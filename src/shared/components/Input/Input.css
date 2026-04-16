@@ -1,0 +1,94 @@
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.input-label {
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-left: var(--space-xxs);
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-field {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-input);
+  border: none;
+  border-radius: var(--border-radius-md);
+  color: var(--text-primary);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  min-height: 48px;
+  transition: all var(--transition-base);
+}
+
+.input-field::placeholder {
+  color: var(--text-tertiary);
+}
+
+.input-field:focus {
+  background: var(--bg-input);
+  box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
+.input-field-error {
+  box-shadow: 0 0 0 2px var(--danger-bg);
+}
+
+.input-error {
+  font-size: var(--font-size-caption);
+  color: var(--danger);
+  padding-left: var(--space-xxs);
+}
+
+.input-hint {
+  font-size: var(--font-size-caption);
+  color: var(--text-tertiary);
+  padding-left: var(--space-xxs);
+}
+
+/* Textarea */
+.input-textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: var(--line-height-normal);
+}
+
+/* Select */
+.input-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%238E8E93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-md) center;
+  padding-right: var(--space-xl);
+}
+
+/* Password toggle */
+.input-field-password {
+  padding-right: 52px;
+}
+
+.input-password-toggle {
+  position: absolute;
+  right: var(--space-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  padding: var(--space-xs);
+  opacity: 0.5;
+  transition: opacity var(--transition-fast);
+  line-height: 1;
+}
+
+.input-password-toggle:active {
+  opacity: 1;
+}

@@ -1,0 +1,715 @@
+/* HogaresPage — iOS premium style */
+.hogares-page {
+  min-height: 100dvh;
+  background: var(--bg-primary, #f2f2f7);
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 32px;
+}
+
+/* Header */
+.hogares-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 56px 20px 8px;
+}
+
+.hogares-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hogares-brand {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary, #1c1c1e);
+}
+
+.hogares-logo-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(168, 230, 207, 0.4);
+}
+
+.hogares-signout {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary, #8e8e93);
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.hogares-signout:hover {
+  color: var(--text-primary, #1c1c1e);
+}
+
+/* Greeting */
+.hogares-greeting {
+  padding: 20px 20px 8px;
+}
+
+.hogares-greeting-title {
+  font-size: clamp(40px, 12vw, 56px);
+  font-weight: 800;
+  line-height: 1.08;
+  color: var(--text-primary, #1c1c1e);
+  margin: 0 0 14px;
+  letter-spacing: -1px;
+}
+
+.hogares-greeting-name {
+  color: var(--text-primary, #1c1c1e);
+}
+
+.hogares-greeting-sub {
+  display: inline-block;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin: 0;
+}
+
+/* List wrapper */
+.hogares-list-wrapper {
+  flex: 1;
+  padding: 20px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hogares-loading {
+  text-align: center;
+  color: var(--text-secondary, #8e8e93);
+  font-size: 15px;
+  padding: 32px 0;
+}
+
+.hogares-empty {
+  text-align: center;
+  color: var(--text-secondary, #8e8e93);
+  font-size: 15px;
+  padding: 16px 0;
+  margin: 0;
+}
+
+/* List */
+.hogares-list {
+  background: var(--bg-card, #ffffff);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.hogares-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color, #f0f0f0);
+  transition: background 0.15s;
+}
+
+.hogares-item:last-child {
+  border-bottom: none;
+}
+
+.hogares-item:active {
+  background: var(--bg-secondary, #f2f2f7);
+}
+
+.hogares-item-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* No pets yet → show letter badge */
+.hogares-item-avatar > span {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+/* Pet stack */
+.hogares-pet-stack {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.hogares-pet-stack-img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: #f2f2f7;
+  border: 2px solid #fff;
+  position: relative;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
+}
+
+.hogares-pet-stack-emoji {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #f2f2f7;
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  position: relative;
+}
+
+.hogares-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hogares-item-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary, #1c1c1e);
+}
+
+.hogares-item-role {
+  font-size: 13px;
+  color: var(--text-secondary, #8e8e93);
+}
+
+.hogares-item-arrow {
+  color: var(--text-tertiary, #c7c7cc);
+  flex-shrink: 0;
+}
+
+/* Create form */
+.hogares-create-form {
+  background: var(--bg-card, #ffffff);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hogares-create-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border-color, #e5e5ea);
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--text-primary, #1c1c1e);
+  background: var(--bg-input, #f2f2f7);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.hogares-create-input:focus {
+  border-color: var(--color-primary, #6c63ff);
+  background: #fff;
+}
+
+.hogares-create-error {
+  color: var(--color-error, #ff3b30);
+  font-size: 13px;
+  margin: 0;
+}
+
+.hogares-create-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.hogares-create-cancel {
+  flex: 1;
+  padding: 12px;
+  border: 1.5px solid var(--border-color, #e5e5ea);
+  border-radius: 10px;
+  background: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-secondary, #8e8e93);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.hogares-create-cancel:active {
+  background: var(--bg-secondary, #f2f2f7);
+}
+
+.hogares-create-submit {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-primary, #6c63ff);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+
+.hogares-create-submit:disabled {
+  opacity: 0.5;
+}
+
+/* Add button */
+.hogares-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  background:
+    linear-gradient(#f2f2f7, #f2f2f7) padding-box,
+    linear-gradient(135deg, #A8E6CF, #89CFF0) border-box;
+  color: #A8E6CF;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.hogares-add-btn:hover {
+  opacity: 0.75;
+}
+
+/* Join link */
+.hogares-join-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text-secondary, #8e8e93);
+  padding: 24px;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+.hogares-join-link:hover {
+  color: var(--text-primary, #1c1c1e);
+}
+
+.hogares-join-link strong {
+  color: var(--color-primary, #6c63ff);
+}
+
+/* ── BOTTOM SHEET ── */
+.hogares-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+}
+
+.hogares-sheet {
+  width: 100%;
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  padding: 12px 20px calc(env(safe-area-inset-bottom, 0px) + 28px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: sheet-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.hogares-sheet-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: #d1d1d6;
+  margin: 0 auto 4px;
+}
+
+.hogares-sheet-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1c1c1e;
+  margin: 0;
+  text-align: center;
+}
+
+.hogares-sheet-input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1.5px solid #e5e5ea;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: inherit;
+  color: #1c1c1e;
+  background: #f2f2f7;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.hogares-sheet-input:focus {
+  border-color: #A8E6CF;
+  background: #fff;
+}
+
+.hogares-sheet-error {
+  color: #ff3b30;
+  font-size: 13px;
+  margin: 0;
+}
+
+.hogares-sheet-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.hogares-sheet-cancel {
+  flex: 1;
+  padding: 13px;
+  border: 1.5px solid #e5e5ea;
+  border-radius: 12px;
+  background: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #8e8e93;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.hogares-sheet-save {
+  flex: 1;
+  padding: 13px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+
+.hogares-sheet-save:disabled {
+  opacity: 0.45;
+}
+
+/* ════════════════════════════════════════
+   INVITATION MODAL (pending invitations)
+   ════════════════════════════════════════ */
+.hogares-inv-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: inv-fade-in 0.25s ease;
+}
+
+@keyframes inv-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.hogares-inv-modal {
+  background: #fff;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 380px;
+  padding: 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  animation: inv-slide-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes inv-slide-up {
+  from { transform: translateY(40px) scale(0.95); opacity: 0; }
+  to   { transform: translateY(0) scale(1);        opacity: 1; }
+}
+
+.hogares-inv-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.hogares-inv-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #8e8e93;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.hogares-inv-hh {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1c1c1e;
+  margin: 0;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+.hogares-inv-sub {
+  font-size: 14px;
+  color: #6c6c70;
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.hogares-inv-count {
+  font-size: 12px;
+  color: #aeaeb2;
+  margin: 0;
+}
+
+.hogares-inv-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.hogares-inv-decline {
+  flex: 1;
+  padding: 13px;
+  border: 1.5px solid #e5e5ea;
+  border-radius: 14px;
+  background: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #8e8e93;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.hogares-inv-decline:hover { background: #f2f2f7; }
+.hogares-inv-decline:disabled { opacity: 0.4; }
+
+.hogares-inv-accept {
+  flex: 2;
+  padding: 13px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+.hogares-inv-accept:disabled { opacity: 0.5; }
+
+/* ════════════════════════════════════════
+   HOGAR ITEM ROW (card + invite button)
+   ════════════════════════════════════════ */
+.hogares-item-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+}
+.hogares-item-row:last-child { border-bottom: none; }
+
+/* Make hogares-item grow and remove its own border */
+.hogares-item-row .hogares-item {
+  flex: 1;
+  border-bottom: none !important;
+}
+
+.hogares-invite-btn {
+  flex-shrink: 0;
+  padding: 14px 14px 14px 8px;
+  background: none;
+  border: none;
+  color: #c7c7cc;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+.hogares-invite-btn:hover { color: #A8E6CF; }
+
+/* ════════════════════════════════════════
+   INVITE SHEET — extra sections
+   ════════════════════════════════════════ */
+.hogares-invite-sheet {
+  gap: 12px !important;
+}
+
+.hogares-invite-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8e8e93;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 4px 0 0;
+}
+
+.hogares-invite-email-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.hogares-invite-input {
+  flex: 1;
+  margin: 0 !important;
+}
+
+.hogares-invite-send-btn {
+  flex-shrink: 0;
+  padding: 13px 16px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+.hogares-invite-send-btn:disabled { opacity: 0.45; }
+
+.hogares-invite-msg {
+  font-size: 13px;
+  color: #3c3c43;
+  margin: 0;
+  padding: 8px 12px;
+  background: #f2f2f7;
+  border-radius: 10px;
+}
+
+.hogares-invite-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #aeaeb2;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 2px 0;
+}
+.hogares-invite-divider-line {
+  flex: 1;
+  height: 1px;
+  background: #e5e5ea;
+}
+
+.hogares-invite-link-btn {
+  width: 100%;
+  padding: 13px;
+  border: 2px dashed #A8E6CF;
+  border-radius: 14px;
+  background: #f0fdf8;
+  color: #2a8a6a;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, opacity 0.15s;
+}
+.hogares-invite-link-btn:hover { background: #e0faf3; }
+.hogares-invite-link-btn:disabled { opacity: 0.5; }
+
+.hogares-invite-link-box {
+  width: 100%;
+  background: #f2f2f7;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hogares-invite-link-text {
+  font-size: 11px;
+  color: #6c6c70;
+  word-break: break-all;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.hogares-invite-copy-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+
+.hogares-invite-close {
+  width: 100%;
+  margin-top: 4px;
+}

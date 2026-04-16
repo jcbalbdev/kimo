@@ -1,0 +1,81 @@
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-nav);
+  padding: var(--bottom-nav-padding);
+  padding-bottom: calc(var(--bottom-nav-padding) + var(--safe-area-bottom));
+  background: var(--bg-nav);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.bottom-nav-segmented {
+  display: flex;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  background: var(--bg-segmented);
+  border-radius: var(--border-radius-md);
+  padding: 3px;
+  position: relative;
+  height: var(--bottom-nav-height);
+}
+
+/* Sliding pill indicator */
+.bottom-nav-pill {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  border-radius: calc(var(--border-radius-md) - 2px);
+  background: var(--bg-segmented-active);
+  box-shadow: var(--shadow-segmented);
+  transition: left var(--transition-ios), width var(--transition-ios);
+  z-index: 0;
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  position: relative;
+  color: var(--text-secondary);
+  font-size: var(--font-size-footnote);
+  font-weight: var(--font-weight-medium);
+  transition: color var(--transition-base);
+  gap: 4px;
+  padding: 0;
+}
+
+.bottom-nav-item:active {
+  opacity: 0.6;
+}
+
+.bottom-nav-item-active {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.bottom-nav-label {
+  white-space: nowrap;
+}
+
+.bottom-nav-badge {
+  position: absolute;
+  top: 6px;
+  right: calc(50% - 24px);
+  min-width: 16px;
+  height: 16px;
+  background: var(--danger);
+  color: white;
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--border-radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  animation: scaleIn var(--transition-spring) both;
+}

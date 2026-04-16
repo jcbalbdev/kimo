@@ -1,0 +1,25 @@
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-xxs) var(--space-sm);
+  border-radius: var(--border-radius-full);
+  background: var(--warning-bg);
+}
+
+.streak-flame {
+  font-size: 14px;
+  animation: streakFlame 2s ease-in-out infinite;
+}
+
+.streak-count {
+  font-size: var(--font-size-footnote);
+  font-weight: var(--font-weight-bold);
+  color: var(--warning);
+}
+
+.streak-best {
+  font-size: var(--font-size-caption2);
+  color: var(--text-tertiary);
+  margin-left: var(--space-xxs);
+}

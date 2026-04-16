@@ -1,0 +1,312 @@
+/* ── MedCard ──────────────────────────────────── */
+
+.medc-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.medc-card-ended {
+  opacity: 0.65;
+}
+
+.medc-header-row {
+  display: flex;
+  align-items: center;
+}
+
+/* ── Card header (always visible) ── */
+.medc-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  width: 100%;
+  padding: 14px 0 14px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.medc-edit-btn {
+  padding: 14px 14px 14px 6px;
+  border: none;
+  background: transparent;
+  color: #c7c7cc;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+.medc-edit-btn:hover { color: #8e8e93; }
+
+.medc-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #A8E6CF22, #89CFF044);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #5dbb97;
+}
+
+.medc-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.medc-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1c1c1e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.medc-sub {
+  font-size: 12px;
+  color: #8e8e93;
+}
+
+.medc-progress {
+  font-size: 11px;
+  background: linear-gradient(135deg, #5dbb97, #5aafc9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+}
+
+.medc-chevron {
+  font-size: 22px;
+  color: #c7c7cc;
+  line-height: 1;
+  transition: transform 0.22s;
+  flex-shrink: 0;
+}
+.medc-open {
+  transform: rotate(90deg);
+}
+
+/* ── Expanded body ── */
+.medc-body {
+  border-top: 1px solid #f0f0f5;
+  padding: 8px 0 12px;
+}
+
+.medc-empty {
+  font-size: 13px;
+  color: #8e8e93;
+  text-align: center;
+  padding: 16px;
+}
+
+/* ── Slot list ── */
+.medc-slots {
+  display: flex;
+  flex-direction: column;
+}
+
+.medc-slot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background 0.12s;
+}
+.medc-slot:active:not(:disabled) {
+  background: #f7f7f8;
+}
+
+.medc-slot-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.medc-slot-label {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1c1c1e;
+}
+
+.medc-slot-done .medc-slot-label {
+  color: #8e8e93;
+  text-decoration: line-through;
+  text-decoration-color: #c7c7cc;
+}
+
+.medc-slot-future {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.medc-future-badge {
+  font-size: 10px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+
+/* ── End treatment button ── */
+.medc-end-btn {
+  margin: 10px 16px 4px;
+  width: calc(100% - 32px);
+  padding: 12px;
+  border: 1.5px solid #ff3b30;
+  border-radius: 12px;
+  background: transparent;
+  color: #ff3b30;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.medc-end-btn:active {
+  background: #ff3b30;
+  color: #fff;
+}
+
+/* ── Inline confirmation ── */
+.medc-confirm {
+  margin: 10px 16px 4px;
+  padding: 14px;
+  background: #fff5f5;
+  border-radius: 12px;
+  border: 1px solid #ffcccc;
+}
+
+.medc-confirm-text {
+  font-size: 13px;
+  color: #3c3c43;
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+
+.medc-confirm-row {
+  display: flex;
+  gap: 8px;
+}
+
+.medc-confirm-no {
+  flex: 1;
+  padding: 10px;
+  border: 1.5px solid #d1d1d6;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #3c3c43;
+  cursor: pointer;
+}
+
+.medc-confirm-yes {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+
+/* ── Ended medications section ── */
+.medc-ended-section {
+  margin-top: 4px;
+}
+
+.medc-ended-summary {
+  font-size: 13px;
+  color: #8e8e93;
+  font-weight: 600;
+  padding: 8px 4px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.medc-ended-summary::-webkit-details-marker { display: none; }
+.medc-ended-section[open] .medc-ended-summary { color: #3c3c43; }
+
+.medc-ended-section .medc-card {
+  margin-top: 6px;
+}
+
+/* ── New medication form ── */
+
+/* Frequency pills */
+.medf-freq-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.medf-pill {
+  padding: 7px 12px;
+  border: 1.5px solid #d1d1d6;
+  border-radius: 20px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: #3c3c43;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.medf-pill-active {
+  border-color: transparent;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-weight: 700;
+}
+
+/* Custom frequency row */
+.medf-custom-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.medf-custom-prefix {
+  font-size: 14px;
+  color: #3c3c43;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.medf-custom-num {
+  width: 70px !important;
+  text-align: center;
+}
+
+.medf-custom-unit {
+  flex: 1;
+}

@@ -1,0 +1,103 @@
+/* Pet Selector — circular bubble style */
+.pet-selector {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 0 8px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.pet-selector::-webkit-scrollbar {
+  display: none;
+}
+
+/* Each pet item */
+.pet-selector-item,
+.pet-selector-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  font-family: inherit;
+  transition: transform 0.15s;
+}
+
+.pet-selector-item:active,
+.pet-selector-add:active {
+  transform: scale(0.92);
+}
+
+/* Bubble */
+.pet-selector-bubble {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--bg-card, #ffffff);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: background 0.2s, box-shadow 0.2s;
+  border: 2.5px solid transparent;
+  overflow: hidden;
+}
+
+/* Active bubble — dark ring + fill */
+.pet-selector-item-active .pet-selector-bubble {
+  background: var(--text-primary, #1c1c1e);
+  border-color: var(--text-primary, #1c1c1e);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.pet-selector-emoji {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.pet-selector-img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  pointer-events: none;
+  mix-blend-mode: darken;
+}
+
+/* Active emoji stays visible (no filter needed with bg change) */
+
+/* Add button bubble */
+.pet-selector-bubble-add {
+  background: var(--bg-secondary, #f2f2f7);
+  border: 2px dashed var(--border-color, #d1d1d6);
+  box-shadow: none;
+  color: var(--text-secondary, #8e8e93);
+}
+
+.pet-selector-bubble-add:hover {
+  border-color: var(--color-primary, #6c63ff);
+  color: var(--color-primary, #6c63ff);
+}
+
+/* Name label */
+.pet-selector-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary, #8e8e93);
+  white-space: nowrap;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.pet-selector-item-active .pet-selector-name {
+  color: var(--text-primary, #1c1c1e);
+  font-weight: 600;
+}

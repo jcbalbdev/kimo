@@ -1,0 +1,101 @@
+/**
+ * Utilidades de fecha para MiKimo
+ */
+
+/**
+ * Retorna la fecha de hoy en formato YYYY-MM-DD
+ */
+export function today() {
+  return new Date().toISOString().split('T')[0];
+}
+
+/**
+ * Retorna la hora actual en formato HH:MM
+ */
+export function currentTime() {
+  return new Date().toLocaleTimeString('es-MX', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+}
+
+/**
+ * Formatea una fecha ISO a formato legible: "13 abr 2026"
+ */
+export function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr + 'T00:00:00');
+  return date.toLocaleDateString('es-MX', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+/**
+ * Formatea una fecha a formato corto: "13 abr"
+ */
+export function formatDateShort(dateStr) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr + 'T00:00:00');
+  return date.toLocaleDateString('es-MX', {
+    day: 'numeric',
+    month: 'short',
+  });
+}
+
+/**
+ * Formatea una hora: "08:30"
+ */
+export function formatTime(timeStr) {
+  if (!timeStr) return '';
+  return timeStr;
+}
+
+/**
+ * Retorna si una fecha es hoy
+ */
+export function isToday(dateStr) {
+  return dateStr === today();
+}
+
+/**
+ * Retorna la fecha de ayer en formato YYYY-MM-DD
+ */
+export function yesterday() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().split('T')[0];
+}
+
+/**
+ * Retorna fecha relativa: "Hoy", "Ayer", o la fecha formateada
+ */
+export function relativeDate(dateStr) {
+  if (dateStr === today()) return 'Hoy';
+  if (dateStr === yesterday()) return 'Ayer';
+  return formatDate(dateStr);
+}
+
+/**
+ * Retorna los últimos N días como array de strings YYYY-MM-DD
+ */
+export function lastNDays(n) {
+  const days = [];
+  for (let i = 0; i < n; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    days.push(d.toISOString().split('T')[0]);
+  }
+  return days;
+}
+
+/**
+ * Calcula días entre dos fechas
+ */
+export function daysBetween(dateStr1, dateStr2) {
+  const d1 = new Date(dateStr1 + 'T00:00:00');
+  const d2 = new Date(dateStr2 + 'T00:00:00');
+  return Math.round(Math.abs(d2 - d1) / (1000 * 60 * 60 * 24));
+}

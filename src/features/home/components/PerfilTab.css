@@ -1,0 +1,286 @@
+/* ─── PerfilTab ─────────────────────── */
+.pt-root {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Stats row */
+.pt-stats-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+/* Base card */
+.pt-stat-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  min-height: 74px;
+}
+
+/* Clickable stat card */
+.pt-stat-card-btn {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.pt-stat-card-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+/* Dashed add card */
+.pt-stat-card-add {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(#f9f9f9, #f9f9f9) padding-box,
+    linear-gradient(135deg, #A8E6CF, #89CFF0) border-box;
+  box-shadow: none;
+  cursor: pointer;
+  font-family: inherit;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: opacity 0.15s;
+}
+.pt-stat-card-add:active { opacity: 0.7; }
+
+/* Large segmented control (inside bottom sheet for gender / sterilized) */
+.pt-seg-control-lg {
+  display: flex;
+  background: #f0f0f5;
+  border-radius: 12px;
+  padding: 3px;
+  gap: 3px;
+  margin-bottom: 16px;
+}
+
+.pt-seg-btn-lg {
+  flex: 1;
+  padding: 12px 8px;
+  border: none;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  background: transparent;
+  color: #8e8e93;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.pt-seg-active {
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-weight: 700;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.12);
+}
+
+.pt-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #8e8e93;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.pt-stat-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1c1c1e;
+}
+
+.pt-add-icon {
+  font-size: 18px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pt-add-text {
+  font-size: 11px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #5dbb97, #5aafc9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+}
+
+/* Bio card */
+.pt-bio-card {
+  width: 100%;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  min-height: 90px;
+  box-sizing: border-box;
+}
+
+.pt-bio-card-btn {
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 0.15s;
+}
+.pt-bio-card-btn:active { transform: scale(0.98); }
+
+.pt-bio-card-add {
+  background:
+    linear-gradient(#f9f9f9, #f9f9f9) padding-box,
+    linear-gradient(135deg, #A8E6CF, #89CFF0) border-box;
+  border: 2px solid transparent;
+  box-shadow: none;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: opacity 0.15s;
+}
+.pt-bio-card-add:active { opacity: 0.7; }
+
+.pt-bio-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #8e8e93;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.pt-bio-text {
+  font-size: 14px;
+  color: #3c3c43;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Edit Sheet */
+.pt-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  animation: pt-overlay-in 0.2s ease;
+}
+
+@keyframes pt-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.pt-sheet {
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  padding: 12px 20px 40px;
+  width: 100%;
+  animation: pt-sheet-in 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+@keyframes pt-sheet-in {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.pt-sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: #e5e5ea;
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+
+.pt-sheet-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1c1c1e;
+  margin: 0 0 16px;
+}
+
+.pt-sheet-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #e5e5ea;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: inherit;
+  color: #1c1c1e;
+  background: #f9f9f9;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+.pt-sheet-input:focus { border-color: #1c1c1e; background: #fff; }
+
+.pt-sheet-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #e5e5ea;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #1c1c1e;
+  background: #f9f9f9;
+  outline: none;
+  box-sizing: border-box;
+  resize: none;
+  line-height: 1.5;
+  transition: border-color 0.2s;
+}
+.pt-sheet-textarea:focus { border-color: #1c1c1e; background: #fff; }
+
+.pt-sheet-hint {
+  font-size: 12px;
+  color: #8e8e93;
+  margin: 6px 0 0;
+}
+
+.pt-sheet-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.pt-sheet-cancel {
+  flex: 1;
+  padding: 14px;
+  border: 1.5px solid #e5e5ea;
+  border-radius: 12px;
+  background: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #8e8e93;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.pt-sheet-save {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+.pt-sheet-save:disabled { opacity: 0.5; }

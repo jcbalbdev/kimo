@@ -1,0 +1,251 @@
+.hh-section {
+  margin-bottom: var(--space-xl);
+}
+
+.hh-invite-card {
+  padding: var(--space-md) var(--page-padding);
+}
+
+.hh-invite-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.hh-invite-icon {
+  font-size: 28px;
+}
+
+.hh-invite-content > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.hh-invite-title {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+}
+
+.hh-invite-sub {
+  font-size: var(--font-size-caption);
+  color: var(--text-secondary);
+}
+
+.hh-invite-arrow {
+  color: var(--text-tertiary);
+  font-size: var(--font-size-body);
+}
+
+/* Members */
+.hh-member-avatar {
+  font-size: 28px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-input);
+  border-radius: var(--border-radius-full);
+  flex-shrink: 0;
+}
+
+.hh-member-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.hh-member-name {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+}
+
+.hh-member-you {
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-regular);
+}
+
+.hh-member-role {
+  font-size: var(--font-size-caption);
+  color: var(--text-secondary);
+}
+
+/* Actions */
+.hh-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.hh-leave-btn { color: var(--danger) !important; }
+.hh-logout-btn { color: var(--text-secondary) !important; }
+
+/* Invite modal */
+.hh-invite-modal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.hh-invite-desc {
+  font-size: var(--font-size-subhead);
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+.hh-invite-url-box {
+  background: var(--bg-input);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-md);
+  word-break: break-all;
+}
+
+.hh-invite-url {
+  font-size: var(--font-size-footnote);
+  color: var(--text-label);
+  font-family: monospace;
+}
+
+.hh-invite-hint {
+  font-size: var(--font-size-caption);
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+/* Leave modal */
+.hh-leave-modal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.hh-leave-modal p {
+  font-size: var(--font-size-subhead);
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+.hh-leave-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.hh-leave-actions > * {
+  flex: 1;
+}
+
+/* ════════════════════════════════════════
+   JOIN HOUSEHOLD — new invitation card UI
+   ════════════════════════════════════════ */
+.join-inv-card {
+  background: #f2f2f7;
+  border-radius: 20px;
+  padding: 24px 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.join-inv-home-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.join-inv-hh-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1c1c1e;
+  margin: 0;
+  text-align: center;
+  letter-spacing: -0.4px;
+}
+
+.join-inv-sub {
+  font-size: 14px;
+  color: #6c6c70;
+  text-align: center;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.join-inv-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.join-decline-btn {
+  flex: 1;
+  padding: 14px;
+  border: 1.5px solid #e5e5ea;
+  border-radius: 14px;
+  background: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #8e8e93;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.join-decline-btn:hover { background: #f2f2f7; }
+
+.join-accept-btn {
+  flex: 2;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+.join-accept-btn:disabled { opacity: 0.5; }
+
+.join-back-btn {
+  margin-top: 16px;
+  padding: 13px 24px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Success state */
+.join-success {
+  gap: 12px;
+}
+.join-success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 800;
+  color: #1c1c1e;
+  animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes pop-in {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}

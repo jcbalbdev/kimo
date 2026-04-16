@@ -1,0 +1,135 @@
+.meds-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.meds-list {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.med-item-wrapper {
+  display: flex;
+  align-items: stretch;
+}
+
+.med-item-wrapper + .med-item-wrapper {
+  border-top: 0.5px solid var(--separator);
+}
+
+.med-item-wrapper .check-item {
+  flex: 1;
+}
+
+.med-detail-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  color: var(--text-tertiary);
+  font-size: 18px;
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-fast);
+}
+
+.med-detail-btn:active {
+  color: var(--text-secondary);
+  background: var(--bg-input);
+}
+
+.meds-inactive {
+  margin-top: var(--space-xl);
+}
+
+.med-inactive-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-xs);
+  opacity: 0.6;
+}
+
+.med-inactive-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.med-inactive-name {
+  font-size: var(--font-size-subhead);
+  text-decoration: line-through;
+}
+
+.med-inactive-dose {
+  font-size: var(--font-size-caption);
+  color: var(--text-tertiary);
+}
+
+.med-reactivate-btn {
+  font-size: var(--font-size-footnote);
+  color: var(--primary);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-xxs) var(--space-xs);
+}
+
+/* Detail modal */
+.med-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.med-detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-sm) 0;
+  border-bottom: 0.5px solid var(--separator);
+  font-size: var(--font-size-subhead);
+}
+
+.med-detail-label {
+  color: var(--text-secondary);
+}
+
+.med-history {
+  margin-top: var(--space-sm);
+}
+
+.med-history-list {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-input);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.med-history-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-subhead);
+  padding: var(--space-sm) var(--space-md);
+  color: var(--text-label);
+}
+
+.med-history-item + .med-history-item {
+  border-top: 0.5px solid var(--separator);
+}
+
+.med-history-time {
+  color: var(--text-tertiary);
+}
+
+.med-detail-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.med-detail-actions > * {
+  flex: 1;
+}

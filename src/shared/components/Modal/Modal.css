@@ -1,0 +1,82 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  z-index: var(--z-modal-backdrop);
+  animation: fadeIn var(--transition-fast) both;
+}
+
+.modal-backdrop-closing {
+  animation: fadeOut var(--transition-fast) both;
+}
+
+.modal-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border-top-left-radius: var(--border-radius-xl);
+  border-top-right-radius: var(--border-radius-xl);
+  z-index: var(--z-modal);
+  max-height: 92vh;
+  overflow-y: auto;
+  animation: slideUp var(--transition-ios) both;
+  padding-bottom: var(--safe-area-bottom);
+}
+
+.modal-sheet-closing {
+  animation: slideDown var(--transition-base) both;
+}
+
+.modal-handle {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-sm) 0 var(--space-xs);
+}
+
+.modal-handle-bar {
+  width: 36px;
+  height: 5px;
+  background: var(--bg-segmented);
+  border-radius: var(--border-radius-full);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-xxs) var(--page-padding) var(--space-lg);
+}
+
+.modal-title {
+  font-size: var(--font-size-title3);
+  font-weight: var(--font-weight-bold);
+}
+
+.modal-close {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius-full);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-fast);
+}
+
+.modal-close:active {
+  background: var(--bg-segmented);
+}
+
+.modal-body {
+  padding: 0 var(--page-padding) var(--space-xl);
+}
+
+.modal-footer {
+  padding: var(--space-md) var(--page-padding);
+  border-top: 0.5px solid var(--separator);
+}

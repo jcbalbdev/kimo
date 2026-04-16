@@ -1,0 +1,43 @@
+.health-tabs {
+  margin-bottom: var(--space-lg);
+}
+
+.health-tabs-bg {
+  display: flex;
+  position: relative;
+  background: var(--bg-segmented);
+  border-radius: var(--border-radius-md);
+  padding: 3px;
+  height: 40px;
+}
+
+.health-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  font-size: var(--font-size-footnote);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  transition: color var(--transition-base);
+}
+
+.health-tab-active {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.health-tab-pill {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  border-radius: calc(var(--border-radius-md) - 2px);
+  background: var(--bg-segmented-active);
+  box-shadow: var(--shadow-segmented);
+  transition: left var(--transition-ios), width var(--transition-ios);
+}
+
+.health-content {
+  /* Content container */
+}

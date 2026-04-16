@@ -1,0 +1,49 @@
+.med-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.med-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.med-form-frequency {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.frequency-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.frequency-pill {
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-full);
+  background: var(--bg-input);
+  font-size: var(--font-size-footnote);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-label);
+  transition: all var(--transition-base);
+  white-space: nowrap;
+}
+
+.frequency-pill:active {
+  transform: scale(0.95);
+}
+
+.frequency-pill-active {
+  background: var(--text-primary);
+  color: var(--text-inverse);
+}
+
+.med-form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}

@@ -1,0 +1,31 @@
+.weight-chart-container {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-md) var(--space-sm);
+  overflow: hidden;
+}
+
+.weight-chart-svg {
+  width: 100%;
+  height: auto;
+}
+
+.weight-chart-label {
+  font-size: 10px;
+  fill: var(--text-tertiary);
+  font-family: var(--font-family);
+}
+
+.weight-chart-placeholder {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-xxl) var(--space-lg);
+  text-align: center;
+}
+
+.weight-chart-placeholder-text {
+  font-size: var(--font-size-subhead);
+  color: var(--text-tertiary);
+}

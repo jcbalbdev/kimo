@@ -1,0 +1,500 @@
+/* ══════════════════════════════════════
+   HomePage — Pet Dashboard (image 1 style)
+   ══════════════════════════════════════ */
+
+.hp-root {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* ── NOMBRE PILL (siempre visible arriba) ── */
+.hp-name-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(env(safe-area-inset-top, 0px) + 20px) 16px 10px;
+  flex-shrink: 0;
+}
+.hp-name-pill {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1c1c1e;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  padding: 5px 18px;
+  border-radius: 20px;
+  letter-spacing: -0.2px;
+}
+
+/* ── HERO AREA (imagen + hogar, ocupa top half) ── */
+.hp-hero-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+  min-height: 0;
+  padding-top: 0;
+}
+
+/* ── CONTENT AREA (solo esto scrollea) ── */
+.hp-content {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 12px 20px calc(80px + env(safe-area-inset-bottom, 0px));
+  -webkit-overflow-scrolling: touch;
+}
+
+
+/* ── STICKY BAR (unused now but keep for reference) ── */
+.hp-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+.hp-hero-emoji {
+  font-size: clamp(120px, 28vw, 180px);
+  line-height: 1;
+  filter: drop-shadow(0 12px 32px rgba(0,0,0,0.12));
+  animation: hp-float 3.5s ease-in-out infinite;
+  user-select: none;
+}
+
+/* Wrap to position pencil btn relative to the illustration */
+.hp-hero-img-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.hp-hero-img {
+  width: auto;
+  max-width: clamp(160px, 55vw, 220px);
+  max-height: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 12px 32px rgba(0,0,0,0.12));
+  animation: hp-float 3.5s ease-in-out infinite;
+  user-select: none;
+  pointer-events: none;
+  mix-blend-mode: darken;
+}
+
+/* Pencil edit button */
+.hp-hero-edit-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  border: none;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #1c1c1e;
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
+  z-index: 5;
+}
+.hp-hero-edit-btn:active {
+  transform: scale(0.88);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+/* ── Avatar picker bottom sheet ── */
+.hp-avatar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  animation: hp-fade-in 0.2s ease;
+}
+
+.hp-avatar-sheet {
+  width: 100%;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  padding: 12px 24px 40px;
+  animation: hp-slide-up 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes hp-slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes hp-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.hp-avatar-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: #e5e5ea;
+  margin: 0 auto 16px;
+}
+
+.hp-avatar-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1c1c1e;
+  text-align: center;
+  margin: 0 0 20px;
+}
+
+.hp-avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.hp-avatar-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 12px 8px;
+  border-radius: 16px;
+  background: #f8f8fa;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  aspect-ratio: 1;
+}
+.hp-avatar-option:active {
+  transform: scale(0.93);
+}
+.hp-avatar-option-active {
+  background: #ededf0;
+  border-color: #d1d1d6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.hp-avatar-opt-img {
+  width: 88px;
+  height: 88px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.14));
+  pointer-events: none;
+  mix-blend-mode: darken;
+}
+
+/* ── Name editing inside avatar sheet ── */
+.hp-avatar-name-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8e8e93;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 4px 0 6px;
+}
+
+.hp-avatar-name-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #e5e5ea;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #1c1c1e;
+  background: #f2f2f7;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s, background 0.2s;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.hp-avatar-name-input:focus {
+  border-color: #A8E6CF;
+  background: #fff;
+}
+
+.hp-avatar-save-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.hp-avatar-save-btn:disabled { opacity: 0.45; }
+.hp-avatar-save-btn:active:not(:disabled) { opacity: 0.75; }
+
+.hp-avatar-opt-emoji {
+  font-size: 44px;
+  line-height: 1;
+  user-select: none;
+}
+
+@keyframes hp-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+.hp-hero-shadow {
+  position: absolute;
+  bottom: 4px;
+  width: 80px;
+  height: 14px;
+  background: rgba(0,0,0,0.1);
+  border-radius: 50%;
+  filter: blur(8px);
+  animation: hp-shadow 3.5s ease-in-out infinite;
+}
+
+@keyframes hp-shadow {
+  0%, 100% { transform: scaleX(1); opacity: 0.1; }
+  50%       { transform: scaleX(0.65); opacity: 0.06; }
+}
+
+/* ── 3. HOGAR PILL ── */
+.hp-hogar-row {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 0;
+}
+
+.hp-hogar-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  border: none;
+  border-radius: 20px;
+  padding: 5px 13px 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1c1c1e;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.hp-hogar-pill:active { opacity: 0.75; }
+
+/* ── 4. ICON TABS ── */
+.hp-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 20px 0;
+}
+
+.hp-tab-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: #f2f2f7;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.hp-tab-btn:active { transform: scale(0.92); }
+
+.hp-tab-btn-active {
+  background: #1c1c1e;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  transform: scale(1.05);
+}
+
+/* Active tab label */
+.hp-tab-active-label {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1c1c1e;
+  margin: 8px 0 0;
+}
+
+
+.hp-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: hp-fade 0.2s ease;
+}
+
+@keyframes hp-fade {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Empty card */
+.hp-empty-card {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: transparent !important;
+  border: 1.5px dashed #d1d1d6 !important;
+  box-shadow: none !important;
+}
+.hp-empty-icon { font-size: 20px; }
+.hp-empty-text { flex: 1; color: #aeaeb2; font-size: 14px; }
+.hp-empty-arrow { color: #aeaeb2; }
+
+/* All done */
+.hp-all-done {
+  display: flex; align-items: center; gap: 8px;
+  background: #e8faf0; border-radius: 12px;
+  padding: 12px 16px; font-size: 14px; font-weight: 600; color: #30d158;
+}
+
+/* Badges */
+.hp-badge-row { display: flex; gap: 8px; }
+.hp-badge-pending { background: #fff3cd; color: #856404; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+.hp-badge-neutral { background: #e5e5ea; color: #6c6c70; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+
+/* Meds */
+.hp-meds-list { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.hp-meds-list > * + * { border-top: 0.5px solid #e5e5ea; }
+
+/* Feed */
+.hp-feed-card { padding: 14px !important; }
+.hp-feed-row { display: flex; align-items: center; gap: 12px; }
+.hp-feed-icon { font-size: 24px; }
+.hp-feed-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.hp-feed-label { font-size: 13px; font-weight: 600; color: #1c1c1e; }
+.hp-feed-detail { font-size: 12px; color: #8e8e93; }
+.hp-feed-time { font-size: 12px; color: #aeaeb2; }
+
+/* Profile */
+.hp-profile-card { padding: 14px !important; }
+.hp-profile-row { display: flex; align-items: center; justify-content: space-between; }
+.hp-profile-item { display: flex; flex-direction: column; gap: 2px; }
+.hp-profile-label { font-size: 11px; color: #8e8e93; font-weight: 500; }
+.hp-profile-value { font-size: 15px; font-weight: 600; color: #1c1c1e; }
+.hp-profile-arrow { color: #aeaeb2; }
+
+/* Appointments */
+.hp-next-appt { background: #1c1c1e; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
+.hp-next-appt-label { font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.hp-next-appt-title { font-size: 18px; font-weight: 700; color: #fff; }
+.hp-next-appt-date { font-size: 13px; color: rgba(255,255,255,0.6); }
+.hp-appt-list { display: flex; flex-direction: column; gap: 8px; }
+.hp-appt-card { padding: 12px 14px !important; }
+.hp-appt-row { display: flex; justify-content: space-between; align-items: center; }
+.hp-appt-title { font-size: 14px; font-weight: 600; color: #1c1c1e; }
+.hp-appt-date { font-size: 12px; color: #8e8e93; }
+.hp-appt-vet { font-size: 12px; color: #8e8e93; margin-top: 2px; display: block; }
+
+/* Link */
+.hp-link-btn { background: none; border: none; font-family: inherit; font-size: 13px; color: #6c63ff; cursor: pointer; padding: 4px 0; font-weight: 500; }
+
+/* ── 6. PET SELECTOR (bottom — fixed) ── */
+.hp-selector-row {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 20px calc(10px + env(safe-area-inset-bottom, 0px));
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 50;
+}
+.hp-selector-row::-webkit-scrollbar { display: none; }
+
+.hp-pet-bubble {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #f2f2f7;
+  border: 2.5px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+.hp-bubble-img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  pointer-events: none;
+  mix-blend-mode: darken;
+}
+
+/* Active bubble — gradient border via background-clip trick */
+.hp-pet-bubble-active {
+  border: 3px solid transparent;
+  background:
+    linear-gradient(#f2f2f7, #f2f2f7) padding-box,
+    linear-gradient(135deg, #A8E6CF, #89CFF0) border-box;
+  box-shadow: 0 2px 12px rgba(108, 58, 255, 0.25);
+}
+
+/* Unselected bubbles: grayscale */
+.hp-pet-bubble:not(.hp-pet-bubble-active):not(.hp-pet-bubble-add) {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+.hp-pet-bubble-add {
+  background: #f2f2f7;
+  border: 2px dashed #d1d1d6;
+  box-shadow: none;
+  color: #8e8e93;
+  font-size: 14px;
+}
+
+.hp-pet-count {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  background: #1c1c1e;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+}

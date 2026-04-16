@@ -1,0 +1,33 @@
+.card {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-md) var(--page-padding);
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-base);
+}
+
+.card-interactive {
+  cursor: pointer;
+}
+
+.card-interactive:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+}
+
+/* Dashed CTA card (like KiCode "add" buttons) */
+.card-dashed {
+  background: transparent;
+  border: 1.5px dashed var(--border-color-strong);
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  color: var(--text-tertiary);
+  font-size: var(--font-size-title3);
+}
+
+.card-dashed:active {
+  background: var(--bg-input);
+}

@@ -1,0 +1,23 @@
+.appt-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.appt-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.appt-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+.appt-form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}

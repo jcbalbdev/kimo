@@ -1,0 +1,33 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-xxxl) var(--space-xl);
+  gap: var(--space-sm);
+  animation: fadeInUp var(--transition-slow) both;
+}
+
+.empty-state-icon {
+  font-size: 56px;
+  opacity: 0.8;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.empty-state-title {
+  font-size: var(--font-size-title3);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+}
+
+.empty-state-text {
+  font-size: var(--font-size-subhead);
+  color: var(--text-secondary);
+  max-width: 260px;
+  line-height: var(--line-height-relaxed);
+}
+
+.empty-state-action {
+  margin-top: var(--space-md);
+}

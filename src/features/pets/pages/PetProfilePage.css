@@ -1,0 +1,99 @@
+.pet-profile-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xl) 0 var(--space-xl);
+}
+
+.pet-profile-name {
+  font-size: var(--font-size-large-title);
+  font-weight: var(--font-weight-black);
+  letter-spacing: -0.02em;
+}
+
+.pet-profile-species {
+  font-size: var(--font-size-footnote);
+  color: var(--text-secondary);
+  background: var(--bg-input);
+  padding: var(--space-xxs) var(--space-sm);
+  border-radius: var(--border-radius-full);
+  font-weight: var(--font-weight-medium);
+}
+
+.pet-profile-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.pet-stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--space-md) var(--space-sm);
+  text-align: center;
+}
+
+.pet-stat-value {
+  font-size: var(--font-size-title1);
+  font-weight: var(--font-weight-black);
+  color: var(--text-primary);
+}
+
+.pet-stat-label {
+  font-size: var(--font-size-caption);
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.pet-profile-info {
+  margin-bottom: var(--space-xl);
+}
+
+.pet-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-md) 0;
+  font-size: var(--font-size-subhead);
+}
+
+.pet-info-row + .pet-info-row {
+  border-top: 0.5px solid var(--separator);
+}
+
+.pet-info-label {
+  color: var(--text-secondary);
+}
+
+.pet-profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.pet-delete-btn {
+  color: var(--danger) !important;
+  opacity: 0.7;
+}
+
+.pet-delete-confirm {
+  background: var(--danger-bg);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-md);
+  text-align: center;
+}
+
+.pet-delete-confirm p {
+  font-size: var(--font-size-subhead);
+  color: var(--text-label);
+  margin-bottom: var(--space-md);
+}
+
+.pet-delete-confirm-actions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: center;
+}

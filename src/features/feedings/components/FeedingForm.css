@@ -1,0 +1,17 @@
+.feeding-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.feeding-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.feeding-form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}

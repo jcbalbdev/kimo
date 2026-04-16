@@ -1,0 +1,45 @@
+.reaction-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.reaction-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xs);
+}
+
+.reaction-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-sm) var(--space-xs);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-input);
+  transition: all var(--transition-base);
+}
+
+.reaction-btn:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+.reaction-btn-active {
+  background: var(--text-primary);
+}
+
+.reaction-emoji {
+  font-size: 24px;
+}
+
+.reaction-label {
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-label);
+}
+
+.reaction-btn-active .reaction-label {
+  color: var(--text-inverse);
+}
