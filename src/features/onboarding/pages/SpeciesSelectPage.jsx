@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SPECIES } from '../../pets/constants/species';
-import gatitoIcon from '../../../assets/gatito.png';
-import huskyIcon from '../../../assets/husky.png';
-import conejitoIcon from '../../../assets/conejito.png';
+import gatitoIcon from '../../../assets/gatito.webp';
+import huskyIcon from '../../../assets/husky.webp';
+import conejitoIcon from '../../../assets/conejito.webp';
 import Input from '../../../shared/components/Input/Input';
 import './SpeciesSelectPage.css';
 

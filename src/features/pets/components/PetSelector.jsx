@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import gatoIcon from '../../../assets/gatito.png';
-import huskyIcon from '../../../assets/husky.png';
-import conejitoIcon from '../../../assets/conejito.png';
+import gatoIcon from '../../../assets/gatito.webp';
+import huskyIcon from '../../../assets/husky.webp';
+import conejitoIcon from '../../../assets/conejito.webp';
 import './PetSelector.css';
 
 const PET_IMG = { cat: gatoIcon, dog: huskyIcon, rabbit: conejitoIcon };

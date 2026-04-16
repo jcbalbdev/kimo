@@ -1,6 +1,6 @@
-import gatitoIcon from '../../../assets/gatito.png';
-import huskyIcon from '../../../assets/husky.png';
-import conejitoIcon from '../../../assets/conejito.png';
+import gatitoIcon from '../../../assets/gatito.webp';
+import huskyIcon from '../../../assets/husky.webp';
+import conejitoIcon from '../../../assets/conejito.webp';
 import './PetAvatar.css';
 
 const PET_IMG = { cat: gatitoIcon, dog: huskyIcon, rabbit: conejitoIcon };

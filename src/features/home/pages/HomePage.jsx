@@ -8,20 +8,21 @@ import MedsTab from '../components/MedsTab';
 import AlimentosTab from '../components/AlimentosTab';
 import CitasTab from '../components/CitasTab';
 import VacunasTab from '../components/VacunasTab';
-import gatoIcon from '../../../assets/gatito.png';
-import gatoGrisIcon from '../../../assets/gatito-gris.png';
-import persianCatIcon from '../../../assets/persian-cat.png';
-import gatoBlancoNegroIcon from '../../../assets/gato-blanco-negro.png';
-import gatoCareyIcon from '../../../assets/gato-carey.png';
-import calicoIcon from '../../../assets/calico.png';
-import huskyIcon from '../../../assets/husky.png';
-import dalmataIcon from '../../../assets/dalmata.png';
-import viringoIcon from '../../../assets/viringo.png';
-import shihtzuIcon from '../../../assets/shihtzu.png';
-import cockerSpanielIcon from '../../../assets/cocker-spaniel.png';
-import conejitoIcon from '../../../assets/conejito.png';
-import conejoNaranjaIcon from '../../../assets/conejo-naranja.png';
+import gatoIcon from '../../../assets/gatito.webp';
+import gatoGrisIcon from '../../../assets/gatito-gris.webp';
+import persianCatIcon from '../../../assets/persian-cat.webp';
+import gatoBlancoNegroIcon from '../../../assets/gato-blanco-negro.webp';
+import gatoCareyIcon from '../../../assets/gato-carey.webp';
+import calicoIcon from '../../../assets/calico.webp';
+import huskyIcon from '../../../assets/husky.webp';
+import dalmataIcon from '../../../assets/dalmata.webp';
+import viringoIcon from '../../../assets/viringo.webp';
+import shihtzuIcon from '../../../assets/shihtzu.webp';
+import cockerSpanielIcon from '../../../assets/cocker-spaniel.webp';
+import conejitoIcon from '../../../assets/conejito.webp';
+import conejoNaranjaIcon from '../../../assets/conejo-naranja.webp';
 import './HomePage.css';
+
 
 // Avatar options per species — ONLY images, no emojis
 const SPECIES_AVATARS = {
