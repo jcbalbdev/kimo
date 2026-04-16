@@ -11,10 +11,14 @@ import VacunasTab from '../components/VacunasTab';
 import gatoIcon from '../../../assets/gatito.png';
 import gatoGrisIcon from '../../../assets/gatito-gris.png';
 import persianCatIcon from '../../../assets/persian-cat.png';
+import gatoBlancoNegroIcon from '../../../assets/gato-blanco-negro.png';
+import gatoCareyIcon from '../../../assets/gato-carey.png';
+import calicoIcon from '../../../assets/calico.png';
 import huskyIcon from '../../../assets/husky.png';
 import dalmataIcon from '../../../assets/dalmata.png';
 import viringoIcon from '../../../assets/viringo.png';
 import shihtzuIcon from '../../../assets/shihtzu.png';
+import cockerSpanielIcon from '../../../assets/cocker-spaniel.png';
 import conejitoIcon from '../../../assets/conejito.png';
 import conejoNaranjaIcon from '../../../assets/conejo-naranja.png';
 import './HomePage.css';
@@ -22,30 +26,38 @@ import './HomePage.css';
 // Avatar options per species — ONLY images, no emojis
 const SPECIES_AVATARS = {
   cat: [
-    { key: 'img',          img: gatoIcon },
-    { key: 'img-gris',     img: gatoGrisIcon },
-    { key: 'img-persian',  img: persianCatIcon },
+    { key: 'img',                  img: gatoIcon },
+    { key: 'img-gris',             img: gatoGrisIcon },
+    { key: 'img-persian',          img: persianCatIcon },
+    { key: 'img-blanco-negro',     img: gatoBlancoNegroIcon },
+    { key: 'img-carey',            img: gatoCareyIcon },
+    { key: 'img-calico',           img: calicoIcon },
   ],
   dog: [
-    { key: 'img',          img: huskyIcon },
-    { key: 'img-dalm',     img: dalmataIcon },
-    { key: 'img-viringo',  img: viringoIcon },
-    { key: 'img-shihtzu',  img: shihtzuIcon },
+    { key: 'img',                  img: huskyIcon },
+    { key: 'img-dalm',             img: dalmataIcon },
+    { key: 'img-viringo',          img: viringoIcon },
+    { key: 'img-shihtzu',          img: shihtzuIcon },
+    { key: 'img-cocker',           img: cockerSpanielIcon },
   ],
   rabbit: [
     { key: 'img',               img: conejitoIcon },
     { key: 'img-conejo-nrj',    img: conejoNaranjaIcon },
   ],
   other: [
-    { key: 'img-gato',        img: gatoIcon },
-    { key: 'img-gris',        img: gatoGrisIcon },
-    { key: 'img-persian',     img: persianCatIcon },
-    { key: 'img-husky',       img: huskyIcon },
-    { key: 'img-dalm',        img: dalmataIcon },
-    { key: 'img-viringo',     img: viringoIcon },
-    { key: 'img-shihtzu',     img: shihtzuIcon },
-    { key: 'img-conejito',    img: conejitoIcon },
-    { key: 'img-conejo-nrj',  img: conejoNaranjaIcon },
+    { key: 'img-gato',            img: gatoIcon },
+    { key: 'img-gris',            img: gatoGrisIcon },
+    { key: 'img-persian',         img: persianCatIcon },
+    { key: 'img-blanco-negro',    img: gatoBlancoNegroIcon },
+    { key: 'img-carey',           img: gatoCareyIcon },
+    { key: 'img-calico',          img: calicoIcon },
+    { key: 'img-husky',           img: huskyIcon },
+    { key: 'img-dalm',            img: dalmataIcon },
+    { key: 'img-viringo',         img: viringoIcon },
+    { key: 'img-shihtzu',         img: shihtzuIcon },
+    { key: 'img-cocker',          img: cockerSpanielIcon },
+    { key: 'img-conejito',        img: conejitoIcon },
+    { key: 'img-conejo-nrj',      img: conejoNaranjaIcon },
   ],
 };
 
@@ -60,14 +72,18 @@ const PET_IMG = {
 // when a pet has key 'img', the code falls back to PET_IMG[species]
 // which returns the correct default per species (husky for dog, gato for cat, etc.)
 const AVATAR_KEY_TO_IMG = {
-  'img-gris':       gatoGrisIcon,
-  'img-persian':    persianCatIcon,
-  'img-husky':      huskyIcon,
-  'img-dalm':       dalmataIcon,
-  'img-viringo':    viringoIcon,
-  'img-shihtzu':    shihtzuIcon,
-  'img-conejito':   conejitoIcon,
-  'img-conejo-nrj': conejoNaranjaIcon,
+  'img-gris':          gatoGrisIcon,
+  'img-persian':       persianCatIcon,
+  'img-blanco-negro':  gatoBlancoNegroIcon,
+  'img-carey':         gatoCareyIcon,
+  'img-calico':        calicoIcon,
+  'img-husky':         huskyIcon,
+  'img-dalm':          dalmataIcon,
+  'img-viringo':       viringoIcon,
+  'img-shihtzu':       shihtzuIcon,
+  'img-cocker':        cockerSpanielIcon,
+  'img-conejito':      conejitoIcon,
+  'img-conejo-nrj':    conejoNaranjaIcon,
 };
 
 const TABS = [

@@ -10,6 +10,10 @@ ASSETS = r"c:\Users\joseb\Desktop\Proyectos 2026\MiKimo\src\assets"
 FILES = [
     "conejo-naranja.png",
     "shihtzu.png",
+    "gato-blanco-negro.png",
+    "gato-carey.png",
+    "calico.png",
+    "cocker-spaniel.png",
 ]
 
 THRESHOLD = 235  # pixels mas brillantes que esto = fondo blanco
