@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PawPrint, Pill, UtensilsCrossed, CalendarDays, Syringe } from 'lucide-react';
 import { usePets } from '../../pets/hooks/usePets';
@@ -104,9 +104,27 @@ export default function HomePage() {
   const [savingAvatar, setSavingAvatar] = useState(false);
   const [newName, setNewName] = useState('');
   const [pendingAvatarKey, setPendingAvatarKey] = useState(null);
+  const [sheetDragY, setSheetDragY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [closingSheet, setClosingSheet] = useState(false);
+
+  const dragStart = useRef(null);
+  const sheetRef = useRef(null);
 
   const { pets, currentPet, selectPet, fetchPets, updatePet } = usePets();
   const { currentHousehold } = useHousehold();
+
+  // ── dismissSheet: desliza hacia abajo desde donde esté (sin saltar) ──
+  const dismissSheet = useCallback(() => {
+    setIsDragging(false);           // activa la transición
+    setClosingSheet(true);          // fade-out del overlay
+    setSheetDragY(window.innerHeight); // continúa bajando
+    setTimeout(() => {
+      setShowAvatarPicker(false);
+      setClosingSheet(false);
+      setSheetDragY(0);
+    }, 320);
+  }, []);
 
   if (!currentPet) return null;
 
@@ -126,7 +144,33 @@ export default function HomePage() {
   const openEditSheet = () => {
     setNewName(currentPet.name || '');
     setPendingAvatarKey(currentAvatarKey);
+    setSheetDragY(0);
+    setClosingSheet(false);
     setShowAvatarPicker(true);
+  };
+
+  // ── Drag-to-dismiss handlers (handle bar only) ──
+  const onHandlePointerDown = (e) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    dragStart.current = e.clientY;
+    setIsDragging(true);   // desactiva transición → sigue el dedo directo
+    setSheetDragY(0);
+  };
+
+  const onHandlePointerMove = (e) => {
+    if (dragStart.current === null) return;
+    const delta = e.clientY - dragStart.current;
+    setSheetDragY(Math.max(0, delta));
+  };
+
+  const onHandlePointerUp = () => {
+    dragStart.current = null;
+    setIsDragging(false);  // reactiva transición
+    if (sheetDragY > 80) {
+      dismissSheet();
+    } else {
+      setSheetDragY(0);    // snap-back suave hacia arriba
+    }
   };
 
   const handleAvatarSelect = (key) => {
@@ -176,9 +220,28 @@ export default function HomePage() {
 
         {/* Avatar picker sheet */}
         {showAvatarPicker && (
-          <div className="hp-avatar-overlay" onClick={() => setShowAvatarPicker(false)}>
-            <div className="hp-avatar-sheet" onClick={e => e.stopPropagation()}>
-              <div className="hp-avatar-handle" />
+          <div
+            className={`hp-avatar-overlay ${closingSheet ? 'hp-avatar-overlay-closing' : ''}`}
+            onClick={dismissSheet}
+          >
+            <div
+              ref={sheetRef}
+              className="hp-avatar-sheet"
+              style={{
+                transform: `translateY(${sheetDragY}px)`,
+                transition: isDragging ? 'none' : 'transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                willChange: 'transform',
+              }}
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Handle — arrastra para cerrar */}
+              <div
+                className="hp-avatar-handle"
+                onPointerDown={onHandlePointerDown}
+                onPointerMove={onHandlePointerMove}
+                onPointerUp={onHandlePointerUp}
+                onPointerCancel={onHandlePointerUp}
+              />
 
               {/* Name editing */}
               <p className="hp-avatar-name-label">Nombre de la mascota</p>
