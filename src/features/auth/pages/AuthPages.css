@@ -103,3 +103,228 @@
   color: var(--text-primary);
   font-weight: var(--font-weight-semibold);
 }
+
+/* ── Keyframes ───────────────────────────────────────────── */
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes inv-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ════════════════════════════════════════
+   DOWNLOAD BANNER
+   ════════════════════════════════════════ */
+.install-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 18px;
+  padding: 13px 16px;
+  background: linear-gradient(135deg, rgba(168,230,207,0.15), rgba(137,207,240,0.15));
+  border: 1.5px solid rgba(137,207,240,0.4);
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  text-align: left;
+}
+.install-banner:active { transform: scale(0.98); }
+.install-banner:hover {
+  background: linear-gradient(135deg, rgba(168,230,207,0.25), rgba(137,207,240,0.25));
+  border-color: rgba(137,207,240,0.7);
+}
+
+.install-banner-icon {
+  color: #3a9fbf;
+  flex-shrink: 0;
+  display: flex;
+}
+
+.install-banner-text {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1c1c1e;
+  line-height: 1.35;
+}
+
+.install-banner-chevron {
+  font-size: 20px;
+  color: #89CFF0;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* ════════════════════════════════════════
+   INSTALL MODAL
+   ════════════════════════════════════════ */
+.install-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  animation: inv-fade-in 0.2s ease;
+}
+
+.install-modal {
+  width: 100%;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  padding: 10px 22px calc(env(safe-area-inset-bottom,0px) + 28px);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  animation: sheet-up 0.3s cubic-bezier(0.34,1.56,0.64,1) backwards;
+  position: relative;
+  max-height: 90dvh;
+  overflow-y: auto;
+}
+
+.install-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: #d1d1d6;
+  margin: 0 auto 16px;
+}
+
+.install-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #f2f2f7;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #636366;
+  transition: background 0.15s;
+}
+.install-close:hover { background: #e5e5ea; }
+
+.install-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.install-app-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 4px 14px rgba(168,230,207,0.5);
+  flex-shrink: 0;
+}
+
+.install-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.install-modal-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1c1c1e;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.install-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  background: linear-gradient(135deg, rgba(168,230,207,0.25), rgba(137,207,240,0.25));
+  border: 1px solid rgba(137,207,240,0.5);
+  color: #3a9fbf;
+  padding: 2px 9px;
+  border-radius: 8px;
+}
+
+/* Steps */
+.install-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.install-step {
+  display: grid;
+  grid-template-columns: 28px 28px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 0;
+  border-bottom: 1px solid #f2f2f7;
+}
+.install-step:last-child { border-bottom: none; }
+
+.install-step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.install-step-icon {
+  color: #636366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.install-step-text {
+  font-size: 13.5px;
+  color: #1c1c1e;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.install-note {
+  font-size: 12px;
+  color: #8e8e93;
+  text-align: center;
+  line-height: 1.5;
+  margin: 0 0 18px;
+  padding: 10px 14px;
+  background: #f9f9f9;
+  border-radius: 10px;
+}
+
+.install-done-btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.install-done-btn:active { opacity: 0.85; transform: scale(0.98); }

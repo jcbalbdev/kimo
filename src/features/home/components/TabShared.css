@@ -150,7 +150,8 @@
 .tab-sheet {
   background: #fff;
   border-radius: 24px 24px 0 0;
-  padding: 12px 20px calc(env(safe-area-inset-bottom, 20px) + 20px);
+  /* max() guarantees ≥90px so Safari browser toolbar (~83px) never covers buttons */
+  padding: 12px 20px max(calc(env(safe-area-inset-bottom, 0px) + 20px), 90px);
   width: 100%;
   animation: tab-sheet-in 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
   max-height: 85dvh;
