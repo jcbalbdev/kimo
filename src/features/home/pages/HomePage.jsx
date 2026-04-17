@@ -20,6 +20,8 @@ import viringoIcon from '../../../assets/viringo.webp';
 import shihtzuIcon from '../../../assets/shihtzu.webp';
 import cockerSpanielIcon from '../../../assets/cocker-spaniel.webp';
 import perroPeludoBlancoIcon from '../../../assets/perrito-peludo-blanco.webp';
+import perroRingoIcon from '../../../assets/perro-ringo.webp';
+import bichonMaltesIcon from '../../../assets/bichon-maltes.webp';
 import conejitoIcon from '../../../assets/conejito.webp';
 import conejoNaranjaIcon from '../../../assets/conejo-naranja.webp';
 import './HomePage.css';
@@ -42,6 +44,8 @@ const SPECIES_AVATARS = {
     { key: 'img-shihtzu',          img: shihtzuIcon },
     { key: 'img-cocker',           img: cockerSpanielIcon },
     { key: 'img-perrito-peludo',   img: perroPeludoBlancoIcon },
+    { key: 'img-ringo',            img: perroRingoIcon },
+    { key: 'img-bichon',           img: bichonMaltesIcon },
   ],
   rabbit: [
     { key: 'img',               img: conejitoIcon },
@@ -60,6 +64,8 @@ const SPECIES_AVATARS = {
     { key: 'img-shihtzu',         img: shihtzuIcon },
     { key: 'img-cocker',          img: cockerSpanielIcon },
     { key: 'img-perrito-peludo',  img: perroPeludoBlancoIcon },
+    { key: 'img-ringo',           img: perroRingoIcon },
+    { key: 'img-bichon',          img: bichonMaltesIcon },
     { key: 'img-conejito',        img: conejitoIcon },
     { key: 'img-conejo-nrj',      img: conejoNaranjaIcon },
   ],
@@ -84,6 +90,8 @@ const AVATAR_KEY_TO_IMG = {
   'img-shihtzu':         shihtzuIcon,
   'img-cocker':          cockerSpanielIcon,
   'img-perrito-peludo':  perroPeludoBlancoIcon,
+  'img-ringo':           perroRingoIcon,
+  'img-bichon':          bichonMaltesIcon,
   'img-conejito':        conejitoIcon,
   'img-conejo-nrj':      conejoNaranjaIcon,
 };
