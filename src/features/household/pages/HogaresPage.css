@@ -84,7 +84,7 @@
 /* List wrapper */
 .hogares-list-wrapper {
   flex: 1;
-  padding: 20px 16px 0;
+  padding: 20px 20px 0;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -1345,7 +1345,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px 4px 24px;
+  padding: 28px 20px 28px;
   gap: 0;
   animation: onb-fade-in 0.4s ease both;
 }
@@ -1401,7 +1401,7 @@
   color: #1c1c1e;
   text-align: center;
   letter-spacing: -0.4px;
-  margin: 0 0 10px;
+  margin: 0 0 14px;
 }
 
 .hogares-onboarding-desc {

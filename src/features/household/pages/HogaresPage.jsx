@@ -466,7 +466,7 @@ export default function HogaresPage() {
 
                 {/* Feature pills */}
                 <div className="hogares-onboarding-features">
-                  {/* Invite — UserPlus icon */}
+                  {/* 1 — UserPlus icon */}
                   <div className="hogares-onboarding-feature">
                     <span className="hogares-onboarding-feature-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -476,25 +476,30 @@ export default function HogaresPage() {
                         <line x1="22" y1="11" x2="16" y2="11"/>
                       </svg>
                     </span>
-                    <span>Invita a tu familia como miembros a tu hogar</span>
+                    <span>Invita a personas como miembros a tu hogar</span>
                   </div>
-                  {/* Pets */}
+                  {/* 2 — Pill / medicine icon */}
                   <div className="hogares-onboarding-feature">
                     <span className="hogares-onboarding-feature-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                        <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/>
+                        <path d="m8.5 8.5 7 7"/>
                       </svg>
                     </span>
-                    <span>Registra mascotas, vacunas y medicamentos</span>
+                    <span>Registra medicinas, vacunas, comida y mucho más</span>
                   </div>
-                  {/* Reminders */}
+                  {/* 3 — Paw print icon */}
                   <div className="hogares-onboarding-feature">
                     <span className="hogares-onboarding-feature-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                        <circle cx="11" cy="4"  r="2"/>
+                        <circle cx="18" cy="8"  r="2"/>
+                        <circle cx="4"  cy="8"  r="2"/>
+                        <circle cx="6.5" cy="15.5" r="1"/>
+                        <path d="M12 15c-2 0-5 1-5 4h10c0-3-3-4-5-4z"/>
                       </svg>
                     </span>
-                    <span>Recibe recordatorios de citas y dosis</span>
+                    <span>Elige entre distintos avatares según tu mascota</span>
                   </div>
                 </div>
 
