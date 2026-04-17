@@ -13,7 +13,7 @@ export function HouseholdProvider({ children }) {
   const fetchingRef = useRef(false);
 
   const fetchHouseholds = useCallback(async (force = false) => {
-    if (!user || !supabase) { setLoading(false); return; }
+    if (!user || !supabase) { return; } // wait for auth — keep loading:true
     if (fetchingRef.current && !force) return; // Already in flight (bypass with force)
     fetchingRef.current = true;
 
