@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PawPrint, Pill, UtensilsCrossed, CalendarDays, Syringe } from 'lucide-react';
 import { usePets } from '../../pets/hooks/usePets';
@@ -72,9 +72,6 @@ const PET_IMG = {
 };
 
 // Map stored avatar keys to actual image sources
-// NOTE: 'img' (generic default) is intentionally NOT listed here —
-// when a pet has key 'img', the code falls back to PET_IMG[species]
-// which returns the correct default per species (husky for dog, gato for cat, etc.)
 const AVATAR_KEY_TO_IMG = {
   'img-gris':            gatoGrisIcon,
   'img-persian':         persianCatIcon,
@@ -113,17 +110,61 @@ export default function HomePage() {
   const [isDragging, setIsDragging] = useState(false);
   const [closingSheet, setClosingSheet] = useState(false);
 
+  // ── Scroll-based sticky header state ──
+  const [hogarVisible, setHogarVisible] = useState(true);
+  const [tabsVisible, setTabsVisible] = useState(true);
+  const [showTabDropdown, setShowTabDropdown] = useState(false);
+
   const dragStart = useRef(null);
   const sheetRef = useRef(null);
+  const rootRef = useRef(null);
+  const headerRef = useRef(null);
+  const hogarSentinelRef = useRef(null);
+  const tabsSentinelRef = useRef(null);
 
   const { pets, currentPet, selectPet, fetchPets, updatePet } = usePets();
   const { currentHousehold } = useHousehold();
 
-  // ── dismissSheet: desliza hacia abajo desde donde esté (sin saltar) ──
+  // Reset scroll & header to top when switching pets
+  useEffect(() => {
+    if (rootRef.current) rootRef.current.scrollTop = 0;
+    setHogarVisible(true);
+    setTabsVisible(true);
+    setShowTabDropdown(false);
+  }, [currentPet?.id]);
+
+  // IntersectionObserver: watches sentinels to drive sticky header
+  useEffect(() => {
+    const headerEl = headerRef.current;
+    const hogarEl  = hogarSentinelRef.current;
+    const tabsEl   = tabsSentinelRef.current;
+    if (!headerEl || !hogarEl || !tabsEl) return;
+
+    // Offset equals the sticky header height so sentinels "exit" right as they
+    // hit the bottom edge of the header bar.
+    const headerH = headerEl.offsetHeight || 56;
+    const opts = { rootMargin: `-${headerH}px 0px 0px 0px` };
+
+    const hogarObs = new IntersectionObserver(
+      ([e]) => setHogarVisible(e.isIntersecting),
+      opts
+    );
+    const tabsObs = new IntersectionObserver(
+      ([e]) => setTabsVisible(e.isIntersecting),
+      opts
+    );
+
+    hogarObs.observe(hogarEl);
+    tabsObs.observe(tabsEl);
+
+    return () => { hogarObs.disconnect(); tabsObs.disconnect(); };
+  }, [currentPet?.id]);
+
+  // ── dismissSheet: slides down from current position ──
   const dismissSheet = useCallback(() => {
-    setIsDragging(false);           // activa la transición
-    setClosingSheet(true);          // fade-out del overlay
-    setSheetDragY(window.innerHeight); // continúa bajando
+    setIsDragging(false);
+    setClosingSheet(true);
+    setSheetDragY(window.innerHeight);
     setTimeout(() => {
       setShowAvatarPicker(false);
       setClosingSheet(false);
@@ -133,7 +174,7 @@ export default function HomePage() {
 
   if (!currentPet) return null;
 
-  // Determine what image to show
+  // Determine hero image
   const avatarKey = currentPet.avatar_emoji;
   const heroImg = (avatarKey && AVATAR_KEY_TO_IMG[avatarKey])
     ? AVATAR_KEY_TO_IMG[avatarKey]
@@ -158,7 +199,7 @@ export default function HomePage() {
   const onHandlePointerDown = (e) => {
     e.currentTarget.setPointerCapture(e.pointerId);
     dragStart.current = e.clientY;
-    setIsDragging(true);   // desactiva transición → sigue el dedo directo
+    setIsDragging(true);
     setSheetDragY(0);
   };
 
@@ -170,17 +211,15 @@ export default function HomePage() {
 
   const onHandlePointerUp = () => {
     dragStart.current = null;
-    setIsDragging(false);  // reactiva transición
+    setIsDragging(false);
     if (sheetDragY > 80) {
       dismissSheet();
     } else {
-      setSheetDragY(0);    // snap-back suave hacia arriba
+      setSheetDragY(0);
     }
   };
 
-  const handleAvatarSelect = (key) => {
-    setPendingAvatarKey(key);
-  };
+  const handleAvatarSelect = (key) => setPendingAvatarKey(key);
 
   const handleSaveEdit = async () => {
     if (!newName.trim()) return;
@@ -196,15 +235,110 @@ export default function HomePage() {
     setShowAvatarPicker(false);
   };
 
-  return (
-    <div className="hp-root">
+  // Derived display flags
+  const showHogarInHeader   = !hogarVisible;
+  const showSectionInHeader = !tabsVisible; // implies showHogarInHeader
 
-      {/* ── 1. NOMBRE SIEMPRE COMO PILL ── */}
-      <div className="hp-name-bar">
-        <span className="hp-name-pill">{currentPet.name}</span>
+  return (
+    <div className="hp-root" ref={rootRef}>
+
+      {/* ══════════════════════════════════════
+          STICKY HEADER — 3-column grid layout
+          [hogar pill] | [section pill or name] | [name pill]
+          ══════════════════════════════════════ */}
+      <div
+        ref={headerRef}
+        className={`hp-header ${showHogarInHeader ? 'hp-header-compact' : ''}`}
+      >
+        {/* ── LEFT: Hogar pill ── */}
+        <div className="hp-header-left">
+          <button
+            className={`hp-header-hogar-btn ${showHogarInHeader ? 'hp-header-hogar-in' : ''}`}
+            onClick={() => navigate('/hogares')}
+            tabIndex={showHogarInHeader ? 0 : -1}
+            aria-hidden={!showHogarInHeader}
+          >
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            <span>{currentHousehold?.name || 'Mi hogar'}</span>
+          </button>
+        </div>
+
+        {/* ── CENTER: Section pill (scrolled) OR Pet name (default) ── */}
+        <div className="hp-header-center">
+          {showSectionInHeader ? (
+            /* Section picker pill */
+            <div className="hp-header-section-wrap">
+              <button
+                className="hp-header-section-pill"
+                onClick={() => setShowTabDropdown(d => !d)}
+                aria-label={`Sección: ${activeTabData?.label}`}
+              >
+                <span>{activeTabData?.label}</span>
+                <svg
+                  width="9" height="9" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2.5"
+                  style={{
+                    transform: showTabDropdown ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s ease',
+                  }}
+                  aria-hidden="true"
+                >
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </button>
+
+              {/* Dropdown list of sections */}
+              {showTabDropdown && (
+                <div className="hp-header-dropdown" role="menu">
+                  {TABS.map(tab => (
+                    <button
+                      key={tab.id}
+                      role="menuitem"
+                      className={`hp-header-dropdown-item ${tab.id === activeTab ? 'hp-header-dropdown-item-active' : ''}`}
+                      onClick={() => { setActiveTab(tab.id); setShowTabDropdown(false); }}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Default: pet name centered; fades out when compact kicks in */
+            <span
+              className={`hp-name-pill ${showHogarInHeader ? 'hp-name-pill-out' : ''}`}
+              aria-hidden={showHogarInHeader}
+            >
+              {currentPet.name}
+            </span>
+          )}
+        </div>
+
+        {/* ── RIGHT: Pet name pill (compact mode) ── */}
+        <div className="hp-header-right">
+          <span
+            className={`hp-name-pill ${showHogarInHeader ? '' : 'hp-name-pill-out'}`}
+            aria-hidden={!showHogarInHeader}
+          >
+            {currentPet.name}
+          </span>
+        </div>
       </div>
 
-      {/* ── 2. HERO AREA (ocupa hasta la mitad de la pantalla) ── */}
+      {/* Transparent backdrop — closes dropdown when clicked outside */}
+      {showTabDropdown && (
+        <div
+          className="hp-dropdown-backdrop"
+          onClick={() => setShowTabDropdown(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* ══════════════════════════════════════
+          HERO AREA
+          ══════════════════════════════════════ */}
       <div className="hp-hero-area">
         <div className="hp-hero">
           <div className="hp-hero-img-wrap">
@@ -222,86 +356,29 @@ export default function HomePage() {
           </div>
           <div className="hp-hero-shadow" />
         </div>
+      </div>
 
-        {/* Avatar picker sheet */}
-        {showAvatarPicker && (
-          <div
-            className={`hp-avatar-overlay ${closingSheet ? 'hp-avatar-overlay-closing' : ''}`}
-            onClick={dismissSheet}
-          >
-            <div
-              ref={sheetRef}
-              className="hp-avatar-sheet"
-              style={{
-                transform: `translateY(${sheetDragY}px)`,
-                transition: isDragging ? 'none' : 'transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                willChange: 'transform',
-              }}
-              onClick={e => e.stopPropagation()}
-            >
-              {/* Handle — arrastra para cerrar */}
-              <div
-                className="hp-avatar-handle"
-                onPointerDown={onHandlePointerDown}
-                onPointerMove={onHandlePointerMove}
-                onPointerUp={onHandlePointerUp}
-                onPointerCancel={onHandlePointerUp}
-              />
+      {/* ══════════════════════════════════════
+          HOGAR PILL (in-page)
+          ══════════════════════════════════════ */}
+      <div className="hp-hogar-row">
+        <button className="hp-hogar-pill" onClick={() => navigate('/hogares')}>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          </svg>
+          {currentHousehold?.name || 'Mi hogar'}
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+      </div>
 
-              {/* Name editing */}
-              <p className="hp-avatar-name-label">Nombre de la mascota</p>
-              <input
-                className="hp-avatar-name-input"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                placeholder="Nombre…"
-                maxLength={30}
-              />
+      {/* Sentinel 1 — exits viewport when hogar pill scrolls behind sticky header */}
+      <div ref={hogarSentinelRef} className="hp-sentinel" aria-hidden="true" />
 
-              <h3 className="hp-avatar-title">Cambiar avatar</h3>
-              <div className="hp-avatar-grid">
-                {avatarOptions.map((opt) => {
-                  const isActive = pendingAvatarKey === opt.key;
-                  return (
-                    <button
-                      key={opt.key}
-                      className={`hp-avatar-option ${isActive ? 'hp-avatar-option-active' : ''}`}
-                      onClick={() => handleAvatarSelect(opt.key)}
-                      disabled={savingAvatar}
-                    >
-                      <img src={opt.img} alt="avatar" className="hp-avatar-opt-img" />
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Save button */}
-              <button
-                className="hp-avatar-save-btn"
-                onClick={handleSaveEdit}
-                disabled={savingAvatar || !newName.trim()}
-              >
-                {savingAvatar ? 'Guardando…' : 'Guardar'}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Hogar pill */}
-        <div className="hp-hogar-row">
-          <button className="hp-hogar-pill" onClick={() => navigate('/hogares')}>
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-            </svg>
-            {currentHousehold?.name || 'Mi hogar'}
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </button>
-        </div>
-      </div>{/* /hp-hero-area */}
-
-      {/* ── 3. TABS — siempre al centro de la pantalla ── */}
+      {/* ══════════════════════════════════════
+          ICON TABS
+          ══════════════════════════════════════ */}
       <div className="hp-tabs">
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
@@ -323,26 +400,89 @@ export default function HomePage() {
       </div>
       <p className="hp-tab-active-label">{activeTabData?.label}</p>
 
-      {/* ── 4. CONTENT — solo esto scrollea ── */}
+      {/* Sentinel 2 — exits viewport when tabs scroll behind sticky header */}
+      <div ref={tabsSentinelRef} className="hp-sentinel" aria-hidden="true" />
+
+      {/* ══════════════════════════════════════
+          TAB CONTENT
+          ══════════════════════════════════════ */}
       <div className="hp-content">
-        {activeTab === 'perfil' && (
-          <PerfilTab pet={currentPet} onPetUpdated={fetchPets} />
-        )}
-        {activeTab === 'medicamentos' && (
-          <MedsTab petId={currentPet.id} />
-        )}
-        {activeTab === 'alimentos' && (
-          <AlimentosTab petId={currentPet.id} />
-        )}
-        {activeTab === 'citas' && (
-          <CitasTab petId={currentPet.id} />
-        )}
-        {activeTab === 'vacunas' && (
-          <VacunasTab petId={currentPet.id} />
-        )}
+        {activeTab === 'perfil'       && <PerfilTab   pet={currentPet} onPetUpdated={fetchPets} />}
+        {activeTab === 'medicamentos' && <MedsTab     petId={currentPet.id} />}
+        {activeTab === 'alimentos'    && <AlimentosTab petId={currentPet.id} />}
+        {activeTab === 'citas'        && <CitasTab    petId={currentPet.id} />}
+        {activeTab === 'vacunas'      && <VacunasTab  petId={currentPet.id} />}
       </div>
 
-      {/* ── 5. PET SELECTOR (bottom fixed) ── */}
+      {/* ══════════════════════════════════════
+          AVATAR PICKER SHEET
+          (position: fixed — above everything)
+          ══════════════════════════════════════ */}
+      {showAvatarPicker && (
+        <div
+          className={`hp-avatar-overlay ${closingSheet ? 'hp-avatar-overlay-closing' : ''}`}
+          onClick={dismissSheet}
+        >
+          <div
+            ref={sheetRef}
+            className="hp-avatar-sheet"
+            style={{
+              transform: `translateY(${sheetDragY}px)`,
+              transition: isDragging ? 'none' : 'transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              willChange: 'transform',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Handle — drag to dismiss */}
+            <div
+              className="hp-avatar-handle"
+              onPointerDown={onHandlePointerDown}
+              onPointerMove={onHandlePointerMove}
+              onPointerUp={onHandlePointerUp}
+              onPointerCancel={onHandlePointerUp}
+            />
+
+            {/* Name editing */}
+            <p className="hp-avatar-name-label">Nombre de la mascota</p>
+            <input
+              className="hp-avatar-name-input"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="Nombre…"
+              maxLength={30}
+            />
+
+            <h3 className="hp-avatar-title">Cambiar avatar</h3>
+            <div className="hp-avatar-grid">
+              {avatarOptions.map((opt) => {
+                const isActive = pendingAvatarKey === opt.key;
+                return (
+                  <button
+                    key={opt.key}
+                    className={`hp-avatar-option ${isActive ? 'hp-avatar-option-active' : ''}`}
+                    onClick={() => handleAvatarSelect(opt.key)}
+                    disabled={savingAvatar}
+                  >
+                    <img src={opt.img} alt="avatar" className="hp-avatar-opt-img" />
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              className="hp-avatar-save-btn"
+              onClick={handleSaveEdit}
+              disabled={savingAvatar || !newName.trim()}
+            >
+              {savingAvatar ? 'Guardando…' : 'Guardar'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════
+          PET SELECTOR — fixed bottom bar
+          ══════════════════════════════════════ */}
       <div className="hp-selector-row">
         {pets.map((pet) => {
           const isActive = pet.id === currentPet.id;

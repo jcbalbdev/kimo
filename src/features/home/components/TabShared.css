@@ -136,7 +136,7 @@
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.4);
-  z-index: 100;
+  z-index: 200;              /* above pet selector (50) and header (60) */
   display: flex;
   align-items: flex-end;
   animation: tab-overlay-in 0.2s ease;
