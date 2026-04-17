@@ -457,12 +457,6 @@ export default function HogaresPage() {
           <div className="hogares-list">
             {households.length === 0 && !showCreate && (
               <div className="hogares-onboarding">
-                {/* Animated Kimo mascot */}
-                <div className="hogares-onboarding-mascot">
-                  <img src={kimoIcon} alt="KIMO" className="hogares-onboarding-kimo" />
-                  <div className="hogares-onboarding-glow" />
-                </div>
-
                 <h2 className="hogares-onboarding-title">
                   ¡Crea tu primer hogar!
                 </h2>
@@ -472,14 +466,19 @@ export default function HogaresPage() {
 
                 {/* Feature pills */}
                 <div className="hogares-onboarding-features">
+                  {/* Invite — UserPlus icon */}
                   <div className="hogares-onboarding-feature">
                     <span className="hogares-onboarding-feature-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <line x1="19" y1="8" x2="19" y2="14"/>
+                        <line x1="22" y1="11" x2="16" y2="11"/>
                       </svg>
                     </span>
-                    <span>Invita a tu familia como cuidadores</span>
+                    <span>Invita a tu familia como miembros a tu hogar</span>
                   </div>
+                  {/* Pets */}
                   <div className="hogares-onboarding-feature">
                     <span className="hogares-onboarding-feature-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -488,6 +487,7 @@ export default function HogaresPage() {
                     </span>
                     <span>Registra mascotas, vacunas y medicamentos</span>
                   </div>
+                  {/* Reminders */}
                   <div className="hogares-onboarding-feature">
                     <span className="hogares-onboarding-feature-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
