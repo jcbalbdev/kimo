@@ -180,7 +180,18 @@ function InstallModal({ onClose }) {
 }
 
 // ── Download Banner ───────────────────────────────────────
+function isRunningAsPWA() {
+  // iOS Safari standalone flag
+  if (window.navigator.standalone === true) return true;
+  // Android / desktop: check display-mode media query
+  if (window.matchMedia('(display-mode: standalone)').matches) return true;
+  return false;
+}
+
 function DownloadBanner({ onClick }) {
+  // Don't show if already installed
+  if (isRunningAsPWA()) return null;
+
   return (
     <button className="install-banner" onClick={onClick}>
       <span className="install-banner-icon"><PhoneDownloadIcon /></span>
