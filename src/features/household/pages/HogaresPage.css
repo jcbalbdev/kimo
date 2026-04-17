@@ -606,6 +606,58 @@
   margin: 4px 0 0;
 }
 
+/* Label + info icon row */
+.hogares-invite-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;   /* anchor for floating tooltip */
+}
+
+.hogares-invite-label-row .hogares-invite-section-label {
+  margin: 0;
+}
+
+.hogares-invite-info-btn {
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  color: #aeaeb2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+.hogares-invite-info-btn:hover { color: #8e8e93; }
+
+/* Floating tooltip */
+.hogares-invite-tip {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 10;
+  font-size: 12px;
+  color: #3a9fbf;
+  font-weight: 500;
+  background: #fff;
+  border: 1px solid rgba(137,207,240,0.5);
+  border-radius: 10px;
+  padding: 8px 12px;
+  line-height: 1.45;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  animation: tip-fade-in 0.15s ease both;
+  pointer-events: none;
+}
+
+@keyframes tip-fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .hogares-invite-email-row {
   display: flex;
   gap: 8px;

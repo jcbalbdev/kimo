@@ -174,6 +174,8 @@ export default function HogaresPage() {
   const [generatedLink, setGeneratedLink] = useState('');
   const [generatingLink, setGeneratingLink] = useState(false);
   const [copied, setCopied] = useState(false);
+  // 'email' | 'noAccount' | null
+  const [activeTip, setActiveTip] = useState(null);
 
   // ── Pending invitation ─────────────────────────────────
   const [currentInvIdx, setCurrentInvIdx] = useState(0);
@@ -278,9 +280,9 @@ export default function HogaresPage() {
 
   // ── Invite handlers ────────────────────────────────────
   const openInviteSheet = (hh) => {
-    setInviteHH(hh); setInviteEmail(''); setInviteMsg(''); setGeneratedLink(''); setCopied(false);
+    setInviteHH(hh); setInviteEmail(''); setInviteMsg(''); setGeneratedLink(''); setCopied(false); setActiveTip(null);
   };
-  const closeInviteSheet = () => { setInviteHH(null); setInviteMsg(''); setGeneratedLink(''); };
+  const closeInviteSheet = () => { setInviteHH(null); setInviteMsg(''); setGeneratedLink(''); setActiveTip(null); };
 
   const handleInviteByEmail = async () => {
     if (!inviteEmail.trim()) return;
@@ -792,20 +794,36 @@ export default function HogaresPage() {
           </form>
         </div>
       )}
-
       {/* ── Bottom sheet: invitar persona ── */}
       {inviteHH && (
         <div className="hogares-sheet-overlay" onClick={closeInviteSheet}>
-          <div className="hogares-sheet hogares-invite-sheet" onClick={(e) => e.stopPropagation()}>
+          <div className="hogares-sheet hogares-invite-sheet" onClick={(e) => { e.stopPropagation(); setActiveTip(null); }}>
             <div className="hogares-sheet-handle" />
             <h3 className="hogares-sheet-title">Invitar a {inviteHH.name}</h3>
 
-            <p className="hogares-invite-section-label">Si tiene cuenta en KIMO</p>
+            {/* Label: tiene cuenta */}
+            <div className="hogares-invite-label-row">
+              <p className="hogares-invite-section-label">Si tiene cuenta en KIMO</p>
+              <button
+                className="hogares-invite-info-btn"
+                onClick={(e) => { e.stopPropagation(); setActiveTip(v => v === 'email' ? null : 'email'); }}
+                aria-label="Más información"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="8"/>
+                  <line x1="12" y1="12" x2="12" y2="16"/>
+                </svg>
+              </button>
+              {activeTip === 'email' && (
+                <span className="hogares-invite-tip">Agrega el correo de la cuenta del usuario de KIMO</span>
+              )}
+            </div>
             <div className="hogares-invite-email-row">
               <input
                 className="hogares-sheet-input hogares-invite-input"
                 type="email"
-                placeholder="email@ejemplo.com"
+                placeholder="kimo@mimail.com"
                 value={inviteEmail}
                 onChange={(e) => { setInviteEmail(e.target.value); setInviteMsg(''); }}
               />
@@ -823,7 +841,24 @@ export default function HogaresPage() {
               <div className="hogares-invite-divider-line" />
             </div>
 
-            <p className="hogares-invite-section-label">Si no tiene cuenta</p>
+            {/* Label: no tiene cuenta */}
+            <div className="hogares-invite-label-row">
+              <p className="hogares-invite-section-label">Si no tiene cuenta</p>
+              <button
+                className="hogares-invite-info-btn"
+                onClick={(e) => { e.stopPropagation(); setActiveTip(v => v === 'noAccount' ? null : 'noAccount'); }}
+                aria-label="Más información"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="8"/>
+                  <line x1="12" y1="12" x2="12" y2="16"/>
+                </svg>
+              </button>
+              {activeTip === 'noAccount' && (
+                <span className="hogares-invite-tip">Invita a usar la app para gestionar hogares juntos</span>
+              )}
+            </div>
             {!generatedLink ? (
               <button className="hogares-invite-link-btn" onClick={handleGenerateLink} disabled={generatingLink}>
                 {generatingLink ? 'Generando…' : '🔗 Generar link de invitación'}
