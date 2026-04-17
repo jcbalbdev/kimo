@@ -173,6 +173,8 @@
 .pt-sheet-overlay {
   position: fixed;
   inset: 0;
+  /* Shrink overlay bottom by keyboard height on iOS */
+  bottom: var(--keyboard-h, 0px);
   background: rgba(0,0,0,0.4);
   z-index: 200;              /* above pet selector (50) and header (60) */
   display: flex;
@@ -188,7 +190,11 @@
 .pt-sheet {
   background: #fff;
   border-radius: 24px 24px 0 0;
-  padding: 12px 20px 40px;
+  /* Keyboard-aware padding: never let the Guardar button hide behind keyboard */
+  padding: 12px 20px max(
+    calc(env(safe-area-inset-bottom, 0px) + 20px),
+    calc(var(--keyboard-h, 0px) + 20px)
+  );
   width: 100%;
   animation: pt-sheet-in 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
 }

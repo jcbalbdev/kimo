@@ -408,6 +408,8 @@
 .hp-avatar-overlay {
   position: fixed;
   inset: 0;
+  /* Shift up by keyboard height on iOS */
+  bottom: var(--keyboard-h, 0px);
   background: rgba(0, 0, 0, 0.4);
   z-index: 200;
   display: flex;
