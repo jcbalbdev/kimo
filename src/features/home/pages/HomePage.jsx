@@ -19,6 +19,7 @@ import dalmataIcon from '../../../assets/dalmata.webp';
 import viringoIcon from '../../../assets/viringo.webp';
 import shihtzuIcon from '../../../assets/shihtzu.webp';
 import cockerSpanielIcon from '../../../assets/cocker-spaniel.webp';
+import perroPeludoBlancoIcon from '../../../assets/perrito-peludo-blanco.webp';
 import conejitoIcon from '../../../assets/conejito.webp';
 import conejoNaranjaIcon from '../../../assets/conejo-naranja.webp';
 import './HomePage.css';
@@ -40,6 +41,7 @@ const SPECIES_AVATARS = {
     { key: 'img-viringo',          img: viringoIcon },
     { key: 'img-shihtzu',          img: shihtzuIcon },
     { key: 'img-cocker',           img: cockerSpanielIcon },
+    { key: 'img-perrito-peludo',   img: perroPeludoBlancoIcon },
   ],
   rabbit: [
     { key: 'img',               img: conejitoIcon },
@@ -57,6 +59,7 @@ const SPECIES_AVATARS = {
     { key: 'img-viringo',         img: viringoIcon },
     { key: 'img-shihtzu',         img: shihtzuIcon },
     { key: 'img-cocker',          img: cockerSpanielIcon },
+    { key: 'img-perrito-peludo',  img: perroPeludoBlancoIcon },
     { key: 'img-conejito',        img: conejitoIcon },
     { key: 'img-conejo-nrj',      img: conejoNaranjaIcon },
   ],
@@ -73,18 +76,19 @@ const PET_IMG = {
 // when a pet has key 'img', the code falls back to PET_IMG[species]
 // which returns the correct default per species (husky for dog, gato for cat, etc.)
 const AVATAR_KEY_TO_IMG = {
-  'img-gris':          gatoGrisIcon,
-  'img-persian':       persianCatIcon,
-  'img-blanco-negro':  gatoBlancoNegroIcon,
-  'img-carey':         gatoCareyIcon,
-  'img-calico':        calicoIcon,
-  'img-husky':         huskyIcon,
-  'img-dalm':          dalmataIcon,
-  'img-viringo':       viringoIcon,
-  'img-shihtzu':       shihtzuIcon,
-  'img-cocker':        cockerSpanielIcon,
-  'img-conejito':      conejitoIcon,
-  'img-conejo-nrj':    conejoNaranjaIcon,
+  'img-gris':            gatoGrisIcon,
+  'img-persian':         persianCatIcon,
+  'img-blanco-negro':    gatoBlancoNegroIcon,
+  'img-carey':           gatoCareyIcon,
+  'img-calico':          calicoIcon,
+  'img-husky':           huskyIcon,
+  'img-dalm':            dalmataIcon,
+  'img-viringo':         viringoIcon,
+  'img-shihtzu':         shihtzuIcon,
+  'img-cocker':          cockerSpanielIcon,
+  'img-perrito-peludo':  perroPeludoBlancoIcon,
+  'img-conejito':        conejitoIcon,
+  'img-conejo-nrj':      conejoNaranjaIcon,
 };
 
 const TABS = [

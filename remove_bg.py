@@ -14,6 +14,7 @@ FILES = [
     "gato-carey.png",
     "calico.png",
     "cocker-spaniel.png",
+    "perrito-peludo-blanco.png",
 ]
 
 THRESHOLD = 235  # pixels mas brillantes que esto = fondo blanco

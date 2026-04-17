@@ -18,6 +18,7 @@ import dalmataIcon        from '../../../assets/dalmata.webp';
 import viringoIcon        from '../../../assets/viringo.webp';
 import shihtzuIcon        from '../../../assets/shihtzu.webp';
 import cockerSpanielIcon  from '../../../assets/cocker-spaniel.webp';
+import perroPeludoBlancoIcon from '../../../assets/perrito-peludo-blanco.webp';
 import conejitoIcon       from '../../../assets/conejito.webp';
 import conejoNaranjaIcon  from '../../../assets/conejo-naranja.webp';
 import './HogaresPage.css';
@@ -25,18 +26,19 @@ import './HogaresPage.css';
 // ── Avatar key → image (mirrors HomePage.jsx) ─────────────
 const PET_IMG_DEFAULT = { cat: gatoIcon, dog: huskyIcon, rabbit: conejitoIcon };
 const AVATAR_KEY_TO_IMG = {
-  'img-gris':         gatoGrisIcon,
-  'img-persian':      persianCatIcon,
-  'img-blanco-negro': gatoBlancoNegroIcon,
-  'img-carey':        gatoCareyIcon,
-  'img-calico':       calicoIcon,
-  'img-husky':        huskyIcon,
-  'img-dalm':         dalmataIcon,
-  'img-viringo':      viringoIcon,
-  'img-shihtzu':      shihtzuIcon,
-  'img-cocker':       cockerSpanielIcon,
-  'img-conejito':     conejitoIcon,
-  'img-conejo-nrj':   conejoNaranjaIcon,
+  'img-gris':           gatoGrisIcon,
+  'img-persian':        persianCatIcon,
+  'img-blanco-negro':   gatoBlancoNegroIcon,
+  'img-carey':          gatoCareyIcon,
+  'img-calico':         calicoIcon,
+  'img-husky':          huskyIcon,
+  'img-dalm':           dalmataIcon,
+  'img-viringo':        viringoIcon,
+  'img-shihtzu':        shihtzuIcon,
+  'img-cocker':         cockerSpanielIcon,
+  'img-perrito-peludo': perroPeludoBlancoIcon,
+  'img-conejito':       conejitoIcon,
+  'img-conejo-nrj':     conejoNaranjaIcon,
 };
 
 function getPetImg(pet) {
