@@ -153,13 +153,10 @@
 .tab-sheet {
   background: #fff;
   border-radius: 24px 24px 0 0;
-  /* Bottom padding adapts: uses whichever is larger —
-     the safe-area + 20px, the old 90px Safari toolbar guard,
-     OR the live keyboard height + 20px (iOS keyboard fix). */
-  padding: 12px 20px max(
-    calc(env(safe-area-inset-bottom, 0px) + 20px),
-    calc(var(--keyboard-h, 0px) + 20px)
-  );
+  /* The overlay's bottom: var(--keyboard-h) already lifts the sheet above
+     the keyboard. No need to repeat it in padding — just account for
+     the safe-area notch at the bottom of the screen. */
+  padding: 12px 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
   width: 100%;
   animation: tab-sheet-in 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
   max-height: 85dvh;
