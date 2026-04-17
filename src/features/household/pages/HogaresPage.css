@@ -1338,3 +1338,138 @@
   border: 1px solid #bee3fc;
 }
 
+/* ══════════════════════════════════════════════════════
+   ONBOARDING EMPTY STATE
+   ══════════════════════════════════════════════════════ */
+.hogares-onboarding {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 4px 24px;
+  gap: 0;
+  animation: onb-fade-in 0.4s ease both;
+}
+
+@keyframes onb-fade-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Mascot */
+.hogares-onboarding-mascot {
+  position: relative;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hogares-onboarding-kimo {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 28px;
+  position: relative;
+  z-index: 1;
+  animation: onb-float 3s ease-in-out infinite;
+  box-shadow: 0 8px 32px rgba(168, 230, 207, 0.5), 0 2px 8px rgba(0,0,0,0.08);
+}
+
+@keyframes onb-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+.hogares-onboarding-glow {
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168,230,207,0.4) 0%, transparent 70%);
+  animation: onb-pulse 3s ease-in-out infinite;
+}
+
+@keyframes onb-pulse {
+  0%, 100% { transform: scale(1);   opacity: 0.7; }
+  50%       { transform: scale(1.2); opacity: 1;   }
+}
+
+/* Text */
+.hogares-onboarding-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1c1c1e;
+  text-align: center;
+  letter-spacing: -0.4px;
+  margin: 0 0 10px;
+}
+
+.hogares-onboarding-desc {
+  font-size: 14px;
+  color: #636366;
+  text-align: center;
+  line-height: 1.55;
+  margin: 0 0 22px;
+  max-width: 280px;
+}
+
+/* Feature rows */
+.hogares-onboarding-features {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 26px;
+}
+
+.hogares-onboarding-feature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  font-size: 14px;
+  font-weight: 500;
+  color: #1c1c1e;
+  line-height: 1.4;
+}
+
+.hogares-onboarding-feature-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(168,230,207,0.3), rgba(137,207,240,0.3));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #3a9fbf;
+}
+
+/* CTA Button */
+.hogares-onboarding-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: -0.2px;
+  box-shadow: 0 4px 18px rgba(137,207,240,0.45);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.hogares-onboarding-cta:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 8px rgba(137,207,240,0.3);
+}

@@ -456,7 +456,56 @@ export default function HogaresPage() {
         ) : (
           <div className="hogares-list">
             {households.length === 0 && !showCreate && (
-              <p className="hogares-empty">No tienes hogares aún. Crea uno para empezar.</p>
+              <div className="hogares-onboarding">
+                {/* Animated Kimo mascot */}
+                <div className="hogares-onboarding-mascot">
+                  <img src={kimoIcon} alt="KIMO" className="hogares-onboarding-kimo" />
+                  <div className="hogares-onboarding-glow" />
+                </div>
+
+                <h2 className="hogares-onboarding-title">
+                  ¡Crea tu primer hogar!
+                </h2>
+                <p className="hogares-onboarding-desc">
+                  Un hogar es el espacio donde gestionas a tus mascotas y puedes invitar a tu familia o cuidadores.
+                </p>
+
+                {/* Feature pills */}
+                <div className="hogares-onboarding-features">
+                  <div className="hogares-onboarding-feature">
+                    <span className="hogares-onboarding-feature-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                      </svg>
+                    </span>
+                    <span>Invita a tu familia como cuidadores</span>
+                  </div>
+                  <div className="hogares-onboarding-feature">
+                    <span className="hogares-onboarding-feature-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                      </svg>
+                    </span>
+                    <span>Registra mascotas, vacunas y medicamentos</span>
+                  </div>
+                  <div className="hogares-onboarding-feature">
+                    <span className="hogares-onboarding-feature-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                      </svg>
+                    </span>
+                    <span>Recibe recordatorios de citas y dosis</span>
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <button className="hogares-onboarding-cta" onClick={() => setShowCreate(true)}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                  Crear mi primer hogar
+                </button>
+              </div>
             )}
             {households.map((hh) => {
               const petCount = (householdPets[hh.id] || []).length;
@@ -498,10 +547,12 @@ export default function HogaresPage() {
           </div>
         )}
 
-        {/* Add hogar button */}
-        <button className="hogares-add-btn" onClick={() => setShowCreate(true)}>
-          <PlusIcon />
-        </button>
+        {/* Add hogar button — hidden on empty state (CTA handles it) */}
+        {households.length > 0 && (
+          <button className="hogares-add-btn" onClick={() => setShowCreate(true)}>
+            <PlusIcon />
+          </button>
+        )}
       </div>
 
       {/* ══════════════════════════════════════════════════ */}
