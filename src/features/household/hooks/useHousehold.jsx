@@ -40,8 +40,11 @@ export function HouseholdProvider({ children }) {
         const hhs = data.map((d) => ({ ...d.households, myRole: d.role }));
         setHouseholds(hhs);
         // Only auto-select if no household already selected
-        setCurrentHousehold((prev) => prev ?? hhs[0]);
-        await fetchMembers(hhs[0].id);
+        setCurrentHousehold((prev) => {
+          if (prev) return prev; // keep existing selection
+          fetchMembers(hhs[0].id);
+          return hhs[0];
+        });
       } else if (force) {
         // Only clear if this is an explicit refresh, not a timeout
         setHouseholds([]);
@@ -101,6 +104,9 @@ export function HouseholdProvider({ children }) {
 
     if (memErr) return { error: memErr.message };
 
+    // ✅ Select the new household BEFORE refetching so pets are saved to it
+    const newHousehold = { ...hh, myRole: 'owner' };
+    setCurrentHousehold(newHousehold);
     await fetchHouseholds();
     return { data: hh };
   };
@@ -150,6 +156,70 @@ export function HouseholdProvider({ children }) {
     await fetchHouseholds();
   };
 
+  const deleteHousehold = async (householdId) => {
+    if (!user || !supabase) return { error: 'No user' };
+    const { error } = await supabase
+      .from('households')
+      .delete()
+      .eq('id', householdId)
+      .eq('created_by', user.id);
+    if (error) return { error: error.message };
+    setCurrentHousehold((prev) => (prev?.id === householdId ? null : prev));
+    await fetchHouseholds(true);
+    return {};
+  };
+
+  const updateHouseholdName = async (householdId, name) => {
+    if (!user || !supabase) return { error: 'No user' };
+    const { error } = await supabase
+      .from('households')
+      .update({ name })
+      .eq('id', householdId)
+      .eq('created_by', user.id);
+    if (error) return { error: error.message };
+    setCurrentHousehold((prev) =>
+      prev?.id === householdId ? { ...prev, name } : prev
+    );
+    await fetchHouseholds(true);
+    return {};
+  };
+
+  // Remove a specific member (by their user_id) from a household
+  const removeMember = async (householdId, memberId) => {
+    if (!user || !supabase) return { error: 'No user' };
+    const { error } = await supabase
+      .from('household_members')
+      .delete()
+      .eq('id', memberId);
+    if (error) return { error: error.message };
+    return {};
+  };
+
+  // Fetch full detail for one household (members + pets)
+  // Uses a SECURITY DEFINER RPC to bypass RLS on household_members/profiles
+  const getHouseholdDetail = async (householdId) => {
+    if (!supabase) return { members: [], pets: [] };
+    const [{ data: membersData }, { data: petsData }] = await Promise.all([
+      supabase.rpc('get_household_members', { p_household_id: householdId }),
+      supabase
+        .from('pets')
+        .select('id, name, species, avatar_emoji')
+        .eq('household_id', householdId)
+        .order('created_at', { ascending: true }),
+    ]);
+    return {
+      members: (membersData || []).map((m) => ({
+        id: m.user_id,
+        display_name: m.display_name,
+        avatar_emoji: m.avatar_emoji,
+        role: m.member_role,   // renamed from 'role' in SQL to avoid reserved word
+        joinedAt: m.joined_at,
+        memberId: m.member_id,
+      })),
+      pets: petsData || [],
+    };
+  };
+
   const getInviteUrl = () => {
     if (!currentHousehold) return '';
     return `${window.location.origin}/unirse/${currentHousehold.invite_code}`;
@@ -166,6 +236,10 @@ export function HouseholdProvider({ children }) {
     createHousehold,
     joinHousehold,
     leaveHousehold,
+    deleteHousehold,
+    updateHouseholdName,
+    removeMember,
+    getHouseholdDetail,
     getInviteUrl,
     fetchHouseholds,
     selectHousehold: setCurrentHousehold,

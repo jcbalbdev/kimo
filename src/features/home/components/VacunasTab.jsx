@@ -308,7 +308,7 @@ export default function VacunasTab({ petId }) {
 
       {/* Bottom sheet */}
       {showForm && (
-        <div className="tab-sheet-overlay" onClick={() => setShowAdd(false)}>
+        <div className="tab-sheet-overlay" onClick={() => setShowForm(false)}>
           <div className="tab-sheet" onClick={(e) => e.stopPropagation()}>
             <div className="tab-sheet-handle" />
             <h3 className="tab-sheet-title">{editId ? 'Editar vacuna' : 'Registrar vacuna'}</h3>

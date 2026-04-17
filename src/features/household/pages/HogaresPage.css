@@ -353,7 +353,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  animation: sheet-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: sheet-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
 }
 
 @keyframes sheet-up {
@@ -713,3 +713,628 @@
   width: 100%;
   margin-top: 4px;
 }
+
+/* ════════════════════════════════════════
+   HOUSE DETAIL ICON BUTTON (in list row)
+   ════════════════════════════════════════ */
+.hogares-detail-btn {
+  flex-shrink: 0;
+  padding: 14px 8px;
+  background: none;
+  border: none;
+  color: #1c1c1e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+.hogares-detail-btn:hover { color: #89CFF0; }
+
+/* ════════════════════════════════════════
+   HOUSEHOLD DETAIL BOTTOM SHEET (hd-)
+   ════════════════════════════════════════ */
+.hd-sheet {
+  max-height: 85dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0 !important;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px) !important;
+}
+
+/* ── Header ── */
+.hd-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 4px 0 16px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 4px;
+}
+
+.hd-header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 3px 12px rgba(168,230,207,0.5);
+}
+
+.hd-header-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.hd-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hd-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1c1c1e;
+  margin: 0;
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hd-edit-name-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #8e8e93;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+.hd-edit-name-btn:hover { color: #1c1c1e; }
+
+.hd-name-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hd-name-input {
+  flex: 1;
+  padding: 7px 10px;
+  border: 1.5px solid #A8E6CF;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  color: #1c1c1e;
+  background: #fff;
+  outline: none;
+  min-width: 0;
+}
+
+.hd-name-save,
+.hd-name-cancel {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+.hd-name-save { color: #34c759; }
+.hd-name-save:hover { color: #28a745; }
+.hd-name-cancel { color: #ff3b30; }
+
+.hd-role-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6c6c70;
+  background: #f2f2f7;
+  padding: 3px 8px;
+  border-radius: 8px;
+  align-self: flex-start;
+}
+
+.hd-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #8e8e93;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.hd-close-btn:hover { color: #1c1c1e; }
+
+.hd-error {
+  font-size: 12px;
+  color: #ff3b30;
+  margin: 0;
+}
+
+.hd-loading {
+  text-align: center;
+  color: #8e8e93;
+  font-size: 14px;
+  padding: 32px 0;
+}
+
+/* ── Body (scrollable) ── */
+.hd-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-top: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Section ── */
+.hd-section {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.hd-section:last-child { border-bottom: none; }
+
+.hd-section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #8e8e93;
+  margin: 0 0 10px;
+}
+
+.hd-empty {
+  font-size: 14px;
+  color: #aeaeb2;
+  text-align: center;
+  padding: 8px 0;
+  margin: 0;
+}
+
+/* ── Pets chips ── */
+.hd-pets-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hd-pet-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, rgba(168,230,207,0.18), rgba(137,207,240,0.18));
+  border: 1.5px solid rgba(137,207,240,0.4);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1c1c1e;
+}
+
+.hd-pet-emoji { font-size: 15px; }
+.hd-pet-name  { font-size: 14px; font-weight: 600; }
+
+/* ── Members list ── */
+.hd-members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hd-member-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f8f8f8;
+}
+.hd-member-row:last-child { border-bottom: none; }
+
+.hd-member-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: white;
+  flex-shrink: 0;
+  letter-spacing: -0.5px;
+}
+
+.hd-member-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.hd-member-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1c1c1e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hd-me-tag {
+  font-size: 12px;
+  font-weight: 500;
+  color: #8e8e93;
+}
+
+.hd-member-role {
+  font-size: 12px;
+  color: #8e8e93;
+}
+
+.hd-remove-member-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ff3b30;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  transition: background 0.15s;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+.hd-remove-member-btn:hover { background: rgba(255,59,48,0.08); opacity: 1; }
+
+.hd-remove-confirm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.hd-remove-confirm-text {
+  font-size: 12px;
+  color: #ff3b30;
+  white-space: nowrap;
+}
+
+.hd-remove-yes,
+.hd-remove-no {
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.hd-remove-yes { background: #ff3b30; color: #fff; }
+.hd-remove-yes:hover { opacity: 0.85; }
+.hd-remove-no  { background: #f2f2f7; color: #1c1c1e; }
+
+/* ── Danger zone ── */
+.hd-danger-zone {
+  padding: 16px 0 4px;
+}
+
+.hd-delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px;
+  border: 1.5px solid rgba(255,59,48,0.35);
+  border-radius: 14px;
+  background: rgba(255,59,48,0.05);
+  color: #ff3b30;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, opacity 0.15s;
+}
+.hd-delete-btn:hover { background: rgba(255,59,48,0.1); }
+
+.hd-delete-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255,59,48,0.05);
+  border: 1.5px solid rgba(255,59,48,0.2);
+  border-radius: 14px;
+  animation: sheet-up 0.2s ease;
+}
+
+.hd-delete-confirm-text {
+  font-size: 14px;
+  color: #3c3c43;
+  margin: 0;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.hd-delete-confirm-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.hd-delete-cancel-btn {
+  flex: 1;
+  padding: 12px;
+  border: 1.5px solid #e5e5ea;
+  border-radius: 12px;
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #8e8e93;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.hd-delete-yes-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.hd-delete-yes-btn:disabled { opacity: 0.6; }
+
+/* ════════════════════════════════════════
+   SHEET OVERLAY — closing animation
+   ════════════════════════════════════════ */
+.hogares-sheet-overlay-closing {
+  animation: overlay-fade-out 0.32s ease forwards;
+}
+@keyframes overlay-fade-out {
+  to { opacity: 0; }
+}
+
+/* ════════════════════════════════════════
+   SWIPEABLE HANDLE (larger touch target)
+   ════════════════════════════════════════ */
+/* ════════════════════════════════════════
+   SWIPEABLE HANDLE — standalone (no base class)
+   ════════════════════════════════════════ */
+.hd-swipe-handle {
+  cursor: grab;
+  touch-action: none;
+  /* Full-width transparent touch target */
+  width: 100%;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+  position: relative;
+}
+.hd-swipe-handle:active { cursor: grabbing; }
+
+/* The visual pill lives in ::before */
+.hd-swipe-handle::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: #d1d1d6;
+}
+
+/* ════════════════════════════════════════
+   PET AVATAR GRID
+   ════════════════════════════════════════ */
+.hd-pets-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.hd-pet-avatar-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 72px;
+  transition: transform 0.15s;
+}
+.hd-pet-avatar-btn:active { transform: scale(0.93); }
+
+.hd-pet-avatar-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 18px;
+  background: #f2f2f7;
+  border: 2px solid rgba(137,207,240,0.3);
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,0.12));
+  transition: border-color 0.15s;
+}
+.hd-pet-avatar-btn:hover .hd-pet-avatar-img {
+  border-color: rgba(137,207,240,0.7);
+}
+
+.hd-pet-name-pill {
+  font-size: 11px;
+  font-weight: 700;
+  color: #1c1c1e;
+  background: linear-gradient(135deg, rgba(168,230,207,0.3), rgba(137,207,240,0.3));
+  border: 1.5px solid rgba(137,207,240,0.45);
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ════════════════════════════════════════
+   PET DETAIL OVERLAY (tap avatar)
+   ════════════════════════════════════════ */
+.hd-pet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: inv-fade-in 0.2s ease;
+}
+
+.hd-pet-overlay-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: inv-slide-up 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.hd-pet-overlay-img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.15));
+}
+
+.hd-pet-overlay-name {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1c1c1e;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.hd-pet-overlay-delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 13px;
+  border: 1.5px solid rgba(255,59,48,0.35);
+  border-radius: 14px;
+  background: rgba(255,59,48,0.05);
+  color: #ff3b30;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  justify-content: center;
+  transition: background 0.15s;
+  margin-top: 4px;
+}
+.hd-pet-overlay-delete-btn:hover { background: rgba(255,59,48,0.1); }
+
+.hd-pet-overlay-confirm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hd-pet-overlay-confirm-text {
+  font-size: 13px;
+  color: #ff3b30;
+  text-align: center;
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.hd-pet-overlay-confirm-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ════════════════════════════════════════
+   MEMBER ROLE PILLS (no emoji)
+   ════════════════════════════════════════ */
+.hd-member-role-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 8px;
+  align-self: flex-start;
+}
+
+.hd-member-role-pill--owner {
+  background: #fff9e6;
+  color: #b07800;
+  border: 1px solid #f5e08a;
+}
+
+.hd-member-role-pill--member {
+  background: #f0f8ff;
+  color: #3a7fbf;
+  border: 1px solid #bee3fc;
+}
+
+/* Header role badge variants */
+.hd-role-badge--owner {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fff9e6;
+  color: #b07800;
+  border: 1px solid #f5e08a;
+}
+
+.hd-role-badge--member {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0f8ff;
+  color: #3a7fbf;
+  border: 1px solid #bee3fc;
+}
+
