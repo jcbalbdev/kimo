@@ -17,6 +17,8 @@ import MedicationsPage from '../features/medications/pages/MedicationsPage';
 import FeedingsPage from '../features/feedings/pages/FeedingsPage';
 import HealthPage from '../features/health/pages/HealthPage';
 import PetProfilePage from '../features/pets/pages/PetProfilePage';
+import ForgotPasswordPage from '../features/auth/pages/ForgotPasswordPage';
+import UpdatePasswordPage from '../features/auth/pages/UpdatePasswordPage';
 
 // Auth guard — must be logged in
 function RequireAuth() {
@@ -120,6 +122,8 @@ export default function Router() {
       <Routes>
         {/* Public */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/recuperar-password" element={<ForgotPasswordPage />} />
+        <Route path="/actualizar-password" element={<UpdatePasswordPage />} />
         <Route path="/unirse/:code" element={<JoinHouseholdPage />} />
         <Route path="/unirse" element={<JoinHouseholdPage />} />
 

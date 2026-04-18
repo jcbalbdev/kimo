@@ -130,6 +130,22 @@ export function AuthProvider({ children }) {
     return { data, error };
   };
 
+  const resetPasswordForEmail = async (email, redirectTo) => {
+    if (!supabase) return { error: { message: 'Supabase no configurado' } };
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo,
+    });
+    return { data, error };
+  };
+
+  const updatePassword = async (newPassword) => {
+    if (!supabase) return { error: { message: 'Supabase no configurado' } };
+    const { data, error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+    return { data, error };
+  };
+
   const value = {
     user,
     profile,
@@ -139,6 +155,8 @@ export function AuthProvider({ children }) {
     signInWithGoogle,
     signOut,
     updateProfile,
+    resetPasswordForEmail,
+    updatePassword,
     isAuthenticated: !!user,
     isConfigured: isSupabaseConfigured,
   };

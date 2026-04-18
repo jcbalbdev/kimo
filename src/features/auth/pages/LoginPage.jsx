@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import Button from '../../../shared/components/Button/Button';
 import Input from '../../../shared/components/Input/Input';
@@ -260,6 +260,17 @@ export default function LoginPage() {
               value={email} onChange={(e) => setEmail(e.target.value)} autoFocus />
             <Input label="Contraseña" type="password" placeholder="Tu contraseña"
               value={password} onChange={(e) => setPassword(e.target.value)} />
+            
+            <div style={{ textAlign: 'right', marginTop: '-0.5rem', marginBottom: '1rem' }}>
+              <Link to="/recuperar-password" style={{ 
+                color: 'var(--text-secondary)', 
+                fontSize: 'var(--font-size-sm)',
+                textDecoration: 'none'
+              }}>
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
+
             {error && <p className="auth-error">{error}</p>}
             <Button type="submit" loading={loading}>Iniciar sesión</Button>
           </form>
