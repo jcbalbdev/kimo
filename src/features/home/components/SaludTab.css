@@ -1,0 +1,428 @@
+/* ─── SaludTab ──────────────────────────────── */
+.salud-root {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 24px;
+}
+
+/* ── Empty state ──────────────────────────── */
+.salud-empty {
+  background: #f9f9f9;
+  border-radius: 16px;
+  padding: 32px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: 1px dashed #e5e5ea;
+  color: #8e8e93;
+}
+
+.salud-empty-icon {
+  color: #c7c7cc;
+  margin-bottom: 4px;
+}
+
+.salud-empty p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #3c3c43;
+}
+
+.salud-empty span {
+  font-size: 12px;
+  color: #8e8e93;
+  line-height: 1.4;
+}
+
+/* ── Card list ─────────────────────────────── */
+.salud-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.salud-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.salud-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 12px rgba(0,0,0,0.08);
+}
+
+.salud-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.salud-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.salud-card-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.salud-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* Type badge */
+.salud-type-allergy {
+  background: rgba(255, 149, 0, 0.12);
+  color: #c47900;
+}
+
+.salud-type-chronic {
+  background: rgba(88, 86, 214, 0.1);
+  color: #3d3abf;
+}
+
+/* Status badge */
+.salud-status-active {
+  background: rgba(255, 59, 48, 0.1);
+  color: #d93025;
+}
+
+.salud-status-resolved {
+  background: rgba(52, 199, 89, 0.12);
+  color: #27a84b;
+}
+
+.salud-card-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1c1c1e;
+}
+
+.salud-card-del-btn {
+  background: none;
+  border: none;
+  padding: 6px;
+  margin: -6px;
+  color: #c7c7cc;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.15s, color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.salud-card-del-btn:active {
+  background: #f2f2f7;
+  color: #FF3B30;
+}
+
+.salud-card-dates {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8e8e93;
+}
+
+.salud-card-notes {
+  margin: 0;
+  font-size: 13px;
+  color: #3c3c43;
+  line-height: 1.45;
+  background: #f9f9f9;
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+/* ── Single add button ─────────────────────── */
+.salud-add-btn {
+  background: linear-gradient(#fafafa, #fafafa) padding-box,
+              linear-gradient(135deg, #A8E6CF, #89CFF0) border-box;
+  border: 1.5px solid transparent;
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  background: linear-gradient(135deg, rgba(168,230,207,0.15), rgba(137,207,240,0.15));
+  border: 1.5px solid rgba(168,230,207,0.5);
+  color: #3a8a6a;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.salud-add-btn:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+}
+
+/* ── Bottom Sheet ──────────────────────────── */
+.salud-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  bottom: var(--keyboard-h, 0px);
+  background: rgba(0,0,0,0.42);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  animation: salud-overlay-in 0.18s ease;
+}
+
+@keyframes salud-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.salud-sheet {
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  padding: 12px 20px calc(env(safe-area-inset-bottom, 0px) + 28px);
+  width: 100%;
+  max-height: 92vh;
+  overflow-y: auto;
+  animation: salud-sheet-in 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+@keyframes salud-sheet-in {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.salud-sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: #e5e5ea;
+  border-radius: 2px;
+  margin: 0 auto 18px;
+}
+
+.salud-sheet-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1c1c1e;
+  margin: 0 0 20px;
+}
+
+/* ── Form ──────────────────────────────────── */
+.salud-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.salud-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8e8e93;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: -4px;
+}
+
+.salud-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.salud-form-row.salud-form-row-single {
+  grid-template-columns: 1fr;
+}
+
+.salud-input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1.5px solid #e5e5ea;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #1c1c1e;
+  background: #f9f9f9;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s, background 0.2s;
+}
+.salud-input:focus { border-color: #A8E6CF; background: #fff; }
+.salud-input:disabled { opacity: 0.45; background: #f2f2f7; }
+
+.salud-textarea {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1.5px solid #e5e5ea;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1c1c1e;
+  background: #f9f9f9;
+  outline: none;
+  box-sizing: border-box;
+  resize: none;
+  line-height: 1.5;
+  transition: border-color 0.2s, background 0.2s;
+}
+.salud-textarea:focus { border-color: #A8E6CF; background: #fff; }
+
+/* ── Segmented control ─────────────────────── */
+.salud-seg-control {
+  display: flex;
+  background: #f0f0f5;
+  border-radius: 12px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.salud-seg-btn {
+  flex: 1;
+  padding: 11px 8px;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  background: transparent;
+  color: #8e8e93;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.salud-seg-btn.active {
+  background: #fff;
+  color: #1c1c1e;
+  font-weight: 700;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.11);
+}
+
+/* ── Sheet actions ─────────────────────────── */
+.salud-sheet-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.salud-sheet-cancel,
+.salud-sheet-save {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s;
+}
+
+.salud-sheet-cancel {
+  background: #f2f2f7;
+  color: #8e8e93;
+}
+
+.salud-sheet-save {
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+}
+
+.salud-sheet-save:disabled { opacity: 0.5; cursor: default; }
+
+/* ── Custom Delete Modal ──────────────────── */
+.salud-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: salud-overlay-in 0.2s ease;
+}
+
+.salud-modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: salud-modal-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes salud-modal-in {
+  from { transform: scale(0.9); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.salud-modal-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 59, 48, 0.1);
+  color: #FF3B30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.salud-modal-title {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1c1c1e;
+}
+
+.salud-modal-text {
+  margin: 0 0 24px;
+  font-size: 14px;
+  color: #8e8e93;
+}
+
+.salud-modal-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.salud-modal-cancel,
+.salud-modal-confirm {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.salud-modal-cancel {
+  background: #f2f2f7;
+  color: #8e8e93;
+}
+
+.salud-modal-confirm {
+  background: #FF3B30;
+  color: #fff;
+}
