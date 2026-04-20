@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PawPrint, Pill, UtensilsCrossed, CalendarDays, Syringe } from 'lucide-react';
+import { PawPrint, Pill, UtensilsCrossed, CalendarDays, Syringe, Activity } from 'lucide-react';
 import { usePets } from '../../pets/hooks/usePets';
 import { useHousehold } from '../../household/hooks/useHousehold';
 import PerfilTab from '../components/PerfilTab';
@@ -8,6 +8,7 @@ import MedsTab from '../components/MedsTab';
 import AlimentosTab from '../components/AlimentosTab';
 import CitasTab from '../components/CitasTab';
 import VacunasTab from '../components/VacunasTab';
+import SaludTab from '../components/SaludTab';
 import gatoIcon from '../../../assets/gatito.webp';
 import gatoGrisIcon from '../../../assets/gatito-gris.webp';
 import persianCatIcon from '../../../assets/persian-cat.webp';
@@ -98,6 +99,7 @@ const AVATAR_KEY_TO_IMG = {
 
 const TABS = [
   { id: 'perfil',       label: 'Perfil',    Icon: PawPrint },
+  { id: 'salud',        label: 'Salud',     Icon: Activity },
   { id: 'medicamentos', label: 'Meds',      Icon: Pill },
   { id: 'alimentos',    label: 'Comida',    Icon: UtensilsCrossed },
   { id: 'vacunas',      label: 'Vacunas',   Icon: Syringe },
@@ -387,24 +389,26 @@ export default function HomePage() {
       {/* ══════════════════════════════════════
           ICON TABS
           ══════════════════════════════════════ */}
-      <div className="hp-tabs">
-        {TABS.map((tab) => {
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              className={`hp-tab-btn ${isActive ? 'hp-tab-btn-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              aria-label={tab.label}
-            >
-              <tab.Icon
-                size={22}
-                strokeWidth={1.5}
-                color={isActive ? '#ffffff' : '#8e8e93'}
-              />
-            </button>
-          );
-        })}
+      <div className="hp-tabs-wrap" onContextMenu={e => e.preventDefault()}>
+        <div className="hp-tabs">
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                className={`hp-tab-btn ${isActive ? 'hp-tab-btn-active' : ''}`}
+                onClick={() => setActiveTab(tab.id)}
+                aria-label={tab.label}
+              >
+                <tab.Icon
+                  size={22}
+                  strokeWidth={1.5}
+                  color={isActive ? '#ffffff' : '#8e8e93'}
+                />
+              </button>
+            );
+          })}
+        </div>
       </div>
       <p className="hp-tab-active-label">{activeTabData?.label}</p>
 
@@ -416,6 +420,7 @@ export default function HomePage() {
           ══════════════════════════════════════ */}
       <div className="hp-content">
         {activeTab === 'perfil'       && <PerfilTab   pet={currentPet} onPetUpdated={fetchPets} />}
+        {activeTab === 'salud'        && <SaludTab    petId={currentPet.id} />}
         {activeTab === 'medicamentos' && <MedsTab     petId={currentPet.id} />}
         {activeTab === 'alimentos'    && <AlimentosTab petId={currentPet.id} />}
         {activeTab === 'citas'        && <CitasTab    petId={currentPet.id} />}

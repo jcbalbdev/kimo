@@ -338,19 +338,49 @@
 
 
 /* ════════════════════════════════════════════════════
-   ICON TABS
+   ICON TABS — horizontal scroll, exactly 4.5 visible
    ════════════════════════════════════════════════════ */
+
+/* Outer wrapper:
+   - margin: 0 20px → 20px breathing on each side, centered.
+   - overflow-x: clip → the scroll track never bleeds past the margins.
+   - overflow-y: visible → scale(1.05) and shadows aren't clipped vertically. */
+.hp-tabs-wrap {
+  position: relative;
+  margin: 0 20px;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+
+
+/* Scrollable track inside the centered wrapper */
 .hp-tabs {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 10px;
-  padding: 16px 20px 0;
+  padding: 20px 0;
+  overflow-x: auto;
+  overflow-y: visible;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  flex-shrink: 0;
 }
+.hp-tabs::-webkit-scrollbar { display: none; }
 
+/*  Button size:
+    Wrapper width = 100vw − 40px  (20px margin each side)
+    4.5 items + 4 gaps of 10px:
+      4.5 × b + 40 = wrapperWidth
+      b = (100vw − 40px − 40px) / 4.5
+      b = (100vw − 80px) / 4.5
+    iPhone 14 Pro Max (430px): (430−80)/4.5 ≈ 78px  ✓  */
 .hp-tab-btn {
-  width: 48px;
-  height: 48px;
+  width:  calc((100vw - 80px) / 4.5);
+  height: calc((100vw - 80px) / 4.5);
+  min-width:  56px;
+  min-height: 56px;
   border-radius: 16px;
   background: #f2f2f7;
   border: none;
@@ -360,13 +390,18 @@
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  /* Prevent long-press context menu on mobile */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .hp-tab-btn:active { transform: scale(0.92); }
 
 .hp-tab-btn-active {
   background: #1c1c1e;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-  transform: scale(1.05);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
 }
 
 .hp-tab-active-label {
@@ -374,9 +409,8 @@
   font-size: 13px;
   font-weight: 600;
   color: #1c1c1e;
-  margin: 8px 0 0;
+  margin: 4px 0 8px;
 }
-
 
 /* ════════════════════════════════════════════════════
    TAB CONTENT AREA
