@@ -131,32 +131,29 @@
   font-weight: 600;
 }
 
-/* ── Bottom Sheet ── */
+/* ── Full Screen Form Modal ── */
 .tab-sheet-overlay {
   position: fixed;
   inset: 0;
-  /* Shrink the bottom of the overlay by the iOS keyboard height so the
-     sheet always appears in the truly visible viewport area. */
-  bottom: var(--keyboard-h, 0px);
-  background: rgba(0,0,0,0.4);
+  /* We no longer need to calculate keyboard height for the overlay
+     since the full screen sheet handles it natively */
+  background: #fff;
   z-index: 200;              /* above pet selector (50) and header (60) */
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
   animation: tab-overlay-in 0.2s ease;
 }
 
 @keyframes tab-overlay-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .tab-sheet {
   background: #fff;
-  border-radius: 24px 24px 0 0;
-  padding: 12px 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
   width: 100%;
-  animation: tab-sheet-in 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
-  max-height: 85dvh;
+  height: 100%;
+  padding: calc(env(safe-area-inset-top, 0px) + 24px) 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
   overflow-y: auto;
   /* iOS: momentum scroll inside the sheet */
   -webkit-overflow-scrolling: touch;
@@ -164,17 +161,9 @@
   overscroll-behavior: contain;
 }
 
-@keyframes tab-sheet-in {
-  from { transform: translateY(100%); }
-  to   { transform: translateY(0); }
-}
-
+/* Hide the little handle line at the top since it's full screen now */
 .tab-sheet-handle {
-  width: 36px;
-  height: 4px;
-  background: #e5e5ea;
-  border-radius: 2px;
-  margin: 0 auto 16px;
+  display: none;
 }
 
 .tab-sheet-title {
