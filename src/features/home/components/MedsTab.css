@@ -88,6 +88,12 @@
   font-weight: 600;
 }
 
+.medc-dates {
+  font-size: 11px;
+  color: #8e8e93;
+  font-weight: 500;
+}
+
 .medc-chevron {
   font-size: 22px;
   color: #c7c7cc;
@@ -309,4 +315,27 @@
 
 .medf-custom-unit {
   flex: 1;
+}
+
+/* End date toggle row */
+.medf-enddate-row {
+  margin-bottom: 12px;
+}
+
+.medf-enddate-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #3c3c43;
+  font-weight: 500;
+}
+
+.medf-enddate-toggle input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #5dbb97;
+  cursor: pointer;
+  flex-shrink: 0;
 }

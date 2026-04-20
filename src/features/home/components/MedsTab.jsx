@@ -22,9 +22,19 @@ const FREQ_PRESETS = [
   { label: '1 sem.', value: 168 },
 ];
 
+function getTodayISO() {
+  return new Date().toISOString().split('T')[0];
+}
+
 function getNowHHMM() {
   const d = new Date();
   return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function formatDate(iso) {
+  if (!iso) return null;
+  const [y, m, d] = iso.split('-');
+  return `${d}/${m}/${y}`;
 }
 
 function hoursToFormState(hours) {
@@ -70,6 +80,12 @@ function MedCard({ med, checks, onCheckSlot, onEnd, onEdit }) {
               {formatFrequency(med.interval_hours)}
               {isEnded && ' · Finalizado'}
             </span>
+            {(med.start_date || med.end_date) && (
+              <span className="medc-dates">
+                {med.start_date && <>Inicio: {formatDate(med.start_date)}</>}
+                {med.end_date   && <> · Fin: {formatDate(med.end_date)}</>}
+              </span>
+            )}
             {slots.length > 0 && (
               <span className="medc-progress">{checkedCount}/{slots.length} dosis registradas</span>
             )}
@@ -153,20 +169,25 @@ export default function MedsTab({ petId }) {
   const [saving,   setSaving]     = useState(false);
   const [form, setForm] = useState({
     name: '', dose: '', start_time: getNowHHMM(),
+    start_date: getTodayISO(), end_date: '', hasEndDate: false,
     interval_hours: 24, isCustom: false, customValue: '', customUnit: 'horas',
   });
 
   const resetForm = () =>
-    setForm({ name: '', dose: '', start_time: getNowHHMM(), interval_hours: 24, isCustom: false, customValue: '', customUnit: 'horas' });
+    setForm({ name: '', dose: '', start_time: getNowHHMM(), start_date: getTodayISO(), end_date: '', hasEndDate: false, interval_hours: 24, isCustom: false, customValue: '', customUnit: 'horas' });
 
   const openCreate = () => { resetForm(); setEditId(null); setShowForm(true); };
 
   const openEdit = (med) => {
     const freqState = hoursToFormState(med.interval_hours || 24);
+    const hasEnd = !!med.end_date;
     setForm({
       name:       med.name || '',
       dose:       med.dose || '',
       start_time: (med.start_time || '08:00:00').substring(0, 5),
+      start_date: med.start_date || getTodayISO(),
+      end_date:   med.end_date || '',
+      hasEndDate: hasEnd,
       ...freqState,
     });
     setEditId(med.id);
@@ -186,15 +207,14 @@ export default function MedsTab({ petId }) {
       dose:           form.dose.trim() || null,
       start_time:     form.start_time + ':00',
       interval_hours: hours || 24,
+      start_date:     form.start_date || getTodayISO(),
+      end_date:       form.hasEndDate && form.end_date ? form.end_date : null,
     };
 
     if (editId) {
       await updateMedication(editId, payload);
     } else {
-      await addMedication({
-        ...payload,
-        start_date: new Date().toISOString().split('T')[0],
-      });
+      await addMedication(payload);
     }
 
     setShowForm(false);
@@ -219,6 +239,27 @@ export default function MedsTab({ petId }) {
 
         <label className="tab-sheet-label">Hora de inicio</label>
         <TimePickerInput value={form.start_time} onChange={(val) => setForm({ ...form, start_time: val })} />
+
+        <label className="tab-sheet-label">Fecha de inicio *</label>
+        <input className="tab-sheet-input" type="date" value={form.start_date}
+          onChange={(e) => setForm({ ...form, start_date: e.target.value })} />
+
+        <div className="medf-enddate-row">
+          <label className="medf-enddate-toggle">
+            <input type="checkbox" checked={form.hasEndDate}
+              onChange={(e) => setForm({ ...form, hasEndDate: e.target.checked, end_date: '' })} />
+            <span>Tiene fecha de fin del tratamiento</span>
+          </label>
+        </div>
+
+        {form.hasEndDate && (
+          <>
+            <label className="tab-sheet-label">Fecha de fin</label>
+            <input className="tab-sheet-input" type="date" value={form.end_date}
+              min={form.start_date}
+              onChange={(e) => setForm({ ...form, end_date: e.target.value })} />
+          </>
+        )}
 
         <label className="tab-sheet-label">Frecuencia</label>
         <div className="medf-freq-pills">
