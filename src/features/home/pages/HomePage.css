@@ -370,15 +370,14 @@
 .hp-tabs::-webkit-scrollbar { display: none; }
 
 /*  Button size:
-    Wrapper width = 100vw − 40px  (20px margin each side)
+    Wrapper width = min(100vw, 430px) − 40px  (20px margin each side)
     4.5 items + 4 gaps of 10px:
-      4.5 × b + 40 = wrapperWidth
-      b = (100vw − 40px − 40px) / 4.5
-      b = (100vw − 80px) / 4.5
-    iPhone 14 Pro Max (430px): (430−80)/4.5 ≈ 78px  ✓  */
+      b = (containerWidth − 40px) / 4.5
+    Mobile (390px): (390−40)/4.5 ≈ 78px ✓
+    Desktop (capped at 430px): (430−40)/4.5 = 87px ✓  */
 .hp-tab-btn {
-  width:  calc((100vw - 80px) / 4.5);
-  height: calc((100vw - 80px) / 4.5);
+  width:  calc((min(100vw, 430px) - 80px) / 4.5);
+  height: calc((min(100vw, 430px) - 80px) / 4.5);
   min-width:  56px;
   min-height: 56px;
   border-radius: 16px;

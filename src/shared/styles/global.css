@@ -12,7 +12,7 @@ body {
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-normal);
   color: var(--text-primary);
-  background-color: var(--bg-main);
+  background-color: #e8e8ed; /* desktop surround — neutral gray */
 }
 
 #root {
@@ -20,6 +20,16 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  /* ── Desktop containment ──────────────────────────────
+     Cap at iPhone 14 Pro Max width. On mobile (< 430px)
+     it still fills the full viewport. Centered with auto
+     margins so it sits in the middle on larger screens. */
+  max-width: 430px;
+  width: 100%;
+  margin: 0 auto;
+  background-color: var(--bg-main);
+  /* Subtle shadow so the app feels like a phone on desktop */
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
 }
 
 /* ---- Page Layout ---- */
