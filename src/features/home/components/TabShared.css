@@ -161,16 +161,34 @@
   overscroll-behavior: contain;
 }
 
-/* Hide the little handle line at the top since it's full screen now */
 .tab-sheet-handle {
   display: none;
 }
 
+.tab-sheet-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.tab-sheet-back {
+  background: none;
+  border: none;
+  padding: 8px;
+  margin: -8px;
+  color: #1c1c1e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .tab-sheet-title {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
   color: #1c1c1e;
-  margin: 0 0 16px;
+  margin: 0;
 }
 
 .tab-sheet-label {

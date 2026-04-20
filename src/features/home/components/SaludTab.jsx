@@ -197,10 +197,16 @@ export default function SaludTab({ petId }) {
       {showSheet && (
         <div className="salud-sheet-overlay" onClick={closeSheet}>
           <div className="salud-sheet" onClick={e => e.stopPropagation()}>
-            <div className="salud-sheet-handle" />
-            <h3 className="salud-sheet-title">
-              {editingId ? 'Editar registro' : 'Nuevo registro'}
-            </h3>
+            <div className="salud-sheet-header-row">
+              <button className="salud-sheet-back" onClick={closeSheet}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 18l-6-6 6-6"/>
+                </svg>
+              </button>
+              <h3 className="salud-sheet-title">
+                {editingId ? 'Editar registro' : 'Nuevo registro'}
+              </h3>
+            </div>
 
             <div className="salud-form">
 

@@ -228,8 +228,14 @@ export default function MedsTab({ petId }) {
   const MedForm = (
     <div className="tab-sheet-overlay" onClick={() => setShowForm(false)}>
       <div className="tab-sheet" onClick={(e) => e.stopPropagation()}>
-        <div className="tab-sheet-handle" />
-        <h3 className="tab-sheet-title">{editId ? 'Editar medicamento' : 'Nuevo medicamento'}</h3>
+        <div className="tab-sheet-header-row">
+          <button className="tab-sheet-back" onClick={() => setShowForm(false)}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <h3 className="tab-sheet-title">{editId ? 'Editar medicamento' : 'Nuevo medicamento'}</h3>
+        </div>
 
         <label className="tab-sheet-label">Nombre *</label>
         <input className="tab-sheet-input" placeholder="Ej: Amoxicilina" value={form.name}

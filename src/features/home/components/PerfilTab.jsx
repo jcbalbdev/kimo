@@ -132,8 +132,14 @@ export default function PerfilTab({ pet, onPetUpdated }) {
       {editing && (
         <div className="pt-sheet-overlay" onClick={handleCancel}>
           <div className="pt-sheet" onClick={(e) => e.stopPropagation()}>
-            <div className="pt-sheet-handle" />
-            <h3 className="pt-sheet-title">{SHEET_TITLES[editing]}</h3>
+            <div className="pt-sheet-header-row">
+              <button className="pt-sheet-back" onClick={handleCancel}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 18l-6-6 6-6"/>
+                </svg>
+              </button>
+              <h3 className="pt-sheet-title">{SHEET_TITLES[editing]}</h3>
+            </div>
 
             {/* Toggle fields — segmented control */}
             {editing === 'gender' && (
