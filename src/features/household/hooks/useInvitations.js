@@ -33,6 +33,39 @@ export function useInvitations() {
 
   useEffect(() => { fetchPending(); }, [fetchPending]);
 
+  // ── Realtime: listen for new invitations targeting this user ──
+  useEffect(() => {
+    let channel;
+
+    async function setupRealtime() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.email) return;
+
+      channel = supabase
+        .channel('invitations-realtime')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'household_invitations',
+            filter: `invited_email=eq.${user.email}`,
+          },
+          () => {
+            // New invitation arrived — refresh the list
+            fetchPending();
+          }
+        )
+        .subscribe();
+    }
+
+    setupRealtime();
+
+    return () => {
+      if (channel) supabase.removeChannel(channel);
+    };
+  }, [fetchPending]);
+
   /** Case 1 — invite by email (user already has account) */
   const inviteByEmail = async (householdId, email) => {
     const { data: { user } } = await supabase.auth.getUser();
