@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAppointments } from '../../appointments/hooks/useAppointments';
+import { useScrollLock } from '../../../shared/hooks/useScrollLock';
 import './TabShared.css';
 import './VacunasTab.css'; /* re-use DateButton, tab-date-btn styles */
 
@@ -44,6 +45,7 @@ export default function CitasTab({ petId }) {
   const [editId,   setEditId]   = useState(null);
   const [saving,   setSaving]   = useState(false);
   const [form, setForm] = useState({ title: '', date: todayStr(), vet_name: '', notes: '' });
+  useScrollLock(showForm);
 
   const resetForm = () => setForm({ title: '', date: todayStr(), vet_name: '', notes: '' });
 

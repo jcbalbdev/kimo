@@ -153,14 +153,15 @@
 .tab-sheet {
   background: #fff;
   border-radius: 24px 24px 0 0;
-  /* The overlay's bottom: var(--keyboard-h) already lifts the sheet above
-     the keyboard. No need to repeat it in padding — just account for
-     the safe-area notch at the bottom of the screen. */
   padding: 12px 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
   width: 100%;
   animation: tab-sheet-in 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
   max-height: 85dvh;
   overflow-y: auto;
+  /* iOS: momentum scroll inside the sheet */
+  -webkit-overflow-scrolling: touch;
+  /* Prevent sheet scroll from leaking to the background page */
+  overscroll-behavior: contain;
 }
 
 @keyframes tab-sheet-in {

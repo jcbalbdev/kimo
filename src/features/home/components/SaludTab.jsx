@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
+import { useScrollLock } from '../../../shared/hooks/useScrollLock';
 import './SaludTab.css';
 
 const TYPE_LABEL  = { allergy: 'Alergia',    chronic: 'Enfermedad' };
@@ -42,6 +43,8 @@ export default function SaludTab({ petId }) {
     setConditions(data || []);
     setLoading(false);
   }, [petId]);
+
+  useScrollLock(showSheet);
 
   useEffect(() => { fetchConditions(); }, [fetchConditions]);
 

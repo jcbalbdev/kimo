@@ -6,6 +6,7 @@ import {
   formatFrequency,
 } from '../../medications/hooks/useMedications';
 import TimePickerInput from '../../../shared/components/TimePicker/TimePickerInput';
+import { useScrollLock } from '../../../shared/hooks/useScrollLock';
 import './TabShared.css';
 import './MedsTab.css';
 
@@ -167,6 +168,7 @@ export default function MedsTab({ petId }) {
   const [showForm, setShowForm]   = useState(false);
   const [editId,   setEditId]     = useState(null);   // null = create mode
   const [saving,   setSaving]     = useState(false);
+  useScrollLock(showForm);
   const [form, setForm] = useState({
     name: '', dose: '', start_time: getNowHHMM(),
     start_date: getTodayISO(), end_date: '', hasEndDate: false,

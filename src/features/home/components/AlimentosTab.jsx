@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useFeedings } from '../../feedings/hooks/useFeedings';
 import TimePickerInput from '../../../shared/components/TimePicker/TimePickerInput';
+import { useScrollLock } from '../../../shared/hooks/useScrollLock';
 import './TabShared.css';
 import './AlimentosTab.css';
 
@@ -50,6 +51,7 @@ export default function AlimentosTab({ petId }) {
   const [editId,   setEditId]   = useState(null);
   const [saving,   setSaving]   = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
+  useScrollLock(showForm);
 
   const openCreate = () => { setForm({ ...EMPTY_FORM, time: getNowHHMM() }); setEditId(null); setShowForm(true); };
 

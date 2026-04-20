@@ -4,6 +4,7 @@ import {
   generateVacSlots,
   formatVacInterval,
 } from '../../vaccines/hooks/useVaccines';
+import { useScrollLock } from '../../../shared/hooks/useScrollLock';
 import './TabShared.css';
 import './VacunasTab.css';
 
@@ -223,6 +224,7 @@ export default function VacunasTab({ petId }) {
     isCustom:     false,
     notes:        '',
   });
+  useScrollLock(showForm);
 
   const resetForm = () =>
     setForm({ name: '', date: today, hasNextDose: false, repeats: false, interval_days: 365, intervalCustom: null, isCustom: false, notes: '' });
