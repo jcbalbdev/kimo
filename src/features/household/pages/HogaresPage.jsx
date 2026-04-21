@@ -17,6 +17,8 @@ import kimoIcon from '../../../assets/icono.png';
 import COUNTRIES from '../../../shared/constants/countries';
 import './HogaresPage.css';
 
+const CURRENT_VERSION = 'v1.0.0';
+
 // ── Member avatar placeholder ──────────────────────────────
 const MemberAvatar = ({ name }) => {
   const initials = (name || '?').charAt(0).toUpperCase();
@@ -94,6 +96,17 @@ export default function HogaresPage() {
   const [copied, setCopied] = useState(false);
   // 'email' | 'noAccount' | null
   const [activeTip, setActiveTip] = useState(null);
+
+  // ── Version / Changelog Modal ──────────────────────────
+  const [showChangelog, setShowChangelog] = useState(false);
+
+  useEffect(() => {
+    const savedVer = localStorage.getItem('kimo_version');
+    if (savedVer !== CURRENT_VERSION) {
+      setShowChangelog(true);
+      localStorage.setItem('kimo_version', CURRENT_VERSION);
+    }
+  }, []);
 
   // ── Pending invitation ─────────────────────────────────
   const [currentInvIdx, setCurrentInvIdx] = useState(0);
@@ -383,7 +396,10 @@ export default function HogaresPage() {
       <div className="hogares-header">
         <div className="hogares-logo">
           <img src={kimoIcon} alt="KIMO" className="hogares-logo-img" />
-          <span className="hogares-brand">KIMO</span>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span className="hogares-brand" style={{ lineHeight: '1' }}>KIMO</span>
+            <span className="hogares-version">{CURRENT_VERSION}</span>
+          </div>
         </div>
         <button className="hogares-signout" onClick={signOut} title="Cerrar sesión">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -544,11 +560,51 @@ export default function HogaresPage() {
 
         {/* Add hogar button — hidden on empty state (CTA handles it) */}
         {households.length > 0 && (
-          <button className="hogares-add-btn" onClick={() => setShowCreate(true)}>
-            <PlusIcon />
-          </button>
+          <div className="hogares-bottom-actions">
+            <button className="hogares-add-btn" onClick={() => setShowCreate(true)}>
+              <PlusIcon /> Nuevo Hogar
+            </button>
+            <button className="hogares-changelog-btn" onClick={() => setShowChangelog(true)}>
+              Registro de versiones
+            </button>
+          </div>
         )}
       </div>
+
+      {/* ══════════════════════════════════════════════════ */}
+      {/* ── Changelog / What's New Modal ── */}
+      {/* ══════════════════════════════════════════════════ */}
+      {showChangelog && (
+        <div className="hogares-inv-overlay">
+          <div className="hogares-inv-modal" style={{ textAlign: 'left' }}>
+            <div className="hogares-inv-icon" style={{ margin: '0 auto 12px' }}>
+              <span style={{ fontSize: '24px' }}>✨</span>
+            </div>
+            <p className="hogares-inv-label" style={{ textAlign: 'center' }}>Novedades en KIMO</p>
+            <h2 className="hogares-inv-hh" style={{ fontSize: '20px', margin: '4px 0 16px', textAlign: 'center' }}>
+              Versión {CURRENT_VERSION}
+            </h2>
+            <div className="hogares-changelog-content">
+              <p>¡Bienvenido a la versión oficial v1.0.0 de KIMO!</p>
+              <ul>
+                <li><strong>Códigos KIMO:</strong> Ahora invitas y trasladas mascotas de manera privada sin usar correos electrónicos. Tu código 100% único está en tu perfil.</li>
+                <li><strong>Adopciones y Traslados:</strong> Los albergues y organizaciones pueden ceder digitalmente el perfil médico de una mascota de por vida a los usuarios adoptantes.</li>
+                <li><strong>Cuidados Inteligentes:</strong> Generamos la agenda exacta de próximas vacunas y medicinas automáticamente según la frecuencia que elijas, además de un historial súper preciso.</li>
+                <li><strong>Experiencia Premium:</strong> Disfruta de una navegación ultrarrápida, suave y espectacularmente fluida en cualquier dispositivo móvil.</li>
+              </ul>
+            </div>
+            <div className="hogares-inv-actions" style={{ marginTop: '20px' }}>
+              <button 
+                className="hogares-inv-accept" 
+                style={{ width: '100%', flex: 'none' }}
+                onClick={() => setShowChangelog(false)}
+              >
+                ¡Me encanta!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ══════════════════════════════════════════════════ */}
       {/* ── Pet detail overlay (tap avatar) ── */}
