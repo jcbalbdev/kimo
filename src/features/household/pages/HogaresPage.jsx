@@ -48,6 +48,24 @@ export default function HogaresPage() {
 
   const [householdPets, setHouseholdPets] = useState({});
   const [householdMemberCounts, setHouseholdMemberCounts] = useState({});
+  
+  // ── Transfer completed modal ──
+  const [completedTransfer, setCompletedTransfer] = useState(null);
+  const previousOutgoing = useRef(outgoingTransfers);
+
+  useEffect(() => {
+    if (outgoingTransfers && previousOutgoing.current) {
+      const newlyAccepted = outgoingTransfers.find(t => 
+        t.status === 'accepted' && 
+        previousOutgoing.current.find(pt => pt.id === t.id && pt.status === 'pending')
+      );
+      if (newlyAccepted) {
+        setCompletedTransfer(newlyAccepted);
+        fetchHouseholds(true); // refresh pets count
+      }
+    }
+    previousOutgoing.current = outgoingTransfers;
+  }, [outgoingTransfers, fetchHouseholds]);
 
   // ── Create hogar ───────────────────────────────────────
   const [showCreate, setShowCreate] = useState(false);
@@ -148,7 +166,7 @@ export default function HogaresPage() {
       const results = await Promise.all(
         households.map(async (hh) => {
           const [{ data: petData }, { data: memberCount }] = await Promise.all([
-            supabase.from('pets').select('id, avatar_emoji, species').eq('household_id', hh.id),
+            supabase.from('pets').select('id, name, avatar_emoji, species').eq('household_id', hh.id),
             supabase.rpc('get_household_member_count', { p_household_id: hh.id }),
           ]);
           return { id: hh.id, pets: petData || [], memberCount: memberCount ?? 0 };
@@ -307,6 +325,31 @@ export default function HogaresPage() {
 
   return (
     <div className="hogares-page">
+
+      {/* ── Transfer completed success modal ── */}
+      {completedTransfer && (
+        <div className="hogares-inv-overlay">
+          <div className="hogares-inv-modal">
+            <div className="hogares-inv-icon"><CheckIcon /></div>
+            <p className="hogares-inv-label">Traslado Exitoso</p>
+            <h2 className="hogares-inv-hh" style={{ fontSize: '18px', margin: '8px 0' }}>
+              {completedTransfer.pets?.name} se unió a {completedTransfer.to_household?.name}
+            </h2>
+            <p className="hogares-inv-sub">
+              El traslado de tu mascota ha sido aceptado y completado.
+            </p>
+            <div className="hogares-inv-actions">
+              <button 
+                className="hogares-inv-accept" 
+                style={{ width: '100%', flex: 'none' }}
+                onClick={() => setCompletedTransfer(null)}
+              >
+                Entendido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Pending invitation modal ── */}
       {currentInv && (
