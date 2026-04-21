@@ -6,7 +6,10 @@ import {
   formatFrequency,
 } from '../../medications/hooks/useMedications';
 import TimePickerInput from '../../../shared/components/TimePicker/TimePickerInput';
-import { useScrollLock } from '../../../shared/hooks/useScrollLock';
+import FormSheet from '../../../shared/components/FormSheet/FormSheet';
+import { useFormSheet } from '../../../shared/hooks/useFormSheet';
+import { EditIcon, CheckCircle, EmptyCircle } from '../../../shared/components/Icons';
+import { today, currentTimeHHMM, formatDateDMY } from '../../../shared/utils/dates';
 import './TabShared.css';
 import './MedsTab.css';
 
@@ -23,21 +26,6 @@ const FREQ_PRESETS = [
   { label: '1 sem.', value: 168 },
 ];
 
-function getTodayISO() {
-  return new Date().toISOString().split('T')[0];
-}
-
-function getNowHHMM() {
-  const d = new Date();
-  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-}
-
-function formatDate(iso) {
-  if (!iso) return null;
-  const [y, m, d] = iso.split('-');
-  return `${d}/${m}/${y}`;
-}
-
 function hoursToFormState(hours) {
   const preset = FREQ_PRESETS.find((p) => p.value === Number(hours));
   if (preset) return { interval_hours: Number(hours), isCustom: false, customValue: '', customUnit: 'horas' };
@@ -47,15 +35,6 @@ function hoursToFormState(hours) {
   return { interval_hours: Number(hours), isCustom: true, customValue: String(hours), customUnit: 'horas' };
 }
 
-// ── Edit icon ────────────────────────────────────────────────
-
-const EditIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-    strokeLinecap="round" strokeLinejoin="round">
-    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-  </svg>
-);
 
 // ── MedCard ──────────────────────────────────────────────────
 
@@ -83,8 +62,8 @@ function MedCard({ med, checks, onCheckSlot, onEnd, onEdit }) {
             </span>
             {(med.start_date || med.end_date) && (
               <span className="medc-dates">
-                {med.start_date && <>Inicio: {formatDate(med.start_date)}</>}
-                {med.end_date   && <> · Fin: {formatDate(med.end_date)}</>}
+                {med.start_date && <>Inicio: {formatDateDMY(med.start_date)}</>}
+                {med.end_date   && <> · Fin: {formatDateDMY(med.end_date)}</>}
               </span>
             )}
             {slots.length > 0 && (
@@ -120,10 +99,7 @@ function MedCard({ med, checks, onCheckSlot, onEnd, onEdit }) {
                   disabled={isFuture}
                 >
                   <span className="medc-slot-circle">
-                    {checked
-                      ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="url(#mg)"/><path d="M8 12l3 3 5-5" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#A8E6CF"/><stop offset="1" stopColor="#89CFF0"/></linearGradient></defs></svg>
-                      : <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#d1d1d6" strokeWidth="2"/></svg>
-                    }
+                    {checked ? <CheckCircle /> : <EmptyCircle />}
                   </span>
                   <span className="medc-slot-label">
                     {slot.toLocaleDateString('es', { weekday: 'short', day: 'numeric', month: 'short' })}
@@ -165,35 +141,28 @@ export default function MedsTab({ petId }) {
     addMedication, updateMedication, checkSlot, endMedication,
   } = useMedications(petId);
 
-  const [showForm, setShowForm]   = useState(false);
-  const [editId,   setEditId]     = useState(null);   // null = create mode
-  const [saving,   setSaving]     = useState(false);
-  useScrollLock(showForm);
-  const [form, setForm] = useState({
-    name: '', dose: '', start_time: getNowHHMM(),
-    start_date: getTodayISO(), end_date: '', hasEndDate: false,
+  const defaultForm = {
+    name: '', dose: '', start_time: currentTimeHHMM(),
+    start_date: today(), end_date: '', hasEndDate: false,
     interval_hours: 24, isCustom: false, customValue: '', customUnit: 'horas',
-  });
-
-  const resetForm = () =>
-    setForm({ name: '', dose: '', start_time: getNowHHMM(), start_date: getTodayISO(), end_date: '', hasEndDate: false, interval_hours: 24, isCustom: false, customValue: '', customUnit: 'horas' });
-
-  const openCreate = () => { resetForm(); setEditId(null); setShowForm(true); };
+  };
+  const {
+    isOpen: showForm, editId, saving, setSaving,
+    form, setForm, openCreate, openEdit: openFormEdit, close: closeForm, resetAndClose,
+  } = useFormSheet(defaultForm);
 
   const openEdit = (med) => {
     const freqState = hoursToFormState(med.interval_hours || 24);
     const hasEnd = !!med.end_date;
-    setForm({
+    openFormEdit(med.id, {
       name:       med.name || '',
       dose:       med.dose || '',
       start_time: (med.start_time || '08:00:00').substring(0, 5),
-      start_date: med.start_date || getTodayISO(),
+      start_date: med.start_date || today(),
       end_date:   med.end_date || '',
       hasEndDate: hasEnd,
       ...freqState,
     });
-    setEditId(med.id);
-    setShowForm(true);
   };
 
   const handleSave = async () => {
@@ -209,7 +178,7 @@ export default function MedsTab({ petId }) {
       dose:           form.dose.trim() || null,
       start_time:     form.start_time + ':00',
       interval_hours: hours || 24,
-      start_date:     form.start_date || getTodayISO(),
+      start_date:     form.start_date || today(),
       end_date:       form.hasEndDate && form.end_date ? form.end_date : null,
     };
 
@@ -219,24 +188,41 @@ export default function MedsTab({ petId }) {
       await addMedication(payload);
     }
 
-    setShowForm(false);
-    setEditId(null);
-    resetForm();
-    setSaving(false);
+    resetAndClose();
   };
 
-  const MedForm = (
-    <div className="tab-sheet-overlay" onClick={() => setShowForm(false)}>
-      <div className="tab-sheet" onClick={(e) => e.stopPropagation()}>
-        <div className="tab-sheet-header-row">
-          <button className="tab-sheet-back" onClick={() => setShowForm(false)}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-          </button>
-          <h3 className="tab-sheet-title">{editId ? 'Editar medicamento' : 'Nuevo medicamento'}</h3>
-        </div>
+  return (
+    <div className="tab-root">
+      <button className="tab-add-card" onClick={openCreate}>
+        <span className="tab-add-icon">+</span>
+        <span className="tab-add-text">Agregar medicamento</span>
+      </button>
 
+      {activeMedications.map((med) => (
+        <MedCard key={med.id} med={med} checks={checks}
+          onCheckSlot={checkSlot} onEnd={endMedication} onEdit={openEdit} />
+      ))}
+
+      {endedMedications.length > 0 && (
+        <details className="medc-ended-section">
+          <summary className="medc-ended-summary">
+            Tratamientos finalizados ({endedMedications.length})
+          </summary>
+          {endedMedications.map((med) => (
+            <MedCard key={med.id} med={med} checks={checks}
+              onCheckSlot={checkSlot} onEnd={endMedication} onEdit={openEdit} />
+          ))}
+        </details>
+      )}
+
+      <FormSheet
+        isOpen={showForm}
+        onClose={closeForm}
+        title={editId ? 'Editar medicamento' : 'Nuevo medicamento'}
+        onSave={handleSave}
+        saving={saving}
+        saveDisabled={!form.name.trim() || (form.isCustom && !form.customValue)}
+      >
         <label className="tab-sheet-label">Nombre *</label>
         <input className="tab-sheet-input" placeholder="Ej: Amoxicilina" value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })} autoFocus />
@@ -299,43 +285,7 @@ export default function MedsTab({ petId }) {
               onClick={() => setForm({ ...form, customUnit: 'días' })}>días</button>
           </div>
         )}
-
-        <div className="tab-sheet-actions">
-          <button className="tab-sheet-cancel" onClick={() => setShowForm(false)}>Cancelar</button>
-          <button className="tab-sheet-save" onClick={handleSave}
-            disabled={saving || !form.name.trim() || (form.isCustom && !form.customValue)}>
-            {saving ? 'Guardando…' : 'Guardar'}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="tab-root">
-      <button className="tab-add-card" onClick={openCreate}>
-        <span className="tab-add-icon">+</span>
-        <span className="tab-add-text">Agregar medicamento</span>
-      </button>
-
-      {activeMedications.map((med) => (
-        <MedCard key={med.id} med={med} checks={checks}
-          onCheckSlot={checkSlot} onEnd={endMedication} onEdit={openEdit} />
-      ))}
-
-      {endedMedications.length > 0 && (
-        <details className="medc-ended-section">
-          <summary className="medc-ended-summary">
-            Tratamientos finalizados ({endedMedications.length})
-          </summary>
-          {endedMedications.map((med) => (
-            <MedCard key={med.id} med={med} checks={checks}
-              onCheckSlot={checkSlot} onEnd={endMedication} onEdit={openEdit} />
-          ))}
-        </details>
-      )}
-
-      {showForm && MedForm}
+      </FormSheet>
     </div>
   );
 }

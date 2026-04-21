@@ -99,3 +99,67 @@ export function daysBetween(dateStr1, dateStr2) {
   const d2 = new Date(dateStr2 + 'T00:00:00');
   return Math.round(Math.abs(d2 - d1) / (1000 * 60 * 60 * 24));
 }
+
+/**
+ * Retorna la hora actual en formato HH:MM (24h)
+ * Used by medication and feeding forms.
+ */
+export function currentTimeHHMM() {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+/**
+ * Formatea fecha ISO a dd/mm/yyyy
+ * Used by MedsTab, SaludTab for compact date display.
+ */
+export function formatDateDMY(iso) {
+  if (!iso) return '';
+  const [y, m, d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+/**
+ * Formatea fecha ISO a formato largo en español: "13 de abril de 2026"
+ * Used by CitasTab, VacunasTab.
+ */
+export function formatDateLong(dateStr) {
+  if (!dateStr) return '';
+  return new Date(dateStr + 'T12:00:00').toLocaleDateString('es', {
+    day: 'numeric', month: 'long', year: 'numeric',
+  });
+}
+
+/**
+ * Formatea fecha ISO a formato corto en español: "13 abr 2026" (short month)
+ * Used by VacunasTab.
+ */
+export function formatDateShortES(dateStr) {
+  if (!dateStr) return '';
+  return new Date(dateStr + 'T12:00:00').toLocaleDateString('es', {
+    day: 'numeric', month: 'short', year: 'numeric',
+  });
+}
+
+/**
+ * Formatea hora HH:MM:SS a formato 12h: "8:30 AM"
+ * Used by AlimentosTab.
+ */
+export function formatTime12(timeStr) {
+  if (!timeStr) return '';
+  const [h, m] = timeStr.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${ampm}`;
+}
+
+/**
+ * Formatea fecha como day label: "Hoy", "Ayer", or "lunes, 13 de abril"
+ * Used by AlimentosTab for grouped feeding views.
+ */
+export function formatDayLabel(dateStr) {
+  if (dateStr === today()) return 'Hoy';
+  if (dateStr === yesterday()) return 'Ayer';
+  return new Date(dateStr + 'T12:00:00').toLocaleDateString('es', {
+    weekday: 'long', day: 'numeric', month: 'long',
+  });
+}

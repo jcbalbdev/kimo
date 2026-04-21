@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../../../lib/supabase';
+import FormSheet from '../../../shared/components/FormSheet/FormSheet';
+import { useScrollLock } from '../../../shared/hooks/useScrollLock';
 import './PerfilTab.css';
 
 const SHEET_TITLES = {
@@ -15,6 +17,8 @@ export default function PerfilTab({ pet, onPetUpdated }) {
   const [inputVal, setInputVal] = useState('');   // for age, weight, bio
   const [toggleVal, setToggleVal] = useState(null); // for gender, sterilized
   const [saving, setSaving] = useState(false);
+
+  useScrollLock(!!editing);
 
   const isToggleField = (f) => f === 'gender' || f === 'sterilized';
 
@@ -128,94 +132,77 @@ export default function PerfilTab({ pet, onPetUpdated }) {
         </button>
       )}
 
-      {/* Edit Sheet */}
-      {editing && (
-        <div className="pt-sheet-overlay" onClick={handleCancel}>
-          <div className="pt-sheet" onClick={(e) => e.stopPropagation()}>
-            <div className="pt-sheet-header-row">
-              <button className="pt-sheet-back" onClick={handleCancel}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M15 18l-6-6 6-6"/>
-                </svg>
-              </button>
-              <h3 className="pt-sheet-title">{SHEET_TITLES[editing]}</h3>
-            </div>
-
-            {/* Toggle fields — segmented control */}
-            {editing === 'gender' && (
-              <div className="pt-seg-control-lg">
-                <button
-                  className={`pt-seg-btn-lg ${toggleVal === 'male' ? 'pt-seg-active' : ''}`}
-                  onClick={() => setToggleVal('male')}
-                >
-                  Macho
-                </button>
-                <button
-                  className={`pt-seg-btn-lg ${toggleVal === 'female' ? 'pt-seg-active' : ''}`}
-                  onClick={() => setToggleVal('female')}
-                >
-                  Hembra
-                </button>
-              </div>
-            )}
-
-            {editing === 'sterilized' && (
-              <div className="pt-seg-control-lg">
-                <button
-                  className={`pt-seg-btn-lg ${toggleVal === false ? 'pt-seg-active' : ''}`}
-                  onClick={() => setToggleVal(false)}
-                >
-                  No
-                </button>
-                <button
-                  className={`pt-seg-btn-lg ${toggleVal === true ? 'pt-seg-active' : ''}`}
-                  onClick={() => setToggleVal(true)}
-                >
-                  Sí
-                </button>
-              </div>
-            )}
-
-            {/* Text / Number fields */}
-            {editing === 'bio' && (
-              <textarea
-                className="pt-sheet-textarea"
-                placeholder={`Describe a ${pet.name}… personalidad, gustos, historia…`}
-                value={inputVal}
-                onChange={(e) => setInputVal(e.target.value)}
-                rows={4}
-                autoFocus
-              />
-            )}
-
-            {(editing === 'age' || editing === 'weight') && (
-              <input
-                className="pt-sheet-input"
-                type={editing === 'weight' ? 'number' : 'text'}
-                placeholder={editing === 'age' ? 'Ej: 2 años' : 'Ej: 4.5'}
-                value={inputVal}
-                onChange={(e) => setInputVal(e.target.value)}
-                autoFocus
-              />
-            )}
-
-            {editing === 'weight' && (
-              <p className="pt-sheet-hint">Ingresa el peso en kg (ej: 4.5)</p>
-            )}
-
-            <div className="pt-sheet-actions">
-              <button className="pt-sheet-cancel" onClick={handleCancel}>Cancelar</button>
-              <button
-                className="pt-sheet-save"
-                onClick={handleSave}
-                disabled={saving || (isToggleField(editing) && toggleVal === null)}
-              >
-                {saving ? 'Guardando…' : 'Guardar'}
-              </button>
-            </div>
+      {/* Edit Sheet — uses shared FormSheet */}
+      <FormSheet
+        isOpen={!!editing}
+        onClose={handleCancel}
+        title={SHEET_TITLES[editing] || ''}
+        onSave={handleSave}
+        saving={saving}
+        saveDisabled={isToggleField(editing) && toggleVal === null}
+      >
+        {/* Toggle fields — segmented control */}
+        {editing === 'gender' && (
+          <div className="pt-seg-control-lg">
+            <button
+              className={`pt-seg-btn-lg ${toggleVal === 'male' ? 'pt-seg-active' : ''}`}
+              onClick={() => setToggleVal('male')}
+            >
+              Macho
+            </button>
+            <button
+              className={`pt-seg-btn-lg ${toggleVal === 'female' ? 'pt-seg-active' : ''}`}
+              onClick={() => setToggleVal('female')}
+            >
+              Hembra
+            </button>
           </div>
-        </div>
-      )}
+        )}
+
+        {editing === 'sterilized' && (
+          <div className="pt-seg-control-lg">
+            <button
+              className={`pt-seg-btn-lg ${toggleVal === false ? 'pt-seg-active' : ''}`}
+              onClick={() => setToggleVal(false)}
+            >
+              No
+            </button>
+            <button
+              className={`pt-seg-btn-lg ${toggleVal === true ? 'pt-seg-active' : ''}`}
+              onClick={() => setToggleVal(true)}
+            >
+              Sí
+            </button>
+          </div>
+        )}
+
+        {/* Text / Number fields */}
+        {editing === 'bio' && (
+          <textarea
+            className="pt-sheet-textarea"
+            placeholder={`Describe a ${pet.name}… personalidad, gustos, historia…`}
+            value={inputVal}
+            onChange={(e) => setInputVal(e.target.value)}
+            rows={4}
+            autoFocus
+          />
+        )}
+
+        {(editing === 'age' || editing === 'weight') && (
+          <input
+            className="pt-sheet-input"
+            type={editing === 'weight' ? 'number' : 'text'}
+            placeholder={editing === 'age' ? 'Ej: 2 años' : 'Ej: 4.5'}
+            value={inputVal}
+            onChange={(e) => setInputVal(e.target.value)}
+            autoFocus
+          />
+        )}
+
+        {editing === 'weight' && (
+          <p className="pt-sheet-hint">Ingresa el peso en kg (ej: 4.5)</p>
+        )}
+      </FormSheet>
     </div>
   );
 }

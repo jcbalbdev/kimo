@@ -4,47 +4,17 @@ import {
   generateVacSlots,
   formatVacInterval,
 } from '../../vaccines/hooks/useVaccines';
-import { useScrollLock } from '../../../shared/hooks/useScrollLock';
+import FormSheet from '../../../shared/components/FormSheet/FormSheet';
+import { useFormSheet } from '../../../shared/hooks/useFormSheet';
+import { SyringeIcon, CheckCircle, EmptyCircle, EditIcon } from '../../../shared/components/Icons';
+import DateButton from '../../../shared/components/DateButton/DateButton';
+import { today, formatDateShortES, formatDateLong } from '../../../shared/utils/dates';
 import './TabShared.css';
 import './VacunasTab.css';
 
-// ── Icons ─────────────────────────────────────────────────
-
-const SyringeIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-    strokeLinecap="round" strokeLinejoin="round">
-    <path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5"/>
-    <path d="m9 11 4 4"/><path d="m5 19-3 3"/><path d="m14 4 6 6"/>
-  </svg>
-);
-
-const CheckCircle = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-    <circle cx="12" cy="12" r="10" fill="url(#vcGrad)"/>
-    <path d="M8 12l3 3 5-5" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <defs>
-      <linearGradient id="vcGrad" x1="0" y1="0" x2="1" y2="1">
-        <stop stopColor="#A8E6CF"/><stop offset="1" stopColor="#89CFF0"/>
-      </linearGradient>
-    </defs>
-  </svg>
-);
-
-const EmptyCircle = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-    <circle cx="12" cy="12" r="9" stroke="#d1d1d6" strokeWidth="2"/>
-  </svg>
-);
-
 // ── Helpers ───────────────────────────────────────────────
 
-const today = new Date().toISOString().split('T')[0];
-
-function formatDateES(dateStr) {
-  if (!dateStr) return '';
-  const d = new Date(dateStr + 'T12:00:00');
-  return d.toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' });
-}
+const todayStr = today();
 
 function formatSlotLabel(dateStr, isFirst) {
   const d = new Date(dateStr + 'T12:00:00');
@@ -53,7 +23,7 @@ function formatSlotLabel(dateStr, isFirst) {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const tomStr = tomorrow.toISOString().split('T')[0];
-  if (dateStr === today) return `Hoy — ${label}`;
+  if (dateStr === todayStr) return `Hoy — ${label}`;
   if (dateStr === tomStr) return `Mañana — ${label}`;
   return label;
 }
@@ -67,27 +37,6 @@ const VAC_INTERVALS = [
   { label: '1 año',   value: 365 },
 ];
 
-function DateButton({ value, onChange }) {
-  const [picking, setPicking] = useState(false);
-  return (
-    <div className="tab-date-btn-wrap">
-      <button type="button" className="tab-date-btn" onClick={() => setPicking(!picking)}>
-        <span>{formatDateES(value)}</span>
-        <span className="tab-date-edit">✎</span>
-      </button>
-      {picking && (
-        <input
-          className="tab-sheet-input"
-          type="date"
-          value={value}
-          onChange={(e) => { onChange(e.target.value); setPicking(false); }}
-          style={{ marginTop: '6px' }}
-        />
-      )}
-    </div>
-  );
-}
-
 // ── VaccineCard component ─────────────────────────────────
 
 function VaccineCard({ vaccine, checks, onCheckDose, onEnd, onEdit }) {
@@ -96,7 +45,6 @@ function VaccineCard({ vaccine, checks, onCheckDose, onEnd, onEdit }) {
 
   const slots    = generateVacSlots(vaccine);
   const isEnded  = !!vaccine.ended_at;
-  const todayStr = today;
 
   const isDoseChecked = (dateStr, isFirst) => {
     if (isFirst) return true;
@@ -106,7 +54,6 @@ function VaccineCard({ vaccine, checks, onCheckDose, onEnd, onEdit }) {
   const isOverdue = (dateStr, isFirst) =>
     !isFirst && dateStr < todayStr && !isDoseChecked(dateStr, false);
 
-  const checkedCount = slots.filter((s) => isDoseChecked(s.dateStr, s.isFirst)).length;
   // First dose doesn't count as "progress" — show completed vs non-first slots
   const nonFirstSlots = slots.filter((s) => !s.isFirst);
   const doneNonFirst  = nonFirstSlots.filter((s) => isDoseChecked(s.dateStr, false)).length;
@@ -123,7 +70,7 @@ function VaccineCard({ vaccine, checks, onCheckDose, onEnd, onEdit }) {
           <div className="vacc-meta">
             <span className="vacc-name">{vaccine.name}</span>
             <span className="vacc-sub">
-              Aplicada: {formatDateES(vaccine.date)}
+              Aplicada: {formatDateShortES(vaccine.date)}
               {vaccine.interval_days && <> · {formatVacInterval(vaccine.interval_days)}</>}
               {isEnded && ' · Finalizado'}
             </span>
@@ -136,11 +83,7 @@ function VaccineCard({ vaccine, checks, onCheckDose, onEnd, onEdit }) {
           <span className={`vacc-chevron ${open ? 'vacc-open' : ''}`}>›</span>
         </button>
         <button className="vacc-edit-btn" onClick={() => onEdit(vaccine)} title="Editar">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-            strokeLinecap="round" strokeLinejoin="round">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-          </svg>
+          <EditIcon />
         </button>
       </div>
 
@@ -211,31 +154,27 @@ export default function VacunasTab({ petId }) {
   const { vaccines, checks, addVaccine, updateVaccine, checkDose, endVaccine, pendingVaccines } =
     useVaccines(petId);
 
-  const [showForm, setShowForm] = useState(false);
-  const [editId,   setEditId]   = useState(null);
-  const [saving,   setSaving]   = useState(false);
-  const [form, setForm] = useState({
+  const defaultForm = {
     name:         '',
-    date:         today,
+    date:         todayStr,
     hasNextDose:  false,
     repeats:      false,
     interval_days: 365,
     intervalCustom: null,
     isCustom:     false,
     notes:        '',
-  });
-  useScrollLock(showForm);
-
-  const resetForm = () =>
-    setForm({ name: '', date: today, hasNextDose: false, repeats: false, interval_days: 365, intervalCustom: null, isCustom: false, notes: '' });
-
-  const openCreate = () => { resetForm(); setEditId(null); setShowForm(true); };
+  };
+  const {
+    isOpen: showForm, editId, saving, setSaving,
+    form, setForm, openCreate, openEdit: openFormEdit,
+    close: closeForm, resetAndClose,
+  } = useFormSheet(defaultForm);
 
   const openEdit = (vac) => {
     const isCustom = !VAC_INTERVALS.some((p) => p.value === vac.interval_days);
-    setForm({
+    openFormEdit(vac.id, {
       name:          vac.name || '',
-      date:          vac.date || today,
+      date:          vac.date || todayStr,
       hasNextDose:   !!vac.interval_days,
       repeats:       vac.repeats || false,
       interval_days: vac.interval_days || 365,
@@ -243,8 +182,6 @@ export default function VacunasTab({ petId }) {
       isCustom,
       notes:         vac.notes || '',
     });
-    setEditId(vac.id);
-    setShowForm(true);
   };
 
   const handleSave = async () => {
@@ -269,10 +206,7 @@ export default function VacunasTab({ petId }) {
       await addVaccine(payload);
     }
 
-    resetForm();
-    setShowForm(false);
-    setEditId(null);
-    setSaving(false);
+    resetAndClose();
   };
 
   return (
@@ -291,7 +225,7 @@ export default function VacunasTab({ petId }) {
       )}
 
       {/* Add button */}
-      <button className="tab-add-card" onClick={() => { resetForm(); setShowForm(true); }}>
+      <button className="tab-add-card" onClick={openCreate}>
         <span className="tab-add-icon">+</span>
         <span className="tab-add-text">Registrar vacuna</span>
       </button>
@@ -308,135 +242,118 @@ export default function VacunasTab({ petId }) {
         />
       ))}
 
-      {/* Bottom sheet */}
-      {showForm && (
-        <div className="tab-sheet-overlay" onClick={() => setShowForm(false)}>
-          <div className="tab-sheet" onClick={(e) => e.stopPropagation()}>
-            <div className="tab-sheet-header-row">
-              <button className="tab-sheet-back" onClick={() => setShowForm(false)}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M15 18l-6-6 6-6"/>
-                </svg>
-              </button>
-              <h3 className="tab-sheet-title">{editId ? 'Editar vacuna' : 'Registrar vacuna'}</h3>
-            </div>
+      {/* Form sheet */}
+      <FormSheet
+        isOpen={showForm}
+        onClose={closeForm}
+        title={editId ? 'Editar vacuna' : 'Registrar vacuna'}
+        onSave={handleSave}
+        saving={saving}
+        saveDisabled={!form.name.trim() || (form.hasNextDose && form.isCustom && !form.intervalCustom)}
+      >
+        <label className="tab-sheet-label">Nombre de la vacuna *</label>
+        <input
+          className="tab-sheet-input"
+          placeholder="Ej: Rabia, Triple felina, Parvovirus"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          autoFocus
+        />
 
-            <label className="tab-sheet-label">Nombre de la vacuna *</label>
-            <input
-              className="tab-sheet-input"
-              placeholder="Ej: Rabia, Triple felina, Parvovirus"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              autoFocus
-            />
+        <label className="tab-sheet-label">Fecha de aplicación</label>
+        <DateButton
+          value={form.date}
+          onChange={(v) => setForm({ ...form, date: v })}
+        />
 
-            <label className="tab-sheet-label">Fecha de aplicación</label>
-            <DateButton
-              value={form.date}
-              onChange={(v) => setForm({ ...form, date: v })}
-            />
-
-            {/* Next dose section */}
-            <div className="vacc-section-header" style={{ marginTop: '16px' }}>
-              <span className="tab-sheet-label" style={{ margin: 0 }}>Próxima dosis</span>
-              <div className="vacc-toggle-row">
-                <button
-                  type="button"
-                  className={`vacc-toggle-btn ${!form.hasNextDose ? 'vacc-toggle-active' : ''}`}
-                  onClick={() => setForm({ ...form, hasNextDose: false })}
-                >
-                  No programar
-                </button>
-                <button
-                  type="button"
-                  className={`vacc-toggle-btn ${form.hasNextDose ? 'vacc-toggle-active' : ''}`}
-                  onClick={() => setForm({ ...form, hasNextDose: true })}
-                >
-                  Programar
-                </button>
-              </div>
-            </div>
-
-            {form.hasNextDose && (
-              <>
-                <label className="tab-sheet-label">¿Dentro de cuántos días?</label>
-                <div className="medf-freq-pills">
-                  {VAC_INTERVALS.map((p) => (
-                    <button
-                      key={p.value}
-                      type="button"
-                      className={`medf-pill ${!form.isCustom && form.interval_days === p.value ? 'medf-pill-active' : ''}`}
-                      onClick={() => setForm({ ...form, interval_days: p.value, isCustom: false })}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
-                  <button
-                    type="button"
-                    className={`medf-pill ${form.isCustom ? 'medf-pill-active' : ''}`}
-                    onClick={() => setForm({ ...form, isCustom: true })}
-                  >
-                    Personalizado
-                  </button>
-                </div>
-
-                {form.isCustom && (
-                  <div className="medf-custom-row">
-                    <span className="medf-custom-prefix">Cada</span>
-                    <input
-                      className="tab-sheet-input medf-custom-num"
-                      type="number"
-                      min="1"
-                      placeholder="N"
-                      value={form.intervalCustom || ''}
-                      onChange={(e) => setForm({ ...form, intervalCustom: e.target.value })}
-                    />
-                    <span className="medf-custom-prefix">días</span>
-                  </div>
-                )}
-
-                <label className="tab-sheet-label">¿Se repite?</label>
-                <div className="vacc-seg-pair">
-                  <button
-                    type="button"
-                    className={`vacc-seg-btn ${!form.repeats ? 'vacc-seg-active' : ''}`}
-                    onClick={() => setForm({ ...form, repeats: false })}
-                  >
-                    No (una sola dosis)
-                  </button>
-                  <button
-                    type="button"
-                    className={`vacc-seg-btn ${form.repeats ? 'vacc-seg-active' : ''}`}
-                    onClick={() => setForm({ ...form, repeats: true })}
-                  >
-                    Sí (se repite)
-                  </button>
-                </div>
-              </>
-            )}
-
-            <label className="tab-sheet-label" style={{ marginTop: '14px' }}>Notas (opcional)</label>
-            <textarea
-              className="tab-sheet-textarea"
-              placeholder="Ej: Lote, veterinario, reacciones…"
-              value={form.notes}
-              onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              rows={3}
-            />
-
-            <div className="tab-sheet-actions">
-              <button className="tab-sheet-cancel" onClick={() => setShowForm(false)}>Cancelar</button>
-              <button
-                className="tab-sheet-save"
-                onClick={handleSave}
-                disabled={saving || !form.name.trim() || (form.hasNextDose && form.isCustom && !form.intervalCustom)}
-              >
-                {saving ? 'Guardando…' : 'Guardar'}
-              </button>
-            </div>
+        {/* Next dose section */}
+        <div className="vacc-section-header" style={{ marginTop: '16px' }}>
+          <span className="tab-sheet-label" style={{ margin: 0 }}>Próxima dosis</span>
+          <div className="vacc-toggle-row">
+            <button
+              type="button"
+              className={`vacc-toggle-btn ${!form.hasNextDose ? 'vacc-toggle-active' : ''}`}
+              onClick={() => setForm({ ...form, hasNextDose: false })}
+            >
+              No programar
+            </button>
+            <button
+              type="button"
+              className={`vacc-toggle-btn ${form.hasNextDose ? 'vacc-toggle-active' : ''}`}
+              onClick={() => setForm({ ...form, hasNextDose: true })}
+            >
+              Programar
+            </button>
           </div>
         </div>
-      )}
+
+        {form.hasNextDose && (
+          <>
+            <label className="tab-sheet-label">¿Dentro de cuántos días?</label>
+            <div className="medf-freq-pills">
+              {VAC_INTERVALS.map((p) => (
+                <button
+                  key={p.value}
+                  type="button"
+                  className={`medf-pill ${!form.isCustom && form.interval_days === p.value ? 'medf-pill-active' : ''}`}
+                  onClick={() => setForm({ ...form, interval_days: p.value, isCustom: false })}
+                >
+                  {p.label}
+                </button>
+              ))}
+              <button
+                type="button"
+                className={`medf-pill ${form.isCustom ? 'medf-pill-active' : ''}`}
+                onClick={() => setForm({ ...form, isCustom: true })}
+              >
+                Personalizado
+              </button>
+            </div>
+
+            {form.isCustom && (
+              <div className="medf-custom-row">
+                <span className="medf-custom-prefix">Cada</span>
+                <input
+                  className="tab-sheet-input medf-custom-num"
+                  type="number"
+                  min="1"
+                  placeholder="N"
+                  value={form.intervalCustom || ''}
+                  onChange={(e) => setForm({ ...form, intervalCustom: e.target.value })}
+                />
+                <span className="medf-custom-prefix">días</span>
+              </div>
+            )}
+
+            <label className="tab-sheet-label">¿Se repite?</label>
+            <div className="vacc-seg-pair">
+              <button
+                type="button"
+                className={`vacc-seg-btn ${!form.repeats ? 'vacc-seg-active' : ''}`}
+                onClick={() => setForm({ ...form, repeats: false })}
+              >
+                No (una sola dosis)
+              </button>
+              <button
+                type="button"
+                className={`vacc-seg-btn ${form.repeats ? 'vacc-seg-active' : ''}`}
+                onClick={() => setForm({ ...form, repeats: true })}
+              >
+                Sí (se repite)
+              </button>
+            </div>
+          </>
+        )}
+
+        <label className="tab-sheet-label" style={{ marginTop: '14px' }}>Notas (opcional)</label>
+        <textarea
+          className="tab-sheet-textarea"
+          placeholder="Ej: Lote, veterinario, reacciones…"
+          value={form.notes}
+          onChange={(e) => setForm({ ...form, notes: e.target.value })}
+          rows={3}
+        />
+      </FormSheet>
     </div>
   );
 }

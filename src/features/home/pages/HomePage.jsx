@@ -3,99 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { PawPrint, Pill, UtensilsCrossed, CalendarDays, Syringe, Activity } from 'lucide-react';
 import { usePets } from '../../pets/hooks/usePets';
 import { useHousehold } from '../../household/hooks/useHousehold';
+import {
+  SPECIES_AVATARS, PET_IMG, AVATAR_KEY_TO_IMG, DEFAULT_SPECIES_KEYS, getPetImg,
+} from '../../../shared/utils/petAvatars';
 import PerfilTab from '../components/PerfilTab';
 import MedsTab from '../components/MedsTab';
 import AlimentosTab from '../components/AlimentosTab';
 import CitasTab from '../components/CitasTab';
 import VacunasTab from '../components/VacunasTab';
 import SaludTab from '../components/SaludTab';
-import gatoIcon from '../../../assets/gatito.webp';
-import gatoGrisIcon from '../../../assets/gatito-gris.webp';
-import persianCatIcon from '../../../assets/persian-cat.webp';
-import gatoBlancoNegroIcon from '../../../assets/gato-blanco-negro.webp';
-import gatoCareyIcon from '../../../assets/gato-carey.webp';
-import calicoIcon from '../../../assets/calico.webp';
-import huskyIcon from '../../../assets/husky.webp';
-import dalmataIcon from '../../../assets/dalmata.webp';
-import viringoIcon from '../../../assets/viringo.webp';
-import shihtzuIcon from '../../../assets/shihtzu.webp';
-import cockerSpanielIcon from '../../../assets/cocker-spaniel.webp';
-import perroPeludoBlancoIcon from '../../../assets/perrito-peludo-blanco.webp';
-import perroRingoIcon from '../../../assets/perro-ringo.webp';
-import bichonMaltesIcon from '../../../assets/bichon-maltes.webp';
-import conejitoIcon from '../../../assets/conejito.webp';
-import conejoNaranjaIcon from '../../../assets/conejo-naranja.webp';
 import './HomePage.css';
 
 
-// Avatar options per species — ONLY images, no emojis
-const SPECIES_AVATARS = {
-  cat: [
-    { key: 'img',                  img: gatoIcon },
-    { key: 'img-gris',             img: gatoGrisIcon },
-    { key: 'img-persian',          img: persianCatIcon },
-    { key: 'img-blanco-negro',     img: gatoBlancoNegroIcon },
-    { key: 'img-carey',            img: gatoCareyIcon },
-    { key: 'img-calico',           img: calicoIcon },
-  ],
-  dog: [
-    { key: 'img',                  img: huskyIcon },
-    { key: 'img-dalm',             img: dalmataIcon },
-    { key: 'img-viringo',          img: viringoIcon },
-    { key: 'img-shihtzu',          img: shihtzuIcon },
-    { key: 'img-cocker',           img: cockerSpanielIcon },
-    { key: 'img-perrito-peludo',   img: perroPeludoBlancoIcon },
-    { key: 'img-ringo',            img: perroRingoIcon },
-    { key: 'img-bichon',           img: bichonMaltesIcon },
-  ],
-  rabbit: [
-    { key: 'img',               img: conejitoIcon },
-    { key: 'img-conejo-nrj',    img: conejoNaranjaIcon },
-  ],
-  other: [
-    { key: 'img-gato',            img: gatoIcon },
-    { key: 'img-gris',            img: gatoGrisIcon },
-    { key: 'img-persian',         img: persianCatIcon },
-    { key: 'img-blanco-negro',    img: gatoBlancoNegroIcon },
-    { key: 'img-carey',           img: gatoCareyIcon },
-    { key: 'img-calico',          img: calicoIcon },
-    { key: 'img-husky',           img: huskyIcon },
-    { key: 'img-dalm',            img: dalmataIcon },
-    { key: 'img-viringo',         img: viringoIcon },
-    { key: 'img-shihtzu',         img: shihtzuIcon },
-    { key: 'img-cocker',          img: cockerSpanielIcon },
-    { key: 'img-perrito-peludo',  img: perroPeludoBlancoIcon },
-    { key: 'img-ringo',           img: perroRingoIcon },
-    { key: 'img-bichon',          img: bichonMaltesIcon },
-    { key: 'img-conejito',        img: conejitoIcon },
-    { key: 'img-conejo-nrj',      img: conejoNaranjaIcon },
-  ],
-};
-
-const PET_IMG = {
-  cat:    gatoIcon,
-  dog:    huskyIcon,
-  rabbit: conejitoIcon,
-};
-
-// Map stored avatar keys to actual image sources
-const AVATAR_KEY_TO_IMG = {
-  'img-gris':            gatoGrisIcon,
-  'img-persian':         persianCatIcon,
-  'img-blanco-negro':    gatoBlancoNegroIcon,
-  'img-carey':           gatoCareyIcon,
-  'img-calico':          calicoIcon,
-  'img-husky':           huskyIcon,
-  'img-dalm':            dalmataIcon,
-  'img-viringo':         viringoIcon,
-  'img-shihtzu':         shihtzuIcon,
-  'img-cocker':          cockerSpanielIcon,
-  'img-perrito-peludo':  perroPeludoBlancoIcon,
-  'img-ringo':           perroRingoIcon,
-  'img-bichon':          bichonMaltesIcon,
-  'img-conejito':        conejitoIcon,
-  'img-conejo-nrj':      conejoNaranjaIcon,
-};
 
 const TABS = [
   { id: 'perfil',       label: 'Perfil',    Icon: PawPrint },
@@ -106,8 +25,7 @@ const TABS = [
   { id: 'citas',        label: 'Citas',     Icon: CalendarDays },
 ];
 
-// Keys that mean "use the default species illustration"
-const DEFAULT_SPECIES_KEYS = new Set(['🐕', '🐈', '🐇', '🐾', 'img']);
+
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -186,9 +104,7 @@ export default function HomePage() {
 
   // Determine hero image
   const avatarKey = currentPet.avatar_emoji;
-  const heroImg = (avatarKey && AVATAR_KEY_TO_IMG[avatarKey])
-    ? AVATAR_KEY_TO_IMG[avatarKey]
-    : (PET_IMG[currentPet.species] || gatoIcon);
+  const heroImg = getPetImg(currentPet);
 
   const avatarOptions = SPECIES_AVATARS[currentPet.species] || SPECIES_AVATARS.other;
   const currentAvatarKey = (avatarKey && !DEFAULT_SPECIES_KEYS.has(avatarKey))
@@ -499,10 +415,7 @@ export default function HomePage() {
       <div className="hp-selector-row">
         {pets.map((pet) => {
           const isActive = pet.id === currentPet.id;
-          const pKey = pet.avatar_emoji;
-          const bubbleImg = (pKey && AVATAR_KEY_TO_IMG[pKey])
-            ? AVATAR_KEY_TO_IMG[pKey]
-            : (PET_IMG[pet.species] || gatoIcon);
+          const bubbleImg = getPetImg(pet);
           return (
             <button
               key={pet.id}

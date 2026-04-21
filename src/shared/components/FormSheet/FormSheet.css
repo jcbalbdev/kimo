@@ -1,0 +1,155 @@
+/* ═══════════════════════════════
+   FormSheet — Full Screen Form Modal
+   Extracted from TabShared.css
+   ═══════════════════════════════ */
+
+.form-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  animation: form-sheet-in 0.2s ease;
+}
+
+@keyframes form-sheet-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.form-sheet {
+  background: #fff;
+  width: 100%;
+  height: 100%;
+  padding: calc(env(safe-area-inset-top, 0px) + 24px) 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-sheet-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-shrink: 0;
+}
+
+.form-sheet-back {
+  background: none;
+  border: none;
+  padding: 8px;
+  margin: -8px;
+  color: #1c1c1e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-sheet-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1c1c1e;
+  margin: 0;
+}
+
+.form-sheet-body {
+  flex: 1;
+}
+
+.form-sheet-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-shrink: 0;
+}
+
+.form-sheet-cancel {
+  flex: 1;
+  padding: 14px;
+  border: 1.5px solid #e5e5ea;
+  border-radius: 12px;
+  background: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #8e8e93;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.form-sheet-save {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+.form-sheet-save:disabled { opacity: 0.5; }
+
+/* ── Re-exported form field styles (used inside FormSheet children) ── */
+/* These match the old tab-sheet-label, tab-sheet-input, etc. classes  */
+
+.form-sheet .tab-sheet-label,
+.form-sheet-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8e8e93;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin: 12px 0 6px;
+  display: block;
+}
+
+.form-sheet .tab-sheet-label:first-of-type,
+.form-sheet-label:first-of-type {
+  margin-top: 0;
+}
+
+.form-sheet .tab-sheet-input,
+.form-sheet-input,
+.form-sheet-input[type="date"],
+.form-sheet-input[type="time"] {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #e5e5ea;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: inherit;
+  color: #1c1c1e;
+  background: #f9f9f9;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+.form-sheet .tab-sheet-input:focus,
+.form-sheet-input:focus { border-color: #1c1c1e; background: #fff; }
+
+.form-sheet .tab-sheet-textarea,
+.form-sheet-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #e5e5ea;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #1c1c1e;
+  background: #f9f9f9;
+  outline: none;
+  box-sizing: border-box;
+  resize: none;
+  line-height: 1.5;
+  transition: border-color 0.2s;
+}
+.form-sheet .tab-sheet-textarea:focus,
+.form-sheet-textarea:focus { border-color: #1c1c1e; background: #fff; }

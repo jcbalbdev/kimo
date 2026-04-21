@@ -1,18 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
+import FormSheet from '../../../shared/components/FormSheet/FormSheet';
+import ConfirmDialog from '../../../shared/components/ConfirmDialog/ConfirmDialog';
 import { useScrollLock } from '../../../shared/hooks/useScrollLock';
+import { formatDateDMY } from '../../../shared/utils/dates';
 import './SaludTab.css';
 
 const TYPE_LABEL  = { allergy: 'Alergia',    chronic: 'Enfermedad' };
 const TYPE_CLASS  = { allergy: 'salud-type-allergy', chronic: 'salud-type-chronic' };
 const STATUS_LABEL = { active: 'Activa', resolved: 'Resuelta' };
 const STATUS_CLASS = { active: 'salud-status-active', resolved: 'salud-status-resolved' };
-
-const formatDate = (dateStr) => {
-  if (!dateStr) return '';
-  const [y, m, d] = dateStr.split('-');
-  return `${d}/${m}/${y}`;
-};
 
 const EMPTY_FORM = {
   record_type: 'allergy',
@@ -173,9 +170,9 @@ export default function SaludTab({ petId }) {
 
               {(item.start_date || item.end_date) && (
                 <p className="salud-card-dates">
-                  {item.start_date ? `Desde ${formatDate(item.start_date)}` : ''}
+                  {item.start_date ? `Desde ${formatDateDMY(item.start_date)}` : ''}
                   {item.start_date && item.end_date ? ' · ' : ''}
-                  {item.end_date ? `Hasta ${formatDate(item.end_date)}` : ''}
+                  {item.end_date ? `Hasta ${formatDateDMY(item.end_date)}` : ''}
                   {!item.end_date && item.status === 'active' ? ' · Actual' : ''}
                 </p>
               )}
@@ -193,126 +190,97 @@ export default function SaludTab({ petId }) {
         + Agregar alergia o enfermedad
       </button>
 
-      {/* ══════════ Bottom Sheet ══════════ */}
-      {showSheet && (
-        <div className="salud-sheet-overlay" onClick={closeSheet}>
-          <div className="salud-sheet" onClick={e => e.stopPropagation()}>
-            <div className="salud-sheet-header-row">
-              <button className="salud-sheet-back" onClick={closeSheet}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M15 18l-6-6 6-6"/>
-                </svg>
-              </button>
-              <h3 className="salud-sheet-title">
-                {editingId ? 'Editar registro' : 'Nuevo registro'}
-              </h3>
-            </div>
+      {/* ══════════ Form Sheet ══════════ */}
+      <FormSheet
+        isOpen={showSheet}
+        onClose={closeSheet}
+        title={editingId ? 'Editar registro' : 'Nuevo registro'}
+        onSave={handleSave}
+        saving={saving}
+        saveDisabled={!formData.name.trim()}
+      >
+        <div className="salud-form">
 
-            <div className="salud-form">
-
-              {/* Tipo */}
-              <label className="salud-label">Tipo</label>
-              <div className="salud-seg-control">
-                <button type="button"
-                  className={`salud-seg-btn ${formData.record_type === 'allergy' ? 'active' : ''}`}
-                  onClick={() => setFormData(p => ({ ...p, record_type: 'allergy' }))}>
-                  Alergia
-                </button>
-                <button type="button"
-                  className={`salud-seg-btn ${formData.record_type === 'chronic' ? 'active' : ''}`}
-                  onClick={() => setFormData(p => ({ ...p, record_type: 'chronic' }))}>
-                  Enfermedad
-                </button>
-              </div>
-
-              {/* Nombre */}
-              <label className="salud-label">Nombre</label>
-              <input
-                className="salud-input"
-                type="text"
-                name="name"
-                autoFocus
-                placeholder={
-                  formData.record_type === 'allergy'
-                    ? 'Ej. Pollo, Picadura de pulga, Polen…'
-                    : 'Ej. Diabetes, Hipotiroidismo…'
-                }
-                value={formData.name}
-                onChange={handleChange}
-                maxLength={80}
-              />
-
-              {/* Estado */}
-              <label className="salud-label">Estado</label>
-              <div className="salud-seg-control">
-                <button type="button"
-                  className={`salud-seg-btn ${formData.status === 'active' ? 'active' : ''}`}
-                  onClick={() => setFormData(p => ({ ...p, status: 'active' }))}>
-                  Activa
-                </button>
-                <button type="button"
-                  className={`salud-seg-btn ${formData.status === 'resolved' ? 'active' : ''}`}
-                  onClick={() => setFormData(p => ({ ...p, status: 'resolved' }))}>
-                  Resuelta / Curada
-                </button>
-              </div>
-
-              {/* Fechas */}
-              <div className={`salud-form-row ${formData.status === 'active' ? 'salud-form-row-single' : ''}`}>
-                <div>
-                  <label className="salud-label">Fecha inicio (opcional)</label>
-                  <input className="salud-input" type="date"
-                    name="start_date" value={formData.start_date} onChange={handleChange} />
-                </div>
-                {formData.status === 'resolved' && (
-                  <div>
-                    <label className="salud-label">Fecha fin (opcional)</label>
-                    <input className="salud-input" type="date"
-                      name="end_date" value={formData.end_date} onChange={handleChange} />
-                  </div>
-                )}
-              </div>
-
-              {/* Notas */}
-              <label className="salud-label">Notas adicionales (opcional)</label>
-              <textarea className="salud-textarea" name="notes"
-                placeholder="Ej. Tratamiento actual, síntomas a vigilar…"
-                value={formData.notes} onChange={handleChange} rows={3} />
-
-              <div className="salud-sheet-actions">
-                <button type="button" className="salud-sheet-cancel" onClick={closeSheet}>Cancelar</button>
-                <button type="button" className="salud-sheet-save"
-                  onClick={handleSave} disabled={saving || !formData.name.trim()}>
-                  {saving ? 'Guardando…' : 'Guardar'}
-                </button>
-              </div>
-
-            </div>
+          {/* Tipo */}
+          <label className="salud-label">Tipo</label>
+          <div className="salud-seg-control">
+            <button type="button"
+              className={`salud-seg-btn ${formData.record_type === 'allergy' ? 'active' : ''}`}
+              onClick={() => setFormData(p => ({ ...p, record_type: 'allergy' }))}>
+              Alergia
+            </button>
+            <button type="button"
+              className={`salud-seg-btn ${formData.record_type === 'chronic' ? 'active' : ''}`}
+              onClick={() => setFormData(p => ({ ...p, record_type: 'chronic' }))}>
+              Enfermedad
+            </button>
           </div>
-        </div>
-      )}
 
-      {/* ══════════ Custom Delete Modal ══════════ */}
-      {deletingId && (
-        <div className="salud-modal-overlay" onClick={() => setDeletingId(null)}>
-          <div className="salud-modal" onClick={e => e.stopPropagation()}>
-            <div className="salud-modal-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 6h18"></path>
-                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-              </svg>
-            </div>
-            <h4 className="salud-modal-title">¿Eliminar registro?</h4>
-            <p className="salud-modal-text">Esta acción no se puede deshacer.</p>
-            <div className="salud-modal-actions">
-              <button className="salud-modal-cancel" onClick={() => setDeletingId(null)}>Cancelar</button>
-              <button className="salud-modal-confirm" onClick={handleDelete}>Eliminar</button>
-            </div>
+          {/* Nombre */}
+          <label className="salud-label">Nombre</label>
+          <input
+            className="salud-input"
+            type="text"
+            name="name"
+            autoFocus
+            placeholder={
+              formData.record_type === 'allergy'
+                ? 'Ej. Pollo, Picadura de pulga, Polen…'
+                : 'Ej. Diabetes, Hipotiroidismo…'
+            }
+            value={formData.name}
+            onChange={handleChange}
+            maxLength={80}
+          />
+
+          {/* Estado */}
+          <label className="salud-label">Estado</label>
+          <div className="salud-seg-control">
+            <button type="button"
+              className={`salud-seg-btn ${formData.status === 'active' ? 'active' : ''}`}
+              onClick={() => setFormData(p => ({ ...p, status: 'active' }))}>
+              Activa
+            </button>
+            <button type="button"
+              className={`salud-seg-btn ${formData.status === 'resolved' ? 'active' : ''}`}
+              onClick={() => setFormData(p => ({ ...p, status: 'resolved' }))}>
+              Resuelta / Curada
+            </button>
           </div>
+
+          {/* Fechas */}
+          <div className={`salud-form-row ${formData.status === 'active' ? 'salud-form-row-single' : ''}`}>
+            <div>
+              <label className="salud-label">Fecha inicio (opcional)</label>
+              <input className="salud-input" type="date"
+                name="start_date" value={formData.start_date} onChange={handleChange} />
+            </div>
+            {formData.status === 'resolved' && (
+              <div>
+                <label className="salud-label">Fecha fin (opcional)</label>
+                <input className="salud-input" type="date"
+                  name="end_date" value={formData.end_date} onChange={handleChange} />
+              </div>
+            )}
+          </div>
+
+          {/* Notas */}
+          <label className="salud-label">Notas adicionales (opcional)</label>
+          <textarea className="salud-textarea" name="notes"
+            placeholder="Ej. Tratamiento actual, síntomas a vigilar…"
+            value={formData.notes} onChange={handleChange} rows={3} />
+
         </div>
-      )}
+      </FormSheet>
+
+      {/* ══════════ Delete Confirm Dialog ══════════ */}
+      <ConfirmDialog
+        isOpen={!!deletingId}
+        title="¿Eliminar registro?"
+        message="Esta acción no se puede deshacer."
+        onConfirm={handleDelete}
+        onCancel={() => setDeletingId(null)}
+      />
 
     </div>
   );

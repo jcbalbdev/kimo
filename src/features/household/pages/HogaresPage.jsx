@@ -3,138 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { useHousehold } from '../hooks/useHousehold';
 import { useInvitations } from '../hooks/useInvitations';
+import { useTransfers } from '../../transfers/hooks/useTransfers';
 import { supabase } from '../../../lib/supabase';
+import { getPetImg } from '../../../shared/utils/petAvatars';
+import {
+  HomeIcon, HomeDetailIcon, PlusIcon, UserPlusIcon, CopyIcon,
+  EditIcon, TrashIcon, PawIcon, CheckIcon, OwnerIcon, MemberIcon,
+  TransferIcon, BuildingIcon, InfoIcon,
+} from '../../../shared/components/Icons';
+import TransferSheet from '../../transfers/components/TransferSheet';
+import TransferModal from '../../transfers/components/TransferModal';
 import kimoIcon from '../../../assets/icono.png';
-
-// ── Pet avatar assets (same as HomePage) ──────────────────
-import gatoIcon           from '../../../assets/gatito.webp';
-import gatoGrisIcon       from '../../../assets/gatito-gris.webp';
-import persianCatIcon     from '../../../assets/persian-cat.webp';
-import gatoBlancoNegroIcon from '../../../assets/gato-blanco-negro.webp';
-import gatoCareyIcon      from '../../../assets/gato-carey.webp';
-import calicoIcon         from '../../../assets/calico.webp';
-import huskyIcon          from '../../../assets/husky.webp';
-import dalmataIcon        from '../../../assets/dalmata.webp';
-import viringoIcon        from '../../../assets/viringo.webp';
-import shihtzuIcon        from '../../../assets/shihtzu.webp';
-import cockerSpanielIcon  from '../../../assets/cocker-spaniel.webp';
-import perroPeludoBlancoIcon from '../../../assets/perrito-peludo-blanco.webp';
-import conejitoIcon       from '../../../assets/conejito.webp';
-import conejoNaranjaIcon  from '../../../assets/conejo-naranja.webp';
+import COUNTRIES from '../../../shared/constants/countries';
 import './HogaresPage.css';
-
-// ── Avatar key → image (mirrors HomePage.jsx) ─────────────
-const PET_IMG_DEFAULT = { cat: gatoIcon, dog: huskyIcon, rabbit: conejitoIcon };
-const AVATAR_KEY_TO_IMG = {
-  'img-gris':           gatoGrisIcon,
-  'img-persian':        persianCatIcon,
-  'img-blanco-negro':   gatoBlancoNegroIcon,
-  'img-carey':          gatoCareyIcon,
-  'img-calico':         calicoIcon,
-  'img-husky':          huskyIcon,
-  'img-dalm':           dalmataIcon,
-  'img-viringo':        viringoIcon,
-  'img-shihtzu':        shihtzuIcon,
-  'img-cocker':         cockerSpanielIcon,
-  'img-perrito-peludo': perroPeludoBlancoIcon,
-  'img-conejito':       conejitoIcon,
-  'img-conejo-nrj':     conejoNaranjaIcon,
-};
-
-function getPetImg(pet) {
-  if (!pet) return gatoIcon;
-  const k = pet.avatar_emoji;
-  if (k && AVATAR_KEY_TO_IMG[k]) return AVATAR_KEY_TO_IMG[k];
-  return PET_IMG_DEFAULT[pet.species] || gatoIcon;
-}
-
-// ── Icons ─────────────────────────────────────────────────
-const HomeIcon = ({ size = 22, color = 'white' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
-    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-  </svg>
-);
-
-const HomeDetailIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-    <polyline points="9 22 9 12 15 12 15 22"/>
-  </svg>
-);
-
-const PlusIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-  </svg>
-);
-
-const UserPlusIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-    <circle cx="9" cy="7" r="4"/>
-    <line x1="19" y1="8" x2="19" y2="14"/>
-    <line x1="22" y1="11" x2="16" y2="11"/>
-  </svg>
-);
-
-const CopyIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-  </svg>
-);
-
-const EditIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-  </svg>
-);
-
-const TrashIcon = ({ size = 15 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="3 6 5 6 21 6"/>
-    <path d="M19 6l-1 14H6L5 6"/>
-    <path d="M10 11v6M14 11v6"/>
-    <path d="M9 6V4h6v2"/>
-  </svg>
-);
-
-const PawIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-    <circle cx="6" cy="7" r="2"/><circle cx="12" cy="5" r="2"/>
-    <circle cx="18" cy="7" r="2"/><circle cx="9" cy="12" r="2"/>
-    <circle cx="15" cy="12" r="2"/>
-    <path d="M12 17c-3 0-6 1-6 3s2 3 6 3 6-1 6-3-3-3-6-3z"/>
-  </svg>
-);
-
-const CheckIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-);
-
-// Owner icon (crown-like star)
-const OwnerIcon = () => (
-  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-  </svg>
-);
-
-// Guest / member icon
-const MemberIcon = () => (
-  <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-    <circle cx="12" cy="7" r="4"/>
-  </svg>
-);
 
 // ── Member avatar placeholder ──────────────────────────────
 const MemberAvatar = ({ name }) => {
@@ -151,11 +32,19 @@ export default function HogaresPage() {
   } = useHousehold();
   const {
     pendingInvitations,
-    inviteByEmail,
+    inviteByCode,
     generateInviteLink,
     acceptInvitation,
     declineInvitation,
   } = useInvitations();
+  const {
+    incomingTransfers,
+    outgoingTransfers,
+    initiateTransfer,
+    acceptTransfer,
+    declineTransfer: declineTransferFn,
+    cancelTransfer,
+  } = useTransfers();
 
   const [householdPets, setHouseholdPets] = useState({});
   const [householdMemberCounts, setHouseholdMemberCounts] = useState({});
@@ -163,12 +52,23 @@ export default function HogaresPage() {
   // ── Create hogar ───────────────────────────────────────
   const [showCreate, setShowCreate] = useState(false);
   const [newName, setNewName] = useState('');
+  const [newType, setNewType] = useState('personal');
+  const [newCountry, setNewCountry] = useState('');
+  const [newPhone, setNewPhone] = useState('');
   const [creating, setCreating] = useState(false);
   const [createErr, setCreateErr] = useState('');
 
+  const resetCreateForm = () => {
+    setShowCreate(false); setNewName(''); setNewType('personal');
+    setNewCountry(''); setNewPhone(''); setCreateErr('');
+  };
+
+  // ── Transfer sheet ────────────────────────────────────
+  const [transferHH, setTransferHH] = useState(null);
+
   // ── Invite sheet ───────────────────────────────────────
   const [inviteHH, setInviteHH] = useState(null);
-  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
   const [inviting, setInviting] = useState(false);
   const [inviteMsg, setInviteMsg] = useState('');
   const [generatedLink, setGeneratedLink] = useState('');
@@ -272,26 +172,35 @@ export default function HogaresPage() {
   const handleCreate = async (e) => {
     e.preventDefault();
     if (!newName.trim()) return;
+    if (newType === 'organization' && !newCountry) { setCreateErr('Selecciona un país'); return; }
+    if (newType === 'organization' && !newPhone.trim()) { setCreateErr('El número de contacto es obligatorio'); return; }
     setCreating(true); setCreateErr('');
-    const { error: err } = await createHousehold(newName.trim());
+
+    const selectedCountry = COUNTRIES.find(c => c.code === newCountry);
+    const fullPhone = selectedCountry ? `${selectedCountry.dial} ${newPhone.trim()}` : newPhone.trim();
+
+    const { error: err } = await createHousehold(newName.trim(), newType, {
+      country: selectedCountry?.name || null,
+      contactPhone: fullPhone || null,
+    });
     if (err) { setCreateErr(err); setCreating(false); }
-    else { setShowCreate(false); setNewName(''); setCreating(false); navigate('/onboarding/especie'); }
+    else { resetCreateForm(); setCreating(false); navigate('/onboarding/especie'); }
   };
 
   // ── Invite handlers ────────────────────────────────────
   const openInviteSheet = (hh) => {
-    setInviteHH(hh); setInviteEmail(''); setInviteMsg(''); setGeneratedLink(''); setCopied(false); setActiveTip(null);
+    setInviteHH(hh); setInviteCode(''); setInviteMsg(''); setGeneratedLink(''); setCopied(false); setActiveTip(null);
   };
   const closeInviteSheet = () => { setInviteHH(null); setInviteMsg(''); setGeneratedLink(''); setActiveTip(null); };
 
-  const handleInviteByEmail = async () => {
-    if (!inviteEmail.trim()) return;
+  const handleInviteByCode = async () => {
+    if (!inviteCode.trim()) return;
     setInviting(true); setInviteMsg('');
-    const { error, alreadySent } = await inviteByEmail(inviteHH.id, inviteEmail);
+    const { error, alreadySent } = await inviteByCode(inviteHH.id, inviteCode.trim());
     setInviting(false);
-    if (alreadySent) { setInviteMsg('⚠️ Ya enviaste una invitación pendiente a este email.'); return; }
+    if (alreadySent) { setInviteMsg('⚠️ Ya enviaste una invitación pendiente a este usuario.'); return; }
     if (error) { setInviteMsg(`❌ ${error?.message || JSON.stringify(error)}`); return; }
-    setInviteMsg('✅ ¡Invitación enviada!'); setInviteEmail('');
+    setInviteMsg('✅ ¡Invitación enviada!'); setInviteCode('');
   };
 
   const handleGenerateLink = async () => {
@@ -453,6 +362,25 @@ export default function HogaresPage() {
 
       {/* ── Households list ── */}
       <div className="hogares-list-wrapper">
+
+        {/* KIMO Code card */}
+        {profile?.kimo_code && (
+          <button
+            className="hogares-kimo-code-card"
+            onClick={() => {
+              navigator.clipboard.writeText(profile.kimo_code);
+              const el = document.getElementById('kimo-code-text');
+              if (el) { el.textContent = '¡Copiado!'; setTimeout(() => { el.textContent = profile.kimo_code; }, 1500); }
+            }}
+            title="Copiar código"
+          >
+            <span className="hogares-kimo-code-label">Tu código KIMO</span>
+            <div className="hogares-kimo-code-value">
+              <span id="kimo-code-text" className="hogares-kimo-code-text">{profile.kimo_code}</span>
+              <CopyIcon size={14} />
+            </div>
+          </button>
+        )}
         {loading ? (
           <div className="hogares-loading">Cargando hogares...</div>
         ) : (
@@ -526,7 +454,12 @@ export default function HogaresPage() {
                   <button className="hogares-item" onClick={() => handleSelect(hh)}>
                     <div className="hogares-item-avatar"><HomeIcon /></div>
                     <div className="hogares-item-info">
-                      <span className="hogares-item-name">{hh.name}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span className="hogares-item-name">{hh.name}</span>
+                        {hh.type === 'organization' && (
+                          <span className="hogares-item-type-badge type-organization">Org</span>
+                        )}
+                      </div>
                       <span className="hogares-item-role">{petStr} · {memberStr}</span>
                     </div>
                   </button>
@@ -548,6 +481,18 @@ export default function HogaresPage() {
                   >
                     <UserPlusIcon />
                   </button>
+
+                  {/* Transfer button */}
+                  {(householdPets[hh.id] || []).length > 0 && (
+                    <button
+                      className="hogares-invite-btn"
+                      onClick={() => setTransferHH(hh)}
+                      title="Trasladar mascota"
+                      style={{ color: '#ff9500' }}
+                    >
+                      <TransferIcon size={16} />
+                    </button>
+                  )}
                 </div>
               );
             })}
@@ -770,21 +715,88 @@ export default function HogaresPage() {
       {/* ── Bottom sheet: crear hogar ── */}
       {showCreate && (
         <div className="hogares-sheet-overlay"
-          onClick={() => { setShowCreate(false); setNewName(''); setCreateErr(''); }}>
+          onClick={resetCreateForm}>
           <form className="hogares-sheet" onClick={(e) => e.stopPropagation()} onSubmit={handleCreate}>
             <div className="hogares-sheet-handle" />
             <h3 className="hogares-sheet-title">🏠 Nuevo hogar</h3>
+
+            {/* Type selector */}
+            <div className="hogares-type-selector">
+              <button
+                type="button"
+                className={`hogares-type-btn ${newType === 'personal' ? 'hogares-type-btn-active' : ''}`}
+                onClick={() => setNewType('personal')}
+              >
+                <div className="hogares-type-icon"><HomeIcon size={20} color="#1c1c1e" /></div>
+                <span className="hogares-type-label">Personal</span>
+                <span className="hogares-type-desc">Familias, parejas, roomies</span>
+              </button>
+              <button
+                type="button"
+                className={`hogares-type-btn ${newType === 'organization' ? 'hogares-type-btn-active' : ''}`}
+                onClick={() => setNewType('organization')}
+              >
+                <div className="hogares-type-icon"><BuildingIcon size={20} /></div>
+                <span className="hogares-type-label">Organización</span>
+                <span className="hogares-type-desc">Albergues, refugios, criadores</span>
+              </button>
+            </div>
+
             <input
               className="hogares-sheet-input"
-              placeholder="Nombre del hogar (ej: Casa Pérez)"
+              placeholder={newType === 'organization' ? 'Nombre de la organización' : 'Nombre del hogar (ej: Casa Pérez)'}
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               autoFocus maxLength={40}
             />
+
+            {/* Organization-only fields */}
+            {newType === 'organization' && (
+              <>
+                {/* Country selector */}
+                <div className="hogares-country-select-wrap" style={{ marginTop: '10px' }}>
+                  <select
+                    className="hogares-sheet-input hogares-country-select"
+                    value={newCountry}
+                    onChange={(e) => setNewCountry(e.target.value)}
+                  >
+                    <option value="">Selecciona un país</option>
+                    {COUNTRIES.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Phone with auto dial code */}
+                <div className="hogares-phone-row" style={{ marginTop: '10px' }}>
+                  <span className="hogares-phone-prefix">
+                    {(() => {
+                      const c = newCountry ? COUNTRIES.find(x => x.code === newCountry) : null;
+                      return c ? c.dial : '+__';
+                    })()}
+                  </span>
+                  <input
+                    className="hogares-sheet-input hogares-phone-input"
+                    placeholder="Número de contacto *"
+                    type="tel"
+                    value={newPhone}
+                    onChange={(e) => setNewPhone(e.target.value)}
+                    maxLength={15}
+                  />
+                </div>
+
+                <p className="hogares-org-hint">
+                  El número de contacto nos permite comunicarnos con tu organización para ofrecerte promociones y beneficios exclusivos.
+                </p>
+              </>
+            )}
+
             {createErr && <p className="hogares-sheet-error">{createErr}</p>}
             <div className="hogares-sheet-actions">
               <button type="button" className="hogares-sheet-cancel"
-                onClick={() => { setShowCreate(false); setNewName(''); setCreateErr(''); }}>
+                onClick={resetCreateForm}>
                 Cancelar
               </button>
               <button type="submit" className="hogares-sheet-save" disabled={!newName.trim() || creating}>
@@ -801,34 +813,32 @@ export default function HogaresPage() {
             <div className="hogares-sheet-handle" />
             <h3 className="hogares-sheet-title">Invitar a {inviteHH.name}</h3>
 
-            {/* Label: tiene cuenta */}
+            {/* Invite by KIMO code */}
             <div className="hogares-invite-label-row">
-              <p className="hogares-invite-section-label">Si tiene cuenta en KIMO</p>
+              <p className="hogares-invite-section-label">Código KIMO del usuario</p>
               <button
                 className="hogares-invite-info-btn"
                 onClick={(e) => { e.stopPropagation(); setActiveTip(v => v === 'email' ? null : 'email'); }}
                 aria-label="Más información"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="12" y1="8" x2="12" y2="8"/>
-                  <line x1="12" y1="12" x2="12" y2="16"/>
-                </svg>
+                <InfoIcon />
               </button>
               {activeTip === 'email' && (
-                <span className="hogares-invite-tip">Agrega el correo de la cuenta del usuario de KIMO</span>
+                <span className="hogares-invite-tip">Pídele su código KIMO al usuario. Lo encuentran en su perfil.</span>
               )}
             </div>
             <div className="hogares-invite-email-row">
               <input
                 className="hogares-sheet-input hogares-invite-input"
-                type="email"
-                placeholder="kimo@mimail.com"
-                value={inviteEmail}
-                onChange={(e) => { setInviteEmail(e.target.value); setInviteMsg(''); }}
+                type="text"
+                placeholder="ej: A3F7K2"
+                value={inviteCode}
+                onChange={(e) => { setInviteCode(e.target.value.toUpperCase()); setInviteMsg(''); }}
+                maxLength={6}
+                style={{ letterSpacing: '3px', fontWeight: 700, textAlign: 'center' }}
               />
-              <button className="hogares-invite-send-btn" onClick={handleInviteByEmail}
-                disabled={inviting || !inviteEmail.trim()}>
+              <button className="hogares-invite-send-btn" onClick={handleInviteByCode}
+                disabled={inviting || !inviteCode.trim()}>
                 {inviting ? '…' : 'Invitar'}
               </button>
             </div>
@@ -849,11 +859,7 @@ export default function HogaresPage() {
                 onClick={(e) => { e.stopPropagation(); setActiveTip(v => v === 'noAccount' ? null : 'noAccount'); }}
                 aria-label="Más información"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="12" y1="8" x2="12" y2="8"/>
-                  <line x1="12" y1="12" x2="12" y2="16"/>
-                </svg>
+                <InfoIcon />
               </button>
               {activeTip === 'noAccount' && (
                 <span className="hogares-invite-tip">Invita a usar la app para gestionar hogares juntos</span>
@@ -877,6 +883,27 @@ export default function HogaresPage() {
             </button>
           </div>
         </div>
+      )}
+      {/* ── Transfer Sheet (sender flow) ── */}
+      <TransferSheet
+        isOpen={!!transferHH}
+        onClose={() => setTransferHH(null)}
+        pets={transferHH ? (householdPets[transferHH.id] || []) : []}
+        householdId={transferHH?.id}
+        householdName={transferHH?.name}
+        onInitiateTransfer={initiateTransfer}
+        outgoingTransfers={outgoingTransfers.filter(t => t.status === 'pending')}
+        onCancelTransfer={cancelTransfer}
+      />
+
+      {/* ── Transfer Modal (receiver flow — real-time) ── */}
+      {incomingTransfers.length > 0 && (
+        <TransferModal
+          transfer={incomingTransfers[0]}
+          households={households}
+          onAccept={acceptTransfer}
+          onDecline={declineTransferFn}
+        />
       )}
     </div>
   );

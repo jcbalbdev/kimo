@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
+import { resolveKimoCode } from '../../../shared/utils/kimoCode';
 
 const IS_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -13,7 +14,8 @@ export function useInvitations() {
 
   /** Fetch invitations where the current user's email is the target */
   const fetchPending = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) { setLoading(false); return; }
 
     const { data } = await supabase
@@ -38,11 +40,12 @@ export function useInvitations() {
     let channel;
 
     async function setupRealtime() {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { session } } = await supabase.auth.getSession();
+      const user = session?.user;
       if (!user?.email) return;
 
       channel = supabase
-        .channel('invitations-realtime')
+        .channel(`invitations-${Date.now()}`)
         .on(
           'postgres_changes',
           {
@@ -66,9 +69,10 @@ export function useInvitations() {
     };
   }, [fetchPending]);
 
-  /** Case 1 — invite by email (user already has account) */
+  /** Case 1 — invite by email (internal, used by inviteByCode) */
   const inviteByEmail = async (householdId, email) => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
 
     // Check if invitation already pending for same household+email
     const { data: existing } = await supabase
@@ -94,9 +98,17 @@ export function useInvitations() {
     return { data, error, alreadySent: false };
   };
 
+  /** Invite by KIMO code — resolves code to email, then invites */
+  const inviteByCode = async (householdId, kimoCode) => {
+    const { email, error: lookupErr } = await resolveKimoCode(kimoCode);
+    if (lookupErr) return { error: { message: lookupErr }, alreadySent: false };
+    return inviteByEmail(householdId, email);
+  };
+
   /** Case 2 — generate a shareable link (no email required) */
   const generateInviteLink = async (householdId) => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
 
     const { data, error } = await supabase
       .from('household_invitations')
@@ -165,6 +177,7 @@ export function useInvitations() {
     pendingInvitations,
     loading,
     inviteByEmail,
+    inviteByCode,
     generateInviteLink,
     getInvitationByToken,
     acceptInvitation,

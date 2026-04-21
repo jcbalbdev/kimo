@@ -26,7 +26,7 @@ export function HouseholdProvider({ children }) {
         .select(`
           household_id,
           role,
-          households (id, name, invite_code, created_by, created_at)
+          households (id, name, type, invite_code, created_by, created_at)
         `)
         .eq('user_id', user.id);
 
@@ -83,12 +83,18 @@ export function HouseholdProvider({ children }) {
     }
   };
 
-  const createHousehold = async (name) => {
+  const createHousehold = async (name, type = 'personal', { country, contactPhone } = {}) => {
     if (!user || !supabase) return { error: 'No user' };
+
+    const payload = { name, type, created_by: user.id };
+    if (type === 'organization') {
+      if (country) payload.country = country;
+      if (contactPhone) payload.contact_phone = contactPhone;
+    }
 
     const { data: hh, error: hhErr } = await supabase
       .from('households')
-      .insert({ name, created_by: user.id })
+      .insert(payload)
       .select()
       .single();
 

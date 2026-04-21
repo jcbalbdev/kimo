@@ -81,6 +81,54 @@
   margin: 0;
 }
 
+/* KIMO Code card */
+.hogares-kimo-code-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 16px;
+  background: var(--bg-card, #ffffff);
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.hogares-kimo-code-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 6px rgba(137, 207, 240, 0.25);
+}
+
+.hogares-kimo-code-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8e8e93;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.hogares-kimo-code-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hogares-kimo-code-text {
+  font-size: 36px;
+  font-weight: 800;
+  color: #1c1c1e;
+  letter-spacing: 6px;
+}
+
+.hogares-kimo-code-value svg {
+  color: #89CFF0;
+  flex-shrink: 0;
+}
+
 /* List wrapper */
 .hogares-list-wrapper {
   flex: 1;
