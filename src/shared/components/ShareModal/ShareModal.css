@@ -1,0 +1,128 @@
+/* ── ShareModal ─────────────────────────────── */
+
+.share-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 300;
+  display: flex;
+  align-items: flex-end;
+  animation: share-fade-in 0.2s ease;
+}
+
+@keyframes share-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.share-panel {
+  width: 100%;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  padding: 12px 24px calc(32px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: share-slide-up 0.28s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+@keyframes share-slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* Handle bar */
+.share-handle {
+  width: 32px;
+  height: 4px;
+  border-radius: 100px;
+  background: #d1d1d6;
+  margin: 0 auto 4px;
+  flex-shrink: 0;
+}
+
+.share-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1c1c1e;
+  margin: 0;
+  text-align: center;
+}
+
+.share-subtitle {
+  font-size: 13px;
+  color: #8e8e93;
+  margin: 0;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* URL display box */
+.share-url-box {
+  background: #f2f2f7;
+  border-radius: 12px;
+  padding: 12px 16px;
+  overflow: hidden;
+}
+
+.share-url-text {
+  font-size: 13px;
+  color: #3c3c43;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  word-break: break-all;
+  line-height: 1.4;
+}
+
+/* Action buttons row */
+.share-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.share-copy-btn,
+.share-native-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 14px 12px;
+  border: none;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.2s, color 0.2s;
+}
+
+.share-copy-btn {
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+}
+.share-copy-btn:active { opacity: 0.75; }
+
+/* ✓ Copied state */
+.share-copy-done {
+  background: #e8faf0;
+  color: #2a9e70;
+}
+
+.share-native-btn {
+  background: #f2f2f7;
+  color: #1c1c1e;
+}
+.share-native-btn:active { opacity: 0.75; }
+
+/* Close link */
+.share-close-btn {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: #8e8e93;
+  cursor: pointer;
+  padding: 4px;
+  align-self: center;
+}

@@ -2,10 +2,13 @@ import { useAppointments } from '../../appointments/hooks/useAppointments';
 import FormSheet from '../../../shared/components/FormSheet/FormSheet';
 import { useFormSheet } from '../../../shared/hooks/useFormSheet';
 import { EditIcon } from '../../../shared/components/Icons';
-import DateButton from '../../../shared/components/DateButton/DateButton';
+import DatePicker from '../../../shared/components/DatePicker/DatePicker';
 import { today, formatDateLong } from '../../../shared/utils/dates';
+import { CalendarDays } from 'lucide-react';
+import TabEmptyState from '../../../shared/components/TabEmptyState/TabEmptyState';
+import TabAddButton from '../../../shared/components/TabAddButton/TabAddButton';
 import './TabShared.css';
-import './VacunasTab.css'; /* re-use DateButton, tab-date-btn styles */
+import './VacunasTab.css';
 
 export default function CitasTab({ petId }) {
   const { upcoming, past, addAppointment, updateAppointment } = useAppointments(petId);
@@ -44,29 +47,37 @@ export default function CitasTab({ petId }) {
   };
 
   const allAppointments = [...upcoming, ...past];
+  const hasNoAppointments = allAppointments.length === 0;
 
   return (
     <div className="tab-root">
-      <button className="tab-add-card" onClick={openCreate}>
-        <span className="tab-add-icon">+</span>
-        <span className="tab-add-text">Registrar cita</span>
-      </button>
-
-      {allAppointments.map((a) => (
-        <div key={a.id} className="tab-card cita-card">
-          <div className="tab-card-body">
-            <div className="cita-card-top">
-              <span className="tab-card-title">{a.title}</span>
-              <button className="tab-card-edit-btn" onClick={() => openEdit(a)} title="Editar">
-                <EditIcon />
-              </button>
+      {hasNoAppointments ? (
+        <TabEmptyState
+          icon={<CalendarDays size={32} strokeWidth={1.5} />}
+          title="Sin citas aún."
+          subtitle="Registra la primera cita médica de tu mascota usando el botón de abajo."
+        />
+      ) : (
+        <>
+          {allAppointments.map((a) => (
+            <div key={a.id} className="tab-card cita-card">
+              <div className="tab-card-body">
+                <div className="cita-card-top">
+                  <span className="tab-card-title">{a.title}</span>
+                  <button className="tab-card-edit-btn" onClick={() => openEdit(a)} title="Editar">
+                    <EditIcon />
+                  </button>
+                </div>
+                <span className="tab-card-sub">{formatDateLong(a.date)}</span>
+                {a.vet_name && <span className="cita-vet-pill">{a.vet_name}</span>}
+                {a.notes && <span className="tab-card-sub cita-notes">{a.notes}</span>}
+              </div>
             </div>
-            <span className="tab-card-sub">{formatDateLong(a.date)}</span>
-            {a.vet_name && <span className="cita-vet-pill">{a.vet_name}</span>}
-            {a.notes && <span className="tab-card-sub cita-notes">{a.notes}</span>}
-          </div>
-        </div>
-      ))}
+          ))}
+        </>
+      )}
+
+      <TabAddButton label="+ Registrar cita" onClick={openCreate} />
 
       <FormSheet
         isOpen={showForm}
@@ -81,7 +92,7 @@ export default function CitasTab({ petId }) {
           value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} autoFocus />
 
         <label className="tab-sheet-label">Fecha</label>
-        <DateButton value={form.date} onChange={(v) => setForm({ ...form, date: v })} />
+        <DatePicker value={form.date} onChange={(v) => setForm({ ...form, date: v })} />
 
         <label className="tab-sheet-label" style={{ marginTop: '14px' }}>Veterinario</label>
         <input className="tab-sheet-input" placeholder="Ej: Dr. González"

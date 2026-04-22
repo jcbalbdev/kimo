@@ -17,7 +17,8 @@ import kimoIcon from '../../../assets/icono.png';
 import COUNTRIES from '../../../shared/constants/countries';
 import './HogaresPage.css';
 
-const CURRENT_VERSION = 'v1.0.0';
+const CURRENT_VERSION = 'v1.0.1';
+
 
 // ── Member avatar placeholder ──────────────────────────────
 const MemberAvatar = ({ name }) => {
@@ -576,15 +577,46 @@ export default function HogaresPage() {
       {/* ══════════════════════════════════════════════════ */}
       {showChangelog && (
         <div className="hogares-inv-overlay">
-          <div className="hogares-inv-modal" style={{ textAlign: 'left' }}>
+          <div className="hogares-inv-modal" style={{ textAlign: 'left', maxHeight: '85vh', overflowY: 'auto', position: 'relative' }}>
+            {/* Close button */}
+            <button
+              onClick={() => setShowChangelog(false)}
+              style={{
+                position: 'absolute', top: '14px', right: '14px',
+                width: '28px', height: '28px',
+                borderRadius: '50%', border: 'none',
+                background: '#f2f2f7', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#8e8e93', fontSize: '16px', lineHeight: 1,
+              }}
+              aria-label="Cerrar"
+            >
+              ✕
+            </button>
             <div className="hogares-inv-icon" style={{ margin: '0 auto 12px' }}>
               <span style={{ fontSize: '24px' }}>✨</span>
             </div>
             <p className="hogares-inv-label" style={{ textAlign: 'center' }}>Novedades en KIMO</p>
-            <h2 className="hogares-inv-hh" style={{ fontSize: '20px', margin: '4px 0 16px', textAlign: 'center' }}>
-              Versión {CURRENT_VERSION}
-            </h2>
+
+
             <div className="hogares-changelog-content">
+
+              {/* ── v1.0.1 ── */}
+              <h2 style={{ fontSize: '18px', margin: '0 0 4px', fontWeight: 800 }}>Versión v1.0.1</h2>
+              <p style={{ color: '#8e8e93', fontSize: '12px', margin: '0 0 12px' }}>21 de abril de 2026</p>
+              <ul>
+                <li><strong>Perfil público para veterinarios:</strong> Comparte el historial completo de tu mascota con cualquier veterinario mediante un enlace único, sin necesidad de cuenta.</li>
+                <li><strong>Fechas en alergias y condiciones crónicas:</strong> Ahora el veterinario puede ver exactamente cuándo inició cada alergia o enfermedad, y si sigue activa o fue resuelta.</li>
+                <li><strong>Exportar historial en PDF:</strong> El veterinario puede descargar el historial clínico completo en PDF directamente desde el enlace que le compartes, sin necesidad de instalar nada.</li>
+                <li><strong>Microchip en el perfil:</strong> El número de microchip ahora aparece visible en el perfil digital de cada mascota.</li>
+              </ul>
+
+              {/* ── divider ── */}
+              <div style={{ borderTop: '1px solid #f0f0f5', margin: '16px 0' }} />
+
+              {/* ── v1.0.0 ── */}
+              <h2 style={{ fontSize: '16px', margin: '0 0 4px', fontWeight: 800, color: '#3c3c43' }}>Versión v1.0.0</h2>
+              <p style={{ color: '#8e8e93', fontSize: '12px', margin: '0 0 12px' }}>Lanzamiento oficial</p>
               <p>¡Bienvenido a la versión oficial v1.0.0 de KIMO!</p>
               <ul>
                 <li><strong>Códigos KIMO:</strong> Ahora invitas y trasladas mascotas de manera privada sin usar correos electrónicos. Tu código 100% único está en tu perfil.</li>
@@ -592,10 +624,12 @@ export default function HogaresPage() {
                 <li><strong>Cuidados Inteligentes:</strong> Generamos la agenda exacta de próximas vacunas y medicinas automáticamente según la frecuencia que elijas, además de un historial súper preciso.</li>
                 <li><strong>Experiencia Premium:</strong> Disfruta de una navegación ultrarrápida, suave y espectacularmente fluida en cualquier dispositivo móvil.</li>
               </ul>
+
             </div>
+
             <div className="hogares-inv-actions" style={{ marginTop: '20px' }}>
-              <button 
-                className="hogares-inv-accept" 
+              <button
+                className="hogares-inv-accept"
                 style={{ width: '100%', flex: 'none' }}
                 onClick={() => setShowChangelog(false)}
               >

@@ -1,0 +1,2 @@
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS birth_date DATE;
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS birth_date_is_approximate BOOLEAN DEFAULT false;

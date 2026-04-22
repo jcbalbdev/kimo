@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PawPrint, Pill, UtensilsCrossed, CalendarDays, Syringe, Activity } from 'lucide-react';
+import { PawPrint, Pill, Drumstick, CalendarDays, Syringe, Activity } from 'lucide-react';
 import { usePets } from '../../pets/hooks/usePets';
 import { useHousehold } from '../../household/hooks/useHousehold';
 import {
@@ -12,6 +12,7 @@ import AlimentosTab from '../components/AlimentosTab';
 import CitasTab from '../components/CitasTab';
 import VacunasTab from '../components/VacunasTab';
 import SaludTab from '../components/SaludTab';
+import ShareModal from '../../../shared/components/ShareModal/ShareModal';
 import './HomePage.css';
 
 
@@ -19,8 +20,8 @@ import './HomePage.css';
 const TABS = [
   { id: 'perfil',       label: 'Perfil',    Icon: PawPrint },
   { id: 'salud',        label: 'Salud',     Icon: Activity },
-  { id: 'medicamentos', label: 'Meds',      Icon: Pill },
-  { id: 'alimentos',    label: 'Comida',    Icon: UtensilsCrossed },
+  { id: 'medicamentos', label: 'Medicinas', Icon: Pill },
+  { id: 'alimentos',    label: 'Comida',    Icon: Drumstick },
   { id: 'vacunas',      label: 'Vacunas',   Icon: Syringe },
   { id: 'citas',        label: 'Citas',     Icon: CalendarDays },
 ];
@@ -37,6 +38,7 @@ export default function HomePage() {
   const [sheetDragY, setSheetDragY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [closingSheet, setClosingSheet] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   // ── Scroll-based sticky header state ──
   const [hogarVisible, setHogarVisible] = useState(true);
@@ -119,6 +121,10 @@ export default function HomePage() {
     setSheetDragY(0);
     setClosingSheet(false);
     setShowAvatarPicker(true);
+  };
+
+  const handleShare = () => {
+    setShowShareModal(true);
   };
 
   // ── Drag-to-dismiss handlers (handle bar only) ──
@@ -269,6 +275,20 @@ export default function HomePage() {
         <div className="hp-hero">
           <div className="hp-hero-img-wrap">
             <img src={heroImg} alt={currentPet.name} className="hp-hero-img" />
+
+            {/* Share button — bottom left */}
+            <button
+              className="hp-hero-share-btn"
+              onClick={handleShare}
+              aria-label="Compartir perfil"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+              </svg>
+            </button>
+
+            {/* Edit button — bottom right */}
             <button
               className="hp-hero-edit-btn"
               onClick={() => openEditSheet()}
@@ -437,6 +457,17 @@ export default function HomePage() {
           </svg>
         </button>
       </div>
+
+      {/* ══════════════════════════════════════
+          SHARE MODAL
+          ══════════════════════════════════════ */}
+      {showShareModal && (
+        <ShareModal
+          petName={currentPet.name}
+          url={`${window.location.origin}/pet/${currentPet.kimo_code || currentPet.id}`}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
 
     </div>
   );

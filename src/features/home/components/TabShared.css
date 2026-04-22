@@ -92,43 +92,69 @@
   align-self: flex-start;
 }
 
-/* ── Dashed Add Card ── */
+/* ── Solid Gradient Add Card ── */
 .tab-add-card {
   display: flex;
   align-items: center;
   gap: 10px;
   width: 100%;
   padding: 16px;
-  border: 2px solid transparent;
+  border: none;
   border-radius: 16px;
-  background:
-    linear-gradient(#f9f9f9, #f9f9f9) padding-box,
-    linear-gradient(135deg, #A8E6CF, #89CFF0) border-box;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
   cursor: pointer;
   font-family: inherit;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, transform 0.15s;
   box-sizing: border-box;
+  justify-content: center;
 }
 .tab-add-card:active {
-  opacity: 0.7;
+  transform: scale(0.98);
+  opacity: 0.8;
 }
 
 .tab-add-icon {
   font-size: 20px;
-  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 300;
+  color: #1c1c1e;
+  font-weight: 500;
 }
 
 .tab-add-text {
-  font-size: 14px;
-  background: linear-gradient(135deg, #5dbb97, #5aafc9);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-size: 15px;
+  color: #1c1c1e;
+  font-weight: 700;
+}
+
+/* ── Empty State Card ── */
+.tab-empty-state {
+  background: #f9f9f9;
+  border-radius: 16px;
+  padding: 32px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: 1px dashed #e5e5ea;
+  color: #8e8e93;
+}
+
+.tab-empty-icon {
+  color: #c7c7cc;
+  margin-bottom: 4px;
+}
+
+.tab-empty-state p {
+  margin: 0;
+  font-size: 15px;
   font-weight: 600;
+  color: #3c3c43;
+}
+
+.tab-empty-state span {
+  font-size: 12px;
+  color: #8e8e93;
+  line-height: 1.4;
 }
 
 /* ── Full Screen Form Modal ── */

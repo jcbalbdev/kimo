@@ -7,8 +7,11 @@ import {
 import FormSheet from '../../../shared/components/FormSheet/FormSheet';
 import { useFormSheet } from '../../../shared/hooks/useFormSheet';
 import { SyringeIcon, CheckCircle, EmptyCircle, EditIcon } from '../../../shared/components/Icons';
-import DateButton from '../../../shared/components/DateButton/DateButton';
+import DatePicker from '../../../shared/components/DatePicker/DatePicker';
+import { Syringe } from 'lucide-react';
 import { today, formatDateShortES, formatDateLong } from '../../../shared/utils/dates';
+import TabEmptyState from '../../../shared/components/TabEmptyState/TabEmptyState';
+import TabAddButton from '../../../shared/components/TabAddButton/TabAddButton';
 import './TabShared.css';
 import './VacunasTab.css';
 
@@ -209,6 +212,8 @@ export default function VacunasTab({ petId }) {
     resetAndClose();
   };
 
+  const hasNoVaccines = vaccines.length === 0;
+
   return (
     <div className="tab-root">
       {/* Overdue alert */}
@@ -224,23 +229,28 @@ export default function VacunasTab({ petId }) {
         </div>
       )}
 
-      {/* Add button */}
-      <button className="tab-add-card" onClick={openCreate}>
-        <span className="tab-add-icon">+</span>
-        <span className="tab-add-text">Registrar vacuna</span>
-      </button>
-
-      {/* Vaccine accordion cards */}
-      {vaccines.map((v) => (
-        <VaccineCard
-          key={v.id}
-          vaccine={v}
-          checks={checks}
-          onCheckDose={checkDose}
-          onEnd={endVaccine}
-          onEdit={openEdit}
+      {hasNoVaccines ? (
+        <TabEmptyState
+          icon={<Syringe size={32} strokeWidth={1.5} />}
+          title="Sin vacunas aún."
+          subtitle="Registra la primera vacuna o el esquema de vacunación usando el botón de abajo."
         />
-      ))}
+      ) : (
+        <>
+          {vaccines.map((v) => (
+            <VaccineCard
+              key={v.id}
+              vaccine={v}
+              checks={checks}
+              onCheckDose={checkDose}
+              onEnd={endVaccine}
+              onEdit={openEdit}
+            />
+          ))}
+        </>
+      )}
+
+      <TabAddButton label="+ Registrar vacuna" onClick={openCreate} />
 
       {/* Form sheet */}
       <FormSheet
@@ -261,7 +271,7 @@ export default function VacunasTab({ petId }) {
         />
 
         <label className="tab-sheet-label">Fecha de aplicación</label>
-        <DateButton
+        <DatePicker
           value={form.date}
           onChange={(v) => setForm({ ...form, date: v })}
         />

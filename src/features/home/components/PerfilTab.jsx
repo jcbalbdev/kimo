@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import FormSheet from '../../../shared/components/FormSheet/FormSheet';
 import { useScrollLock } from '../../../shared/hooks/useScrollLock';
+import DatePicker from '../../../shared/components/DatePicker/DatePicker';
 import './PerfilTab.css';
 
 const SHEET_TITLES = {
@@ -10,12 +11,46 @@ const SHEET_TITLES = {
   bio: 'Descripción',
   gender: 'Género',
   sterilized: 'Esterilizado',
+  microchip: 'Microchip'
+};
+
+const formatMicrochip = (value) => {
+  if (!value) return '';
+  const cleaned = value.toString().replace(/\D/g, '').slice(0, 15);
+  const match = cleaned.match(/.{1,3}/g);
+  return match ? match.join(' ') : cleaned;
+};
+
+export const calculateAge = (birthDate) => {
+  if (!birthDate) return '';
+  // ensure we handle timezone correctly by parsing YYYY-MM-DD
+  const [year, month, day] = birthDate.split('-');
+  const birth = new Date(year, month - 1, day || 1);
+  const now = new Date();
+  
+  let years = now.getFullYear() - birth.getFullYear();
+  let months = now.getMonth() - birth.getMonth();
+  
+  if (months < 0 || (months === 0 && now.getDate() < birth.getDate())) {
+    years--;
+    months += 12;
+  }
+  
+  if (years > 0) {
+    if (months === 0) return years === 1 ? '1 año' : `${years} años`;
+    return `${years} año${years > 1 ? 's' : ''}, ${months} mes${months > 1 ? 'es' : ''}`;
+  }
+  
+  if (months > 0) return `${months} mes${months > 1 ? 'es' : ''}`;
+  return 'Menos de 1 mes';
 };
 
 export default function PerfilTab({ pet, onPetUpdated }) {
   const [editing, setEditing] = useState(null);
-  const [inputVal, setInputVal] = useState('');   // for age, weight, bio
+  const [inputVal, setInputVal] = useState('');   // for age (manual), weight, bio, microchip
   const [toggleVal, setToggleVal] = useState(null); // for gender, sterilized
+  const [birthDate, setBirthDate] = useState('');
+  const [ageMode, setAgeMode] = useState('exact'); // 'exact', 'approx', 'manual'
   const [saving, setSaving] = useState(false);
 
   useScrollLock(!!editing);
@@ -26,8 +61,26 @@ export default function PerfilTab({ pet, onPetUpdated }) {
     setEditing(field);
     if (isToggleField(field)) {
       setToggleVal(currentVal ?? null);
+    } else if (field === 'age') {
+      const getNum = (str) => {
+        if (!str) return '';
+        const matchAños = str.match(/(\d+)\s*año/i);
+        if (matchAños) return matchAños[1];
+        if (/mes/.test(str)) return '0';
+        return str.replace(/\D/g, '');
+      };
+
+      if (pet.birth_date) {
+        setAgeMode(pet.birth_date_is_approximate ? 'approx' : 'exact');
+        setBirthDate(pet.birth_date_is_approximate ? pet.birth_date.substring(0, 7) : pet.birth_date);
+        setInputVal(getNum(pet.age || calculateAge(pet.birth_date)));
+      } else {
+        setAgeMode('exact');
+        setBirthDate('');
+        setInputVal(getNum(pet.age));
+      }
     } else {
-      setInputVal(currentVal ?? '');
+      setInputVal(field === 'microchip' ? formatMicrochip(currentVal) : (currentVal ?? ''));
     }
   };
 
@@ -41,10 +94,34 @@ export default function PerfilTab({ pet, onPetUpdated }) {
     } else if (editing === 'sterilized') {
       if (toggleVal === null) { setSaving(false); return; }
       updates = { sterilized: toggleVal };
+    } else if (editing === 'age') {
+      if (!ageMode || !birthDate) {
+        if (!inputVal.trim()) { setSaving(false); return; }
+        updates = {
+          birth_date: null,
+          birth_date_is_approximate: false,
+          age: inputVal.trim()
+        };
+      } else {
+        let finalDate = birthDate;
+        if (ageMode === 'approx' && finalDate.length === 7) {
+          finalDate = `${finalDate}-01`;
+        }
+
+        updates = { 
+          birth_date: finalDate, 
+          birth_date_is_approximate: (ageMode === 'approx'),
+          age: inputVal.trim() || calculateAge(finalDate) // persist user text or calculate
+        };
+      }
     } else {
       if (!inputVal.trim() && editing !== 'bio') { setSaving(false); return; }
+      let dbValue = inputVal.trim();
+      if (editing === 'microchip') {
+        dbValue = dbValue.replace(/\s/g, ''); // Guardar sin espacios en BD
+      }
       updates = {
-        [editing === 'weight' ? 'weight_kg' : editing]: inputVal.trim() || null,
+        [editing === 'weight' ? 'weight_kg' : editing]: dbValue || null,
       };
     }
 
@@ -54,7 +131,14 @@ export default function PerfilTab({ pet, onPetUpdated }) {
     setEditing(null);
   };
 
-  const handleCancel = () => { setEditing(null); setInputVal(''); setToggleVal(null); };
+  const handleCancel = () => { 
+    setEditing(null); 
+    setInputVal(''); 
+    setToggleVal(null); 
+    setBirthDate(''); 
+    setAgeMode('exact'); 
+  };
+
 
   const genderLabel = { male: 'Macho', female: 'Hembra' };
 
@@ -62,10 +146,14 @@ export default function PerfilTab({ pet, onPetUpdated }) {
     <div className="pt-root">
       {/* Row: Edad + Peso */}
       <div className="pt-stats-row">
-        {pet.age ? (
-          <button className="pt-stat-card pt-stat-card-btn" onClick={() => openEdit('age', pet.age)}>
+        {pet.birth_date || pet.age ? (
+          <button className="pt-stat-card pt-stat-card-btn" onClick={() => openEdit('age', null)}>
             <span className="pt-stat-label">Edad</span>
-            <span className="pt-stat-value">{pet.age}</span>
+            <span className="pt-stat-value">
+              {pet.birth_date 
+                ? calculateAge(pet.birth_date) 
+                : (!isNaN(Number(pet.age)) && pet.age ? `${pet.age} años` : pet.age)}
+            </span>
           </button>
         ) : (
           <button className="pt-stat-card pt-stat-card-add" onClick={() => openEdit('age', '')}>
@@ -112,6 +200,21 @@ export default function PerfilTab({ pet, onPetUpdated }) {
           <button className="pt-stat-card pt-stat-card-add" onClick={() => openEdit('sterilized', null)}>
             <span className="pt-add-icon">+</span>
             <span className="pt-add-text">Esterilizado</span>
+          </button>
+        )}
+      </div>
+
+      {/* Row: Microchip */}
+      <div className="pt-stats-row">
+        {pet.microchip ? (
+          <button className="pt-stat-card pt-stat-card-btn" style={{ gridColumn: '1 / -1' }} onClick={() => openEdit('microchip', pet.microchip)}>
+            <span className="pt-stat-label">Microchip</span>
+            <span className="pt-stat-value">{formatMicrochip(pet.microchip)}</span>
+          </button>
+        ) : (
+          <button className="pt-stat-card pt-stat-card-add" style={{ gridColumn: '1 / -1' }} onClick={() => openEdit('microchip', '')}>
+            <span className="pt-add-icon">+</span>
+            <span className="pt-add-text">Añadir Microchip</span>
           </button>
         )}
       </div>
@@ -176,6 +279,126 @@ export default function PerfilTab({ pet, onPetUpdated }) {
           </div>
         )}
 
+        {editing === 'age' && (
+          <div style={{ marginBottom: '24px' }}>
+            <label className="pt-sheet-hint" style={{ display: 'block', marginBottom: '8px', fontWeight: 600, color: '#1c1c1e', fontSize: '13px' }}>
+              Edad actual
+            </label>
+            <input
+              className="pt-sheet-input"
+              type="tel"
+              placeholder="Ej: 5"
+              value={inputVal}
+              onChange={(e) => setInputVal(e.target.value.replace(/\D/g, ''))}
+              autoFocus
+            />
+          </div>
+        )}
+
+        {editing === 'age' && (
+          <div style={{ marginBottom: '16px' }}>
+            <label className="pt-sheet-hint" style={{ display: 'block', marginBottom: '8px', fontWeight: 600, color: '#1c1c1e', fontSize: '13px' }}>
+              Cumpleaños (Opcional - ajustará la edad mes a mes)
+            </label>
+            <div className="pt-seg-control-lg">
+              <button
+                className={`pt-seg-btn-lg ${ageMode === 'exact' ? 'pt-seg-active' : ''}`}
+                onClick={() => {
+                  setAgeMode(ageMode === 'exact' ? null : 'exact');
+                  if (ageMode !== 'exact' && birthDate && birthDate.length === 7) {
+                    setBirthDate(`${birthDate}-01`);
+                  }
+                }}
+              >
+                Exacto
+              </button>
+              <button
+                className={`pt-seg-btn-lg ${ageMode === 'approx' ? 'pt-seg-active' : ''}`}
+                onClick={() => {
+                   setAgeMode(ageMode === 'approx' ? null : 'approx');
+                   if (ageMode !== 'approx' && birthDate && birthDate.length === 10) {
+                     setBirthDate(birthDate.substring(0, 7));
+                   }
+                }}
+              >
+                Aproximado
+              </button>
+            </div>
+            
+            {ageMode && (
+              <div style={{ marginTop: '12px' }}>
+                {ageMode === 'approx' ? (
+                  /* Approximate: year+month only — use two number selects */
+                  <div className="pt-approx-row">
+                    <select
+                      className="pt-sheet-input"
+                      value={birthDate ? birthDate.split('-')[1] : ''}
+                      onChange={(e) => {
+                        const [y] = birthDate ? birthDate.split('-') : [new Date().getFullYear()];
+                        const newDate = `${y || new Date().getFullYear()}-${e.target.value}`;
+                        setBirthDate(newDate);
+                        const fullDate = `${newDate}-01`;
+                        const calculated = calculateAge(fullDate);
+                        if (calculated) {
+                          const matchA = calculated.match(/(\d+)\s*año/i);
+                          if (matchA) setInputVal(matchA[1]);
+                          else if (/mes/.test(calculated)) setInputVal('0');
+                        }
+                      }}
+                    >
+                      <option value="">Mes</option>
+                      {['01','02','03','04','05','06','07','08','09','10','11','12'].map((m, i) => (
+                        <option key={m} value={m}>
+                          {['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'][i]}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      className="pt-sheet-input"
+                      value={birthDate ? birthDate.split('-')[0] : ''}
+                      onChange={(e) => {
+                        const [, m] = birthDate ? birthDate.split('-') : ['', '01'];
+                        const newDate = `${e.target.value}-${m || '01'}`;
+                        setBirthDate(newDate);
+                        const fullDate = `${newDate}-01`;
+                        const calculated = calculateAge(fullDate);
+                        if (calculated) {
+                          const matchA = calculated.match(/(\d+)\s*año/i);
+                          if (matchA) setInputVal(matchA[1]);
+                          else if (/mes/.test(calculated)) setInputVal('0');
+                        }
+                      }}
+                    >
+                      <option value="">Año</option>
+                      {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map(y => (
+                        <option key={y} value={y}>{y}</option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  /* Exact: full date picker */
+                  <DatePicker
+                    value={birthDate}
+                    max={new Date().toISOString().slice(0, 10)}
+                    onChange={(newDate) => {
+                      setBirthDate(newDate);
+                      if (newDate) {
+                        const calculated = calculateAge(newDate);
+                        if (calculated) {
+                          const matchA = calculated.match(/(\d+)\s*año/i);
+                          if (matchA) setInputVal(matchA[1]);
+                          else if (/mes/.test(calculated)) setInputVal('0');
+                        }
+                      }
+                    }}
+                  />
+                )}
+                {ageMode === 'approx' && <p className="pt-sheet-hint">Selecciona el mes y año aproximado en el que nació.</p>}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Text / Number fields */}
         {editing === 'bio' && (
           <textarea
@@ -188,13 +411,19 @@ export default function PerfilTab({ pet, onPetUpdated }) {
           />
         )}
 
-        {(editing === 'age' || editing === 'weight') && (
+        {(editing === 'weight' || editing === 'microchip') && (
           <input
             className="pt-sheet-input"
-            type={editing === 'weight' ? 'number' : 'text'}
-            placeholder={editing === 'age' ? 'Ej: 2 años' : 'Ej: 4.5'}
+            type={editing === 'weight' ? 'number' : 'tel'}
+            placeholder={editing === 'microchip' ? 'Ej: 985 121 023 456 789' : 'Ej: 4.5'}
             value={inputVal}
-            onChange={(e) => setInputVal(e.target.value)}
+            onChange={(e) => {
+              if (editing === 'microchip') {
+                setInputVal(formatMicrochip(e.target.value));
+              } else {
+                setInputVal(e.target.value);
+              }
+            }}
             autoFocus
           />
         )}

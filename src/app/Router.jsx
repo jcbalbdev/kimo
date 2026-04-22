@@ -19,6 +19,7 @@ import HealthPage from '../features/health/pages/HealthPage';
 import PetProfilePage from '../features/pets/pages/PetProfilePage';
 import ForgotPasswordPage from '../features/auth/pages/ForgotPasswordPage';
 import UpdatePasswordPage from '../features/auth/pages/UpdatePasswordPage';
+import PetPublicPage from '../features/pets/pages/PetPublicPage';
 
 // Auth guard — must be logged in
 function RequireAuth() {
@@ -126,6 +127,7 @@ export default function Router() {
         <Route path="/actualizar-password" element={<UpdatePasswordPage />} />
         <Route path="/unirse/:code" element={<JoinHouseholdPage />} />
         <Route path="/unirse" element={<JoinHouseholdPage />} />
+        <Route path="/pet/:id" element={<PetPublicPage />} />
 
         {/* Auth required */}
         <Route element={<RequireAuth />}>

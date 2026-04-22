@@ -37,9 +37,9 @@ export default defineConfig({
       workbox: {
         // Cache pages and assets
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
-        // Don't cache Supabase API calls
         navigateFallback: 'index.html',
-        navigateFallbackDenylist: [/^\/rest\//, /^\/auth\//],
+        // Don't intercept Supabase API calls or public pet profiles
+        navigateFallbackDenylist: [/^\/rest\//, /^\/auth\//, /^\/pet\//],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/.*\.supabase\.co\//,

@@ -1,0 +1,797 @@
+/* ── PetPublicPage — Full viewport, vet-facing ──────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/*
+  Escape global #root max-width: 430px.
+  The root occupies the full viewport and does NOT scroll.
+  Only the right content panel scrolls.
+*/
+.ppub-root {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;           /* NO page-level scroll */
+  display: flex;
+  flex-direction: column;
+  background: #f0f2f5;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #1c1c1e;
+  z-index: 9999;
+}
+
+/* ════════════════════════════════════════
+   TOP BAR — fixed at top, never scrolls
+   ════════════════════════════════════════ */
+.ppub-topbar {
+  flex-shrink: 0;             /* never compress */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: #fff;
+  border-bottom: 1px solid #e5e5ea;
+  width: 100%;
+  z-index: 20;
+}
+
+.ppub-kimo-logo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.ppub-kimo-name {
+  font-size: 17px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #5dbb97, #5aafc9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+.ppub-topbar-badge {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8e8e93;
+  background: #f2f2f7;
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+/* ════════════════════════════════════════
+   PAGE BODY — two-column split panel
+   ════════════════════════════════════════ */
+.ppub-body {
+  flex: 1;                    /* fills height below topbar */
+  overflow: hidden;           /* children control their own scroll */
+  display: grid;
+  grid-template-columns: 300px 1fr;  /* sidebar | content */
+}
+
+/* Mobile: single column, full scroll */
+@media (max-width: 767px) {
+  .ppub-root    { overflow-y: auto; }
+  .ppub-body    { grid-template-columns: 1fr; overflow: visible; }
+  .ppub-sidebar { height: auto; overflow: visible; border-right: none; border-bottom: 1px solid #e5e5ea; }
+  .ppub-content { height: auto; overflow: visible; }
+}
+
+/* ════════════════════════════════════════
+   LEFT SIDEBAR — fixed panel, NO scroll
+   ════════════════════════════════════════ */
+.ppub-sidebar {
+  height: 100%;
+  overflow-y: auto;           /* scrollable only if taller than viewport */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 20px 32px;
+  background: #fff;
+  border-right: 1px solid #e5e5ea;
+}
+
+/* ════════════════════════════════════════
+   RIGHT CONTENT — the ONLY scroll area
+   ════════════════════════════════════════ */
+.ppub-content {
+  height: 100%;
+  overflow-y: auto;           /* ← THE ONLY scroll */
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 28px 48px;
+  background: #f0f2f5;
+}
+
+/* ════════════════════════════════════════
+   HERO CARD (inside sidebar)
+   ════════════════════════════════════════ */
+.ppub-hero {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+}
+
+.ppub-avatar-wrap {
+  width: 110px;
+  height: 110px;
+  border-radius: 28px;
+  background: #f2f2f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.09);
+}
+
+.ppub-avatar {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  mix-blend-mode: darken;
+}
+
+.ppub-pet-name {
+  font-size: 26px;
+  font-weight: 800;
+  margin: 0 0 12px;
+  letter-spacing: -0.5px;
+}
+
+.ppub-pet-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ════════════════════════════════════════
+   VITALS CARD (inside sidebar)
+   ════════════════════════════════════════ */
+.ppub-vitals-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+}
+
+.ppub-vital-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 4px;
+  border-bottom: 1px solid #f0f0f5;
+}
+.ppub-vital-row:last-child { border-bottom: none; }
+
+.ppub-vital-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8e8e93;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.ppub-vital-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1c1c1e;
+  text-align: right;
+}
+
+.ppub-vital-mono {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+/* ──────────────────────────────────────
+   Vitals grid — premium pill layout
+   ────────────────────────────────────── */
+.ppub-vitals-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 20px 20px 18px;
+  justify-content: center;
+}
+
+.ppub-vg-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 5px;
+  background: #f5f5f7;
+  border-radius: 16px;
+  padding: 14px 20px;
+  min-width: 90px;
+  flex: 1;
+  max-width: 140px;
+  transition: background 0.15s;
+}
+.ppub-vg-item:hover { background: #ebebf0; }
+
+.ppub-vg-item--wide {
+  flex-basis: 100%;
+  max-width: 100%;
+  background: #f5f5f7;
+  border-radius: 16px;
+  padding: 12px 20px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+}
+
+.ppub-vg-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #8e8e93;
+}
+
+.ppub-vg-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1c1c1e;
+  letter-spacing: -0.5px;
+}
+
+.ppub-vg-item--wide .ppub-vg-value {
+  font-size: 15px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  letter-spacing: 0.5px;
+}
+
+/* ════════════════════════════════════════
+   CTA CARD — veterinarian acquisition
+   ════════════════════════════════════════ */
+.ppub-cta-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, #0f2027, #1a3a4a, #0f2c3a);
+  border-radius: 20px;
+  padding: 24px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  margin-top: auto;
+}
+
+/* ambient glow */
+.ppub-cta-glow {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(168,230,207,0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.ppub-cta-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  position: relative;
+  filter: drop-shadow(0 2px 8px rgba(168,230,207,0.4));
+}
+
+.ppub-cta-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #A8E6CF;
+  margin: 0;
+  opacity: 0.85;
+}
+
+.ppub-cta-headline {
+  font-size: 17px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  line-height: 1.35;
+  letter-spacing: -0.3px;
+}
+
+.ppub-cta-body {
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.ppub-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 4px;
+  padding: 11px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #0f2027;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 3px 14px rgba(168,230,207,0.4);
+  width: 100%;
+  justify-content: center;
+}
+.ppub-cta-btn:hover  { opacity: 0.9; transform: translateY(-1px); }
+.ppub-cta-btn:active { transform: scale(0.97); }
+
+.ppub-cta-fine {
+  font-size: 10px;
+  color: rgba(255,255,255,0.35);
+  margin: 0;
+}
+
+/* ════════════════════════════════════════
+   SECTIONS (in right content)
+   ════════════════════════════════════════ */
+.ppub-section {
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  flex-shrink: 0;
+}
+
+.ppub-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid #f0f0f5;
+}
+
+.ppub-section-icon { font-size: 18px; }
+
+.ppub-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  color: #1c1c1e;
+}
+
+.ppub-empty-state {
+  padding: 20px;
+  font-size: 13px;
+  color: #aeaeb2;
+  text-align: center;
+}
+
+/* Allergy list */
+.ppub-alert-list { padding: 4px 0; }
+
+.ppub-alert-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #f0f0f5;
+}
+.ppub-alert-row:last-child { border-bottom: none; }
+
+.ppub-alert-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.ppub-alert-name  { font-size: 15px; font-weight: 600; }
+.ppub-alert-dates { font-size: 12px; color: #636366; font-weight: 500; }
+.ppub-alert-notes { font-size: 12px; color: #8e8e93; font-style: italic; }
+
+/* Record card */
+.ppub-record-card {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f5;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.ppub-record-card:last-child { border-bottom: none; }
+
+.ppub-appt-upcoming {
+  background: linear-gradient(135deg, rgba(168,230,207,0.1), rgba(137,207,240,0.1));
+}
+
+.ppub-record-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ppub-record-name  { font-size: 15px; font-weight: 600; flex: 1; }
+.ppub-record-meta  { font-size: 12px; color: #636366; font-weight: 500; }
+.ppub-record-notes { font-size: 12px; color: #8e8e93; font-style: italic; }
+
+/* Vaccine table */
+.ppub-table { width: 100%; }
+
+.ppub-table-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #f0f0f5;
+}
+.ppub-table-header span {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #8e8e93;
+}
+
+.ppub-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 8px;
+  padding: 13px 20px;
+  border-bottom: 1px solid #f0f0f5;
+  align-items: center;
+}
+.ppub-table-row:last-child { border-bottom: none; }
+.ppub-table-row:hover { background: #fafafa; }
+
+.ppub-table-name { font-size: 14px; font-weight: 600; }
+.ppub-table-date { font-size: 13px; color: #636366; }
+.ppub-na { color: #c7c7cc; }
+
+/* Group label */
+.ppub-group-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #8e8e93;
+  padding: 10px 20px 4px;
+  margin: 0;
+}
+
+/* Bio */
+.ppub-bio {
+  padding: 16px 20px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #3c3c43;
+  margin: 0;
+}
+
+/* Badges */
+.ppub-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ppub-badge-default  { background: #f2f2f7; color: #3c3c43; }
+.ppub-badge-teal     { background: linear-gradient(135deg, #A8E6CF, #89CFF0); color: #1c1c1e; }
+.ppub-badge-danger   { background: #fee2e2; color: #991b1b; }
+.ppub-badge-warn     { background: #fef9c3; color: #854d0e; }
+.ppub-badge-resolved { background: #f0f0f5; color: #8e8e93; }
+
+/* ════════════════════════════════════════
+   LOADING / NOT FOUND
+   ════════════════════════════════════════ */
+.ppub-loading,
+.ppub-notfound {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px 20px;
+  text-align: center;
+  background: #f0f2f5;
+  font-family: 'Inter', system-ui, sans-serif;
+  z-index: 9999;
+}
+
+.ppub-loading-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  animation: ppub-pulse 2s ease-in-out infinite;
+}
+
+@keyframes ppub-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.95); }
+}
+
+.ppub-notfound h2 { font-size: 22px; font-weight: 700; margin: 0; }
+.ppub-notfound p  { font-size: 14px; color: #636366; margin: 0; }
+
+/* ════════════════════════════════════════
+   PRINT
+   ════════════════════════════════════════ */
+@media print {
+  .ppub-root    { position: static; width: auto; height: auto; overflow: visible; }
+  .ppub-body    { grid-template-columns: 1fr; overflow: visible; }
+  .ppub-sidebar { height: auto; overflow: visible; }
+  .ppub-content { height: auto; overflow: visible; }
+  .ppub-section, .ppub-vitals-card, .ppub-hero { break-inside: avoid; }
+}
+
+/* ════════════════════════════════════════
+   EXPORT PDF BUTTON
+   ════════════════════════════════════════ */
+.ppub-export-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: 12px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+  white-space: nowrap;
+}
+.ppub-export-btn:hover   { opacity: 0.88; }
+.ppub-export-btn:active  { transform: scale(0.96); }
+.ppub-export-btn:disabled { opacity: 0.6; cursor: wait; }
+
+.ppub-export-loading { opacity: 0.7; }
+
+/* Sidebar PDF button — full width, below vitals card */
+.ppub-sidebar-pdf-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
+  color: #1c1c1e;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 2px 10px rgba(137,207,240,0.35);
+}
+.ppub-sidebar-pdf-btn:hover   { opacity: 0.88; transform: translateY(-1px); }
+.ppub-sidebar-pdf-btn:active  { transform: scale(0.97); }
+.ppub-sidebar-pdf-btn:disabled { opacity: 0.6; cursor: wait; }
+
+/* Centered KIMO logo in footer card */
+.ppub-sidebar-footer-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 10px;
+}
+
+.ppub-export-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(0,0,0,0.15);
+  border-top-color: #1c1c1e;
+  border-radius: 50%;
+  animation: ppub-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes ppub-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ════════════════════════════════════════
+   HIDDEN PDF CONTAINER
+   html2pdf captures this, not the split view
+   ════════════════════════════════════════ */
+.ppub-pdf-container {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  width: 794px;          /* A4 at 96dpi */
+  padding: 32px 40px;
+  background: #fff;
+  font-family: 'Inter', Arial, sans-serif;
+  color: #1c1c1e;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ppub-pdf-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid #f0f0f5;
+  margin-bottom: 20px;
+}
+
+.ppub-pdf-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.ppub-pdf-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.ppub-pdf-subtitle {
+  font-size: 11px;
+  color: #8e8e93;
+}
+
+.ppub-pdf-date {
+  margin-left: auto;
+  font-size: 12px;
+  color: #8e8e93;
+  text-align: right;
+}
+
+/* Vitals grid */
+.ppub-pdf-vitals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.ppub-pdf-vital {
+  background: #f5f5f7;
+  border-radius: 10px;
+  padding: 8px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 100px;
+}
+
+.ppub-pdf-vital-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #8e8e93;
+}
+
+.ppub-pdf-vital-value {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* Section */
+.ppub-pdf-section {
+  margin-bottom: 20px;
+  border: 1px solid #e5e5ea;
+  border-radius: 12px;
+  overflow: hidden;
+  page-break-inside: avoid;
+}
+
+.ppub-pdf-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 12px 16px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #e5e5ea;
+}
+
+.ppub-pdf-empty {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #aeaeb2;
+  margin: 0;
+}
+
+.ppub-pdf-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f5;
+}
+.ppub-pdf-row:last-child { border-bottom: none; }
+
+.ppub-pdf-row-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.ppub-pdf-row-left strong { font-size: 14px; font-weight: 700; }
+.ppub-pdf-row-left span   { font-size: 12px; color: #636366; }
+.ppub-pdf-row-left em     { font-size: 12px; color: #8e8e93; font-style: italic; }
+
+/* PDF badges */
+.ppub-pdf-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ppub-pdf-badge-danger   { background: #fee2e2; color: #991b1b; }
+.ppub-pdf-badge-warn     { background: #fef9c3; color: #854d0e; }
+.ppub-pdf-badge-teal     { background: #d1f0e5; color: #145f41; }
+.ppub-pdf-badge-resolved { background: #f0f0f5; color: #636366; }
+
+/* Vaccine table */
+.ppub-pdf-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.ppub-pdf-table th {
+  background: #f5f5f7;
+  text-align: left;
+  padding: 8px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #8e8e93;
+}
+.ppub-pdf-table td {
+  padding: 10px 16px;
+  border-top: 1px solid #f0f0f5;
+  color: #1c1c1e;
+}
+
+/* Disclaimer */
+.ppub-pdf-disclaimer {
+  margin-top: 24px;
+  padding: 12px 16px;
+  background: #f5f5f7;
+  border-radius: 10px;
+  font-size: 11px;
+  color: #8e8e93;
+  line-height: 1.5;
+  text-align: center;
+}

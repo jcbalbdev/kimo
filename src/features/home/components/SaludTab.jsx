@@ -4,6 +4,9 @@ import FormSheet from '../../../shared/components/FormSheet/FormSheet';
 import ConfirmDialog from '../../../shared/components/ConfirmDialog/ConfirmDialog';
 import { useScrollLock } from '../../../shared/hooks/useScrollLock';
 import { formatDateDMY } from '../../../shared/utils/dates';
+import { Activity } from 'lucide-react';
+import TabEmptyState from '../../../shared/components/TabEmptyState/TabEmptyState';
+import TabAddButton from '../../../shared/components/TabAddButton/TabAddButton';
 import './SaludTab.css';
 
 const TYPE_LABEL  = { allergy: 'Alergia',    chronic: 'Enfermedad' };
@@ -128,16 +131,11 @@ export default function SaludTab({ petId }) {
       {loading ? (
         <div className="salud-empty">Cargando…</div>
       ) : conditions.length === 0 ? (
-        <div className="salud-empty">
-          <div className="salud-empty-icon" aria-hidden="true">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-            </svg>
-          </div>
-          <p>Sin registros médicos aún.</p>
-          <span>Agrega alergias o enfermedades crónicas usando el botón de abajo.</span>
-        </div>
+        <TabEmptyState
+          icon={<Activity size={32} strokeWidth={1.5} />}
+          title="Sin registros médicos aún."
+          subtitle="Agrega alergias o enfermedades crónicas usando el botón de abajo."
+        />
       ) : (
         <div className="salud-list">
           {conditions.map(item => (
@@ -186,9 +184,7 @@ export default function SaludTab({ petId }) {
       )}
 
       {/* ── Single add button ── */}
-      <button className="salud-add-btn" onClick={() => openSheet(null)} id="salud-add-btn">
-        + Agregar alergia o enfermedad
-      </button>
+      <TabAddButton label="+ Agregar alergia o enfermedad" onClick={() => openSheet(null)} id="salud-add-btn" />
 
       {/* ══════════ Form Sheet ══════════ */}
       <FormSheet

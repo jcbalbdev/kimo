@@ -298,3 +298,10 @@
   transition: opacity 0.2s;
 }
 .pt-sheet-save:disabled { opacity: 0.5; }
+
+/* Approximate birthday: two selects side by side */
+.pt-approx-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}

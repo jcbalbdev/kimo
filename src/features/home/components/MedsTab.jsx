@@ -10,6 +10,9 @@ import FormSheet from '../../../shared/components/FormSheet/FormSheet';
 import { useFormSheet } from '../../../shared/hooks/useFormSheet';
 import { EditIcon, CheckCircle, EmptyCircle } from '../../../shared/components/Icons';
 import { today, currentTimeHHMM, formatDateDMY } from '../../../shared/utils/dates';
+import { Pill } from 'lucide-react';
+import TabEmptyState from '../../../shared/components/TabEmptyState/TabEmptyState';
+import TabAddButton from '../../../shared/components/TabAddButton/TabAddButton';
 import './TabShared.css';
 import './MedsTab.css';
 
@@ -191,29 +194,38 @@ export default function MedsTab({ petId }) {
     resetAndClose();
   };
 
+  const hasNoMeds = activeMedications.length === 0 && endedMedications.length === 0;
+
   return (
     <div className="tab-root">
-      <button className="tab-add-card" onClick={openCreate}>
-        <span className="tab-add-icon">+</span>
-        <span className="tab-add-text">Agregar medicamento</span>
-      </button>
-
-      {activeMedications.map((med) => (
-        <MedCard key={med.id} med={med} checks={checks}
-          onCheckSlot={checkSlot} onEnd={endMedication} onEdit={openEdit} />
-      ))}
-
-      {endedMedications.length > 0 && (
-        <details className="medc-ended-section">
-          <summary className="medc-ended-summary">
-            Tratamientos finalizados ({endedMedications.length})
-          </summary>
-          {endedMedications.map((med) => (
+      {hasNoMeds ? (
+        <TabEmptyState
+          icon={<Pill size={32} strokeWidth={1.5} />}
+          title="Sin medicamentos aún."
+          subtitle="Agrega un medicamento o tratamiento usando el botón de abajo."
+        />
+      ) : (
+        <>
+          {activeMedications.map((med) => (
             <MedCard key={med.id} med={med} checks={checks}
               onCheckSlot={checkSlot} onEnd={endMedication} onEdit={openEdit} />
           ))}
-        </details>
+
+          {endedMedications.length > 0 && (
+            <details className="medc-ended-section">
+              <summary className="medc-ended-summary">
+                Tratamientos finalizados ({endedMedications.length})
+              </summary>
+              {endedMedications.map((med) => (
+                <MedCard key={med.id} med={med} checks={checks}
+                  onCheckSlot={checkSlot} onEnd={endMedication} onEdit={openEdit} />
+              ))}
+            </details>
+          )}
+        </>
       )}
+
+      <TabAddButton label="+ Agregar medicamento" onClick={openCreate} />
 
       <FormSheet
         isOpen={showForm}

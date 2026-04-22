@@ -154,27 +154,8 @@
   border-radius: 10px;
 }
 
-/* ── Single add button ─────────────────────── */
-.salud-add-btn {
-  background: linear-gradient(#fafafa, #fafafa) padding-box,
-              linear-gradient(135deg, #A8E6CF, #89CFF0) border-box;
-  border: 1.5px solid transparent;
-  border-radius: 14px;
-  padding: 14px 16px;
-  font-size: 14px;
-  font-weight: 700;
-  font-family: inherit;
-  background: linear-gradient(135deg, rgba(168,230,207,0.15), rgba(137,207,240,0.15));
-  border: 1.5px solid rgba(168,230,207,0.5);
-  color: #3a8a6a;
-  cursor: pointer;
-  width: 100%;
-  transition: opacity 0.15s, transform 0.15s;
-}
-.salud-add-btn:active {
-  transform: scale(0.98);
-  opacity: 0.8;
-}
+
+
 
 /* ── Bottom Sheet -> Full Screen ── */
 .salud-sheet-overlay {
@@ -316,10 +297,9 @@
 }
 
 .salud-seg-btn.active {
-  background: #fff;
+  background: linear-gradient(135deg, #A8E6CF, #89CFF0);
   color: #1c1c1e;
   font-weight: 700;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.11);
 }
 
 /* ── Sheet actions ─────────────────────────── */
