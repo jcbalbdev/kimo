@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useCallback, useContext, useRef } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useAuth } from '../../auth/hooks/useAuth';
+import { APP_URL } from '../../../shared/constants/app';
 
 const HouseholdContext = createContext(null);
 
@@ -228,7 +229,7 @@ export function HouseholdProvider({ children }) {
 
   const getInviteUrl = () => {
     if (!currentHousehold) return '';
-    return `${window.location.origin}/unirse/${currentHousehold.invite_code}`;
+    return `${APP_URL}/unirse/${currentHousehold.invite_code}`;
   };
 
   const hasHousehold = households.length > 0;

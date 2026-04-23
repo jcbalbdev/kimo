@@ -1,0 +1,8 @@
+{
+  "appId": "app.kimofriends",
+  "appName": "KIMO",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}

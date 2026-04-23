@@ -1,4 +1,8 @@
 import { useState } from 'react';
+
+// ── APK download URL ──────────────────────────────────────
+// TODO: reemplaza con la URL real del APK cuando esté hosteado
+const APK_DOWNLOAD_URL = 'https://github.com/jcbalbdev/kimo/releases/download/v1.0.2/app-release.apk';
 import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import Button from '../../../shared/components/Button/Button';
@@ -179,6 +183,58 @@ function InstallModal({ onClose }) {
   );
 }
 
+// ── Android Download Modal ───────────────────────────────
+const AndroidIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.523 15.341a.95.95 0 0 1-.95-.95.95.95 0 0 1 .95-.95.95.95 0 0 1 .95.95.95.95 0 0 1-.95.95m-11.046 0a.95.95 0 0 1-.95-.95.95.95 0 0 1 .95-.95.95.95 0 0 1 .95.95.95.95 0 0 1-.95.95M17.78 9.3l1.88-3.26a.392.392 0 0 0-.142-.535.393.393 0 0 0-.536.142l-1.905 3.301A11.27 11.27 0 0 0 12 8.1c-1.812 0-3.52.435-5.077 1.207L4.998 5.647a.393.393 0 0 0-.536-.142.392.392 0 0 0-.142.535L6.22 9.3C3.613 10.795 1.87 13.474 1.87 16.56h20.26c0-3.086-1.743-5.765-4.35-7.26"/>
+  </svg>
+);
+
+function AndroidDownloadModal({ onClose }) {
+  const handleDownload = () => {
+    window.open(APK_DOWNLOAD_URL, '_blank');
+  };
+
+  return (
+    <div className="install-overlay" onClick={onClose}>
+      <div className="install-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="install-handle" />
+        <button className="install-close" onClick={onClose}><CloseXIcon /></button>
+
+        <div className="install-header">
+          <img src={kimoIcon} alt="Kimo" className="install-app-icon" />
+          <div className="install-header-text">
+            <h2 className="install-modal-title">KIMO para Android</h2>
+            <span className="install-badge">APK · Descarga directa</span>
+          </div>
+        </div>
+
+        <div className="android-download-body">
+          <div className="android-download-icon">
+            <AndroidIcon />
+          </div>
+          <p className="android-download-desc">
+            Descarga la app nativa de KIMO directamente en tu Android.
+          </p>
+          <div className="android-reassurance">
+            <span className="android-reassurance-icon">🔒</span>
+            <p>Android puede mostrarte un aviso de <strong>"fuente desconocida"</strong> — esto es completamente normal para apps fuera de Play Store. <strong>KIMO es 100% seguro.</strong></p>
+          </div>
+        </div>
+
+        <button className="android-download-btn" onClick={handleDownload}>
+          <DownloadIcon />
+          Descargar KIMO (.apk)
+        </button>
+
+        <p className="install-note" style={{ marginTop: '0.75rem' }}>
+          Si Android te pide permiso para instalar, toca «Configuración» y activa «Permitir de esta fuente».
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ── Download Banner ───────────────────────────────────────
 function isRunningAsPWA() {
   // iOS Safari standalone flag
@@ -213,6 +269,15 @@ export default function LoginPage() {
   const [showRegister, setShowRegister] = useState(false);
   const [registerName, setRegisterName] = useState('');
   const [showInstall, setShowInstall] = useState(false);
+  const [showAndroidDownload, setShowAndroidDownload] = useState(false);
+
+  const handleInstallClick = () => {
+    if (getDeviceType() === 'android') {
+      setShowAndroidDownload(true);
+    } else {
+      setShowInstall(true);
+    }
+  };
 
   if (isAuthenticated) {
     const joinToken = localStorage.getItem('kimo_join_token');
@@ -238,9 +303,10 @@ export default function LoginPage() {
           registerName={registerName} setRegisterName={setRegisterName}
           error={error} loading={loading}
           onBack={() => setShowRegister(false)}
-          onShowInstall={() => setShowInstall(true)}
+          onShowInstall={handleInstallClick}
         />
         {showInstall && <InstallModal onClose={() => setShowInstall(false)} />}
+        {showAndroidDownload && <AndroidDownloadModal onClose={() => setShowAndroidDownload(false)} />}
       </>
     );
   }
@@ -279,10 +345,11 @@ export default function LoginPage() {
             ¿No tienes cuenta? <strong>Regístrate</strong>
           </button>
 
-          <DownloadBanner onClick={() => setShowInstall(true)} />
+          <DownloadBanner onClick={handleInstallClick} />
         </div>
       </div>
       {showInstall && <InstallModal onClose={() => setShowInstall(false)} />}
+      {showAndroidDownload && <AndroidDownloadModal onClose={() => setShowAndroidDownload(false)} />}
     </>
   );
 }

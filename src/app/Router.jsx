@@ -20,6 +20,7 @@ import PetProfilePage from '../features/pets/pages/PetProfilePage';
 import ForgotPasswordPage from '../features/auth/pages/ForgotPasswordPage';
 import UpdatePasswordPage from '../features/auth/pages/UpdatePasswordPage';
 import PetPublicPage from '../features/pets/pages/PetPublicPage';
+import NotificationPrefsPage from '../features/notifications/pages/NotificationPrefsPage';
 
 // Auth guard — must be logged in
 function RequireAuth() {
@@ -153,6 +154,7 @@ export default function Router() {
                 <Route path="/alimentacion" element={<FeedingsPage />} />
                 <Route path="/salud" element={<HealthPage />} />
                 <Route path="/perfil" element={<PetProfilePage />} />
+                <Route path="/notificaciones" element={<NotificationPrefsPage />} />
               </Route>
             </Route>
           </Route>

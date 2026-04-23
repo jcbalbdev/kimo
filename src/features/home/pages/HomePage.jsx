@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { APP_URL } from '../../../shared/constants/app';
 import { useNavigate } from 'react-router-dom';
 import { PawPrint, Pill, Drumstick, CalendarDays, Syringe, Activity } from 'lucide-react';
 import { usePets } from '../../pets/hooks/usePets';
@@ -464,7 +465,7 @@ export default function HomePage() {
       {showShareModal && (
         <ShareModal
           petName={currentPet.name}
-          url={`${window.location.origin}/pet/${currentPet.kimo_code || currentPet.id}`}
+          url={`${APP_URL}/pet/${currentPet.kimo_code || currentPet.id}`}
           onClose={() => setShowShareModal(false)}
         />
       )}

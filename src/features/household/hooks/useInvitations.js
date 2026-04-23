@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { resolveKimoCode } from '../../../shared/utils/kimoCode';
+import { APP_URL } from '../../../shared/constants/app';
 
 const IS_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -121,7 +122,7 @@ export function useInvitations() {
       .single();
 
     if (error) return { link: null, error };
-    const link = `${window.location.origin}/unirse/${data.token}`;
+    const link = `${APP_URL}/unirse/${data.token}`;
     return { link, error: null };
   };
 

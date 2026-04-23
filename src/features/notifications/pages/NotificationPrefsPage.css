@@ -1,0 +1,180 @@
+.np-root {
+  min-height: 100dvh;
+  background: var(--bg-primary, #f2f2f7);
+  padding-bottom: 40px;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.np-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px 12px;
+  background: var(--bg-card, #fff);
+  border-bottom: 1px solid var(--border, #e5e5ea);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.np-back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: var(--bg-primary, #f2f2f7);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text-primary, #1c1c1e);
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.np-back-btn:active { background: var(--border, #e5e5ea); }
+
+.np-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary, #1c1c1e);
+  margin: 0;
+  flex: 1;
+}
+
+.np-saving {
+  font-size: 13px;
+  color: var(--text-secondary, #8e8e93);
+}
+
+/* ── Subtitle ────────────────────────────────────────────── */
+.np-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary, #8e8e93);
+  padding: 12px 20px 4px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ── States ─────────────────────────────────────────────── */
+.np-loading,
+.np-empty {
+  text-align: center;
+  color: var(--text-secondary, #8e8e93);
+  font-size: 14px;
+  padding: 48px 24px;
+}
+
+/* ── Pet list ────────────────────────────────────────────── */
+.np-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 16px 0;
+}
+
+.np-pet-card {
+  background: var(--bg-card, #fff);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+
+/* ── Pet header ──────────────────────────────────────────── */
+.np-pet-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border, #f2f2f7);
+}
+
+.np-pet-avatar {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.np-pet-name {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary, #1c1c1e);
+}
+
+/* Master toggle button */
+.np-master-toggle {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.01em;
+}
+.np-master-toggle.np-toggle-on {
+  background: var(--success-light, #e8faf0);
+  color: var(--success, #30d158);
+}
+.np-master-toggle.np-toggle-off {
+  background: var(--bg-primary, #f2f2f7);
+  color: var(--text-secondary, #8e8e93);
+}
+
+/* ── Type rows ───────────────────────────────────────────── */
+.np-types {
+  display: flex;
+  flex-direction: column;
+}
+
+.np-type-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border, #f2f2f7);
+}
+.np-type-row:last-child { border-bottom: none; }
+
+.np-type-emoji {
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.np-type-label {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-primary, #1c1c1e);
+  font-weight: 500;
+}
+
+/* ── iOS-style toggle switch ─────────────────────────────── */
+.np-toggle {
+  position: relative;
+  width: 51px;
+  height: 31px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.25s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.np-toggle.np-toggle-on  { background: var(--success, #30d158); }
+.np-toggle.np-toggle-off { background: var(--border, #e5e5ea); }
+
+.np-toggle-knob {
+  position: absolute;
+  top: 2px;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+  transition: left 0.25s;
+}
+
+.np-toggle.np-toggle-on  .np-toggle-knob { left: 22px; }
+.np-toggle.np-toggle-off .np-toggle-knob { left: 2px; }

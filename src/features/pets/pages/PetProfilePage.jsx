@@ -82,6 +82,9 @@ export default function PetProfilePage() {
       </div>
 
       <div className="pet-profile-actions">
+        <Button variant="secondary" onClick={() => navigate('/notificaciones')}>
+          🔔 Mis notificaciones
+        </Button>
         <Button variant="secondary" onClick={() => navigate('/hogar')}>
           🏠 Gestionar hogar
         </Button>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "219033240359",
+    "project_id": "kimo-8cd46",
+    "storage_bucket": "kimo-8cd46.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:219033240359:android:91d2500aae991ae0781f02",
+        "android_client_info": {
+          "package_name": "app.kimofriends"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmHPtTb5jkvUheETbiSogwsl6EOC3EYus"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

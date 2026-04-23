@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
 import FormSheet from '../../../shared/components/FormSheet/FormSheet';
 import { useScrollLock } from '../../../shared/hooks/useScrollLock';
@@ -46,6 +47,7 @@ export const calculateAge = (birthDate) => {
 };
 
 export default function PerfilTab({ pet, onPetUpdated }) {
+  const navigate = useNavigate();
   const [editing, setEditing] = useState(null);
   const [inputVal, setInputVal] = useState('');   // for age (manual), weight, bio, microchip
   const [toggleVal, setToggleVal] = useState(null); // for gender, sterilized
@@ -432,6 +434,17 @@ export default function PerfilTab({ pet, onPetUpdated }) {
           <p className="pt-sheet-hint">Ingresa el peso en kg (ej: 4.5)</p>
         )}
       </FormSheet>
+
+      {/* Notificaciones */}
+      <button
+        className="pt-notifications-btn"
+        onClick={() => navigate('/notificaciones')}
+      >
+        <span className="pt-notif-icon">🔔</span>
+        <span className="pt-notif-label">Mis notificaciones</span>
+        <span className="pt-notif-arrow">›</span>
+      </button>
+
     </div>
   );
 }
