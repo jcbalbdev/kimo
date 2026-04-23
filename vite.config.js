@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  base: './',
+  base: '/',
   plugins: [
     react(),
     VitePWA({
@@ -40,7 +40,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
         navigateFallback: 'index.html',
         // Don't intercept Supabase API calls or public pet profiles
-        navigateFallbackDenylist: [/^\/rest\//, /^\/auth\//, /^\/pet\//],
+        navigateFallbackDenylist: [/^\/rest\//, /^\/auth\//],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/.*\.supabase\.co\//,
