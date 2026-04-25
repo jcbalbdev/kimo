@@ -4,31 +4,34 @@ import { useAuth } from '../../auth/hooks/useAuth';
 import { useHousehold } from '../hooks/useHousehold';
 import { useInvitations } from '../hooks/useInvitations';
 import { useTransfers } from '../../transfers/hooks/useTransfers';
+import { useDirectory } from '../../directory/hooks/useDirectory';
 import { supabase } from '../../../lib/supabase';
-import { getPetImg } from '../../../shared/utils/petAvatars';
 import {
   HomeIcon, HomeDetailIcon, PlusIcon, UserPlusIcon, CopyIcon,
-  EditIcon, TrashIcon, PawIcon, CheckIcon, OwnerIcon, MemberIcon,
-  TransferIcon, BuildingIcon, InfoIcon,
+  EditIcon, TrashIcon, PawIcon, OwnerIcon,
+  TransferIcon, CheckIcon, MessageSquarePlusIcon, BuildingIcon,
 } from '../../../shared/components/Icons';
 import TransferSheet from '../../transfers/components/TransferSheet';
 import TransferModal from '../../transfers/components/TransferModal';
+import DirectoryProfileSheet from '../../directory/components/DirectoryProfileSheet';
+import OrgProfileSheet from '../../directory/components/OrgProfileSheet';
+import FeedbackModal from '../../feedback/components/FeedbackModal';
+import OrgCard from '../../directory/components/OrgCard';
+import InviteSheet from '../components/InviteSheet';
+import HogarCreateSheet from '../components/HogarCreateSheet';
+import HogarDetailSheet from '../components/HogarDetailSheet';
 import kimoIcon from '../../../assets/icono.png';
-import COUNTRIES from '../../../shared/constants/countries';
 import './HogaresPage.css';
 
-const CURRENT_VERSION = 'v1.0.1';
-
-
-// ── Member avatar placeholder ──────────────────────────────
-const MemberAvatar = ({ name }) => {
-  const initials = (name || '?').charAt(0).toUpperCase();
-  return <div className="hd-member-avatar">{initials}</div>;
-};
+const CURRENT_VERSION = 'v1.0.2';
 
 export default function HogaresPage() {
   const navigate = useNavigate();
   const { profile, user, signOut } = useAuth();
+  const { organizations, loadingDir, fetchOrganizations } = useDirectory();
+  const [dirProfileHH, setDirProfileHH] = useState(null);
+  const [selectedOrg, setSelectedOrg]   = useState(null);
+  const [activeTab, setActiveTab] = useState('hogares');
   const {
     households, loading, createHousehold, selectHousehold, fetchHouseholds,
     deleteHousehold, updateHouseholdName, removeMember, getHouseholdDetail,
@@ -76,12 +79,44 @@ export default function HogaresPage() {
   const [newType, setNewType] = useState('personal');
   const [newCountry, setNewCountry] = useState('');
   const [newPhone, setNewPhone] = useState('');
+  // Org-specific profile fields
+  const [newCity, setNewCity] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [newInstagram, setNewInstagram] = useState('');
+  const [newWhatsapp, setNewWhatsapp] = useState('');
+  const [newFacebook, setNewFacebook] = useState('');
+  const [newTiktok, setNewTiktok] = useState('');
+  const [newWebsite, setNewWebsite] = useState('');
+  const [newMaps, setNewMaps] = useState('');
+  const [newDirectoryVisible, setNewDirectoryVisible] = useState(true);
+  // Cover photo
+  const [newCoverBlob, setNewCoverBlob]           = useState(null);
+  const [newCoverPreview, setNewCoverPreview]     = useState('');
   const [creating, setCreating] = useState(false);
   const [createErr, setCreateErr] = useState('');
+
+  // ── Type-picker modal (first-time onboarding) ──────────
+  const [typePickerModal, setTypePickerModal] = useState(null); // 'personal' | 'organization' | null
+  const [typeLocked, setTypeLocked] = useState(false); // true = type chosen from modal, hide selector
 
   const resetCreateForm = () => {
     setShowCreate(false); setNewName(''); setNewType('personal');
     setNewCountry(''); setNewPhone(''); setCreateErr('');
+    setNewCity(''); setNewDescription(''); setNewInstagram('');
+    setNewWhatsapp(''); setNewFacebook(''); setNewTiktok('');
+    setNewWebsite(''); setNewMaps('');
+    setNewDirectoryVisible(true);
+    setNewCoverBlob(null); setNewCoverPreview('');
+    setTypeLocked(false);
+  };
+
+  const handleOpenCreateFromModal = (type) => {
+    setTypePickerModal(null);
+    setNewType(type);
+    setTypeLocked(true);
+    setNewName('');
+    setCreateErr('');
+    setShowCreate(true);
   };
 
   // ── Transfer sheet ────────────────────────────────────
@@ -100,6 +135,8 @@ export default function HogaresPage() {
 
   // ── Version / Changelog Modal ──────────────────────────
   const [showChangelog, setShowChangelog] = useState(false);
+  // ── Feedback Modal ────────────────────────────────────
+  const [showFeedback, setShowFeedback] = useState(false);
 
   useEffect(() => {
     const savedVer = localStorage.getItem('kimo_version');
@@ -204,19 +241,40 @@ export default function HogaresPage() {
   const handleCreate = async (e) => {
     e.preventDefault();
     if (!newName.trim()) return;
-    if (newType === 'organization' && !newCountry) { setCreateErr('Selecciona un país'); return; }
-    if (newType === 'organization' && !newPhone.trim()) { setCreateErr('El número de contacto es obligatorio'); return; }
     setCreating(true); setCreateErr('');
 
     const selectedCountry = COUNTRIES.find(c => c.code === newCountry);
-    const fullPhone = selectedCountry ? `${selectedCountry.dial} ${newPhone.trim()}` : newPhone.trim();
 
-    const { error: err } = await createHousehold(newName.trim(), newType, {
-      country: selectedCountry?.name || null,
-      contactPhone: fullPhone || null,
+    const { data: hh, error: err } = await createHousehold(newName.trim(), newType, {
+      country:          selectedCountry?.name || null,
+      contactPhone:     null,
+      city:             newCity.trim()        || null,
+      description:      newDescription.trim() || null,
+      instagram:        newInstagram.trim()   || null,
+      whatsapp:         newWhatsapp.trim()    || null,
+      facebook:         newFacebook.trim()    || null,
+      tiktok:           newTiktok.trim()      || null,
+      directoryVisible: true,
+      directory_website: newWebsite.trim()   || null,
+      directory_maps:    newMaps.trim()      || null,
     });
-    if (err) { setCreateErr(err); setCreating(false); }
-    else { resetCreateForm(); setCreating(false); navigate('/onboarding/especie'); }
+    if (err) { setCreateErr(err); setCreating(false); return; }
+
+    // Upload cover photo if one was selected
+    if (newCoverBlob && hh?.id) {
+      const path = `${hh.id}/cover.webp`;
+      const { error: upErr } = await supabase.storage
+        .from('org-covers')
+        .upload(path, newCoverBlob, { contentType: 'image/webp', upsert: true });
+      if (!upErr) {
+        const { data: urlData } = supabase.storage.from('org-covers').getPublicUrl(path);
+        await supabase.from('households').update({ directory_cover_url: urlData.publicUrl }).eq('id', hh.id);
+      }
+    }
+
+    resetCreateForm();
+    setCreating(false);
+    navigate('/onboarding/especie');
   };
 
   // ── Invite handlers ────────────────────────────────────
@@ -411,7 +469,9 @@ export default function HogaresPage() {
         </button>
       </div>
 
-      {/* ── Greeting ── */}
+      {/* ── TAB: HOGARES ── */}
+      {activeTab === 'hogares' && (
+        <div className="tab-panel">
       <div className="hogares-greeting">
         <h1 className="hogares-greeting-title">
           Hola,<br />
@@ -444,64 +504,57 @@ export default function HogaresPage() {
         {loading ? (
           <div className="hogares-loading">Cargando hogares...</div>
         ) : (
-          <div className="hogares-list">
+          <>
             {households.length === 0 && !showCreate && (
               <div className="hogares-onboarding">
                 <h2 className="hogares-onboarding-title">
-                  ¡Crea tu primer hogar!
+                  Crea tu primer hogar
                 </h2>
-                <p className="hogares-onboarding-desc">
-                  Un hogar es el espacio donde gestionas a tus mascotas y puedes invitar a tu familia o cuidadores.
-                </p>
 
-                {/* Feature pills */}
-                <div className="hogares-onboarding-features">
-                  {/* 1 — UserPlus icon */}
-                  <div className="hogares-onboarding-feature">
-                    <span className="hogares-onboarding-feature-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                        <circle cx="9" cy="7" r="4"/>
-                        <line x1="19" y1="8" x2="19" y2="14"/>
-                        <line x1="22" y1="11" x2="16" y2="11"/>
-                      </svg>
-                    </span>
-                    <span>Invita a personas como miembros a tu hogar</span>
-                  </div>
-                  {/* 2 — Pill / medicine icon */}
-                  <div className="hogares-onboarding-feature">
-                    <span className="hogares-onboarding-feature-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/>
-                        <path d="m8.5 8.5 7 7"/>
-                      </svg>
-                    </span>
-                    <span>Registra medicinas, vacunas, comida y mucho más</span>
-                  </div>
-                  {/* 3 — Paw print icon */}
-                  <div className="hogares-onboarding-feature">
-                    <span className="hogares-onboarding-feature-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="11" cy="4"  r="2"/>
-                        <circle cx="18" cy="8"  r="2"/>
-                        <circle cx="4"  cy="8"  r="2"/>
-                        <circle cx="6.5" cy="15.5" r="1"/>
-                        <path d="M12 15c-2 0-5 1-5 4h10c0-3-3-4-5-4z"/>
-                      </svg>
-                    </span>
-                    <span>Elige entre distintos avatares según tu mascota</span>
-                  </div>
+                {/* Type picker buttons */}
+                <div className="hogares-type-picker">
+                  {/* Hogar Personal */}
+                  <button
+                    className="hogares-type-pick-btn"
+                    onClick={() => setTypePickerModal('personal')}
+                  >
+                    <div className="hogares-type-pick-icon hogares-type-pick-icon--personal">
+                      <HomeIcon size={26} color="#2a8a6a" />
+                    </div>
+                    <span className="hogares-type-pick-label">Hogar Personal</span>
+                    <span className="hogares-type-pick-sub">Familias y cuidadores</span>
+                  </button>
+
+                  {/* Organización */}
+                  <button
+                    className="hogares-type-pick-btn"
+                    onClick={() => setTypePickerModal('organization')}
+                  >
+                    <div className="hogares-type-pick-icon hogares-type-pick-icon--org">
+                      <BuildingIcon size={26} />
+                    </div>
+                    <span className="hogares-type-pick-label">Organización</span>
+                    <span className="hogares-type-pick-sub">Albergues y refugios</span>
+                  </button>
                 </div>
 
-                {/* CTA */}
-                <button className="hogares-onboarding-cta" onClick={() => setShowCreate(true)}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-                  </svg>
-                  Crear mi primer hogar
+                {/* What's New card */}
+                <button
+                  className="hogares-whats-new-card"
+                  onClick={() => setShowChangelog(true)}
+                >
+                  <span className="hogares-whats-new-badge">NUEVO</span>
+                  <div className="hogares-whats-new-body">
+                    <span className="hogares-whats-new-emoji">🚀</span>
+                    <div>
+                      <p className="hogares-whats-new-title">¡Novedades en KIMO!</p>
+                      <p className="hogares-whats-new-sub">Hay cosas nuevas esperándote — toca para ver</p>
+                    </div>
+                  </div>
                 </button>
               </div>
             )}
+            <div className="hogares-list">
             {households.map((hh) => {
               const petCount = (householdPets[hh.id] || []).length;
               const memberCount = householdMemberCounts[hh.id] ?? 0;
@@ -556,28 +609,102 @@ export default function HogaresPage() {
                 </div>
               );
             })}
-          </div>
+            </div>
+          </>
         )}
 
         {/* Add hogar button — hidden on empty state (CTA handles it) */}
         {households.length > 0 && (
           <div className="hogares-bottom-actions">
-            <button className="hogares-add-btn" onClick={() => setShowCreate(true)}>
+            <button className="hogares-add-btn hogares-add-btn--secondary" onClick={() => setShowCreate(true)}>
               <PlusIcon /> Nuevo Hogar
             </button>
-            <button className="hogares-changelog-btn" onClick={() => setShowChangelog(true)}>
-              Registro de versiones
+            <button className="hogares-whats-new-card" onClick={() => setShowChangelog(true)}>
+              <span className="hogares-whats-new-badge">NUEVO</span>
+              <div className="hogares-whats-new-body">
+                <span className="hogares-whats-new-emoji">🚀</span>
+                <div>
+                  <p className="hogares-whats-new-title">¡Novedades en KIMO!</p>
+                  <p className="hogares-whats-new-sub">Hay cosas nuevas esperándote — toca para ver</p>
+                </div>
+              </div>
+            </button>
+
+            {/* Feedback button */}
+            <button
+              className="hogares-feedback-btn"
+              onClick={() => setShowFeedback(true)}
+            >
+              <span className="hogares-feedback-btn-icon">
+                <MessageSquarePlusIcon size={22} color="#2a8a6a" />
+              </span>
+              <span className="hogares-feedback-btn-text">
+                <span className="hogares-feedback-btn-label">Enviar comentario o reporte</span>
+                <span className="hogares-feedback-btn-sublabel">Tu opinión mejora KIMO</span>
+              </span>
+              <span className="hogares-feedback-btn-arrow">›</span>
             </button>
           </div>
         )}
+
+      </div>
+        </div>
+      )}
+
+      {/* ── TAB: COMUNIDAD ── */}
+      {activeTab === 'comunidad' && (
+        <div className="tab-panel comunidad-page">
+          <div className="comunidad-hero">
+            <p className="comunidad-hero-title">Organizaciones en KIMO</p>
+            <p className="comunidad-hero-sub">Albergues y refugios que cuidan mascotas con KIMO</p>
+          </div>
+
+          {loadingDir ? (
+            <p className="vitrina-loading">Cargando…</p>
+          ) : organizations.length === 0 ? (
+            <div className="comunidad-empty">
+              <div className="comunidad-empty-icon">🏠</div>
+              <p className="comunidad-empty-title">Muy pronto los primeros albergues estarán aquí</p>
+              <p className="comunidad-empty-sub">Los albergues que usan KIMO aparecerán en esta sección con sus redes y contacto directo</p>
+            </div>
+          ) : (
+            <div className="comunidad-cards">
+              {organizations.map((org) => (
+                <OrgCard
+                  key={org.id}
+                  org={org}
+                  onClick={() => setSelectedOrg(org)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Bottom Tab Bar (iOS Segmented Control) ── */}
+      <div className="hogares-bottom-tabs">
+        <div className="hogares-tabs-segment">
+          <button
+            className={`hogares-tab-btn ${activeTab === 'hogares' ? 'hogares-tab-btn--active' : ''}`}
+            onClick={() => setActiveTab('hogares')}
+          >
+            Hogares
+          </button>
+          <button
+            className={`hogares-tab-btn ${activeTab === 'comunidad' ? 'hogares-tab-btn--active' : ''}`}
+            onClick={() => setActiveTab('comunidad')}
+          >
+            Comunidad
+          </button>
+        </div>
       </div>
 
       {/* ══════════════════════════════════════════════════ */}
       {/* ── Changelog / What's New Modal ── */}
       {/* ══════════════════════════════════════════════════ */}
       {showChangelog && (
-        <div className="hogares-inv-overlay">
-          <div className="hogares-inv-modal" style={{ textAlign: 'left', maxHeight: '85vh', overflowY: 'auto', position: 'relative' }}>
+        <div className="hogares-inv-overlay" onClick={() => setShowChangelog(false)}>
+          <div className="hogares-inv-modal" style={{ textAlign: 'left', maxHeight: '85vh', overflowY: 'auto', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
             {/* Close button */}
             <button
               onClick={() => setShowChangelog(false)}
@@ -593,16 +720,29 @@ export default function HogaresPage() {
             >
               ✕
             </button>
-            <div className="hogares-inv-icon" style={{ margin: '0 auto 12px' }}>
-              <span style={{ fontSize: '24px' }}>✨</span>
+            <div className="hogares-inv-icon" style={{ margin: '0 auto 12px', background: 'transparent', boxShadow: 'none' }}>
+              <img src={kimoIcon} alt="KIMO" style={{ width: '52px', height: '52px', borderRadius: '14px', objectFit: 'cover', boxShadow: '0 4px 14px rgba(168,230,207,0.5)' }} />
             </div>
             <p className="hogares-inv-label" style={{ textAlign: 'center' }}>Novedades en KIMO</p>
 
 
             <div className="hogares-changelog-content">
 
+              {/* ── v1.0.2 ── */}
+              <h2 style={{ fontSize: '18px', margin: '0 0 4px', fontWeight: 800 }}>Versión v1.0.2</h2>
+              <p style={{ color: '#8e8e93', fontSize: '12px', margin: '0 0 12px' }}>24 de abril de 2026</p>
+              <ul>
+                <li><strong>App Android disponible:</strong> KIMO ya tiene una app nativa para Android. Aún no está en la Play Store, pero ya puedes descargarla y probarla. Descárgala desde la pantalla de login.</li>
+                <li><strong>Notificaciones en tiempo real:</strong> Con la app Android recibirás alertas automáticas cuando sea la hora de alimentar a tu mascota. Es esa tranquilidad de saber que aunque estés ocupado, KIMO te recuerda que tus peludos te necesitan.</li>
+                <li><strong>Hogares Personales y Organizaciones:</strong> Por primera vez puedes elegir el tipo de hogar que mejor representa tu situación. Un Hogar Personal está pensado para familias y cuidadores que conviven con sus mascotas. Una Organización es para albergues, refugios o criaderos que gestionan muchas mascotas y equipos. Esta diferencia no es solo una categoría: define cómo KIMO trabaja para ti.</li>
+                <li><strong>Próximamente en iOS:</strong> La app para iPhone ya está en camino. ¡Muy pronto la tendrás disponible!</li>
+              </ul>
+
+              {/* ── divider ── */}
+              <div style={{ borderTop: '1px solid #f0f0f5', margin: '16px 0' }} />
+
               {/* ── v1.0.1 ── */}
-              <h2 style={{ fontSize: '18px', margin: '0 0 4px', fontWeight: 800 }}>Versión v1.0.1</h2>
+              <h2 style={{ fontSize: '16px', margin: '0 0 4px', fontWeight: 800, color: '#3c3c43' }}>Versión v1.0.1</h2>
               <p style={{ color: '#8e8e93', fontSize: '12px', margin: '0 0 12px' }}>21 de abril de 2026</p>
               <ul>
                 <li><strong>Perfil público para veterinarios:</strong> Comparte el historial completo de tu mascota con cualquier veterinario mediante un enlace único, sin necesidad de cuenta.</li>
@@ -640,13 +780,50 @@ export default function HogaresPage() {
         </div>
       )}
 
-      {/* ══════════════════════════════════════════════════ */}
-      {/* ── Pet detail overlay (tap avatar) ── */}
-      {/* ══════════════════════════════════════════════════ */}
-      {focusedPet && (
+      {/* ── Hogar Detail Sheet (includes pet overlay) ── */}
+      {detailHH && (
+        <HogarDetailSheet
+          household={detailHH}
+          detailData={detailData}
+          detailLoading={detailLoading}
+          isOwner={isOwner}
+          userId={user?.id}
+          editingName={editingName} editNameVal={editNameVal} savingName={savingName} nameErr={nameErr}
+          onStartEditName={() => setEditingName(true)}
+          onEditNameChange={setEditNameVal}
+          onSaveName={handleSaveName}
+          onCancelEditName={() => { setEditingName(false); setEditNameVal(detailHH.name); }}
+          confirmDelete={confirmDelete} deleting={deleting}
+          onConfirmDelete={() => setConfirmDelete(true)}
+          onCancelDelete={() => setConfirmDelete(false)}
+          onDeleteHousehold={handleDeleteHousehold}
+          removingMemberId={removingMemberId}
+          onStartRemoveMember={setRemovingMemberId}
+          onCancelRemoveMember={() => setRemovingMemberId(null)}
+          onRemoveMember={handleRemoveMember}
+          focusedPet={focusedPet} removingPetId={removingPetId} deletingPet={deletingPet}
+          onFocusPet={setFocusedPet}
+          onStartRemovePet={setRemovingPetId}
+          onCancelRemovePet={() => setRemovingPetId(null)}
+          onDeletePet={handleDeletePet}
+          onOpenDirProfile={() => setDirProfileHH(detailHH)}
+          sheetDragY={sheetDragY} isDragging={isDragging}
+          onHandlePointerDown={onHandlePointerDown}
+          onHandlePointerMove={onHandlePointerMove}
+          onHandlePointerUp={onHandlePointerUp}
+          onClose={closeDetail}
+        />
+      )}
+
+      {/* ── DEAD CODE placeholder so git diff stays clean ── */}
+      {false && (
         <div className="hd-pet-overlay" onClick={() => setFocusedPet(null)}>
           <div className="hd-pet-overlay-card" onClick={(e) => e.stopPropagation()}>
-            <img src={getPetImg(focusedPet)} alt={focusedPet.name} className="hd-pet-overlay-img" />
+            <img
+              src={getPetImg(focusedPet)}
+              alt={focusedPet.name}
+              className={`hd-pet-overlay-img${focusedPet.photo_url ? ' hd-pet-overlay-img--photo' : ''}`}
+            />
             <p className="hd-pet-overlay-name">{focusedPet.name}</p>
             {isOwner && (
               removingPetId === focusedPet.id ? (
@@ -669,10 +846,8 @@ export default function HogaresPage() {
         </div>
       )}
 
-      {/* ══════════════════════════════════════════════════ */}
-      {/* ── Bottom sheet: DETAIL DEL HOGAR ── */}
-      {/* ══════════════════════════════════════════════════ */}
-      {detailHH && (
+      {/* removed — now rendered by HogarDetailSheet above */}
+      {false && (
         <div
           className={`hogares-sheet-overlay${closingSheet ? ' hogares-sheet-overlay-closing' : ''}`}
           onClick={closeDetail}
@@ -748,17 +923,33 @@ export default function HogaresPage() {
                   <p className="hd-section-title">
                     <PawIcon /> Mascotas ({detailData.pets.length})
                   </p>
-                  {detailData.pets.length === 0 ? (
+                  {detailData.pets.length === 0 && !isOwner ? (
                     <p className="hd-empty">Sin mascotas en este hogar</p>
                   ) : (
                     <div className="hd-pets-grid">
+                      {/* ── Add pet button — first position ── */}
+                      {isOwner && (
+                        <button
+                          className="hd-pet-add-btn"
+                          onClick={() => { setDetailHH(null); navigate('/onboarding/especie'); }}
+                          title="Agregar mascota"
+                        >
+                          <span className="hd-pet-add-icon">+</span>
+                          <span className="hd-pet-name-pill">Agregar</span>
+                        </button>
+                      )}
+
                       {detailData.pets.map((pet) => (
                         <button
                           key={pet.id}
                           className="hd-pet-avatar-btn"
                           onClick={() => { setFocusedPet(pet); setRemovingPetId(null); }}
                         >
-                          <img src={getPetImg(pet)} alt={pet.name} className="hd-pet-avatar-img" />
+                          <img
+                            src={getPetImg(pet)}
+                            alt={pet.name}
+                            className={`hd-pet-avatar-img${pet.photo_url ? ' hd-pet-avatar-img--photo' : ''}`}
+                          />
                           <span className="hd-pet-name-pill">{pet.name}</span>
                         </button>
                       ))}
@@ -814,6 +1005,31 @@ export default function HogaresPage() {
                   </div>
                 </div>
 
+                {/* ── Notificaciones ── */}
+                <button
+                  className="hd-notif-btn"
+                  onClick={() => { closeDetail(); navigate('/notificaciones', { state: { householdId: detailHH.id, householdName: detailHH.name } }); }}
+                >
+                  <span className="hd-notif-btn-left">
+                    <span className="hd-notif-icon">🔔</span>
+                    <span className="hd-notif-label">Notificaciones del hogar</span>
+                  </span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
+
+                {/* ── Directory profile button (org owners only) ── */}
+                {isOwner && detailHH?.type === 'organization' && (
+                  <button
+                    className="hd-dir-profile-btn"
+                    onClick={() => setDirProfileHH(detailHH)}
+                  >
+                    <BuildingIcon size={16} />
+                    Editar perfil de vitrina
+                  </button>
+                )}
+
                 {/* ── Danger zone: delete household ── */}
                 {isOwner && (
                   <div className="hd-danger-zone">
@@ -845,178 +1061,126 @@ export default function HogaresPage() {
         </div>
       )}
 
-      {/* ── Bottom sheet: crear hogar ── */}
-      {showCreate && (
-        <div className="hogares-sheet-overlay"
-          onClick={resetCreateForm}>
-          <form className="hogares-sheet" onClick={(e) => e.stopPropagation()} onSubmit={handleCreate}>
-            <div className="hogares-sheet-handle" />
-            <h3 className="hogares-sheet-title">🏠 Nuevo hogar</h3>
+      {/* ══════════════════════════════════════════════════ */}
+      {/* ── Type-picker modal ── */}
+      {/* ══════════════════════════════════════════════════ */}
+      {typePickerModal && (() => {
+        const isPersonal = typePickerModal === 'personal';
+        return (
+          <div className="hogares-inv-overlay" onClick={() => setTypePickerModal(null)}>
+            <div className="hogares-inv-modal hogares-typepick-modal" onClick={(e) => e.stopPropagation()}>
 
-            {/* Type selector */}
-            <div className="hogares-type-selector">
+              {/* Close */}
               <button
-                type="button"
-                className={`hogares-type-btn ${newType === 'personal' ? 'hogares-type-btn-active' : ''}`}
-                onClick={() => setNewType('personal')}
-              >
-                <div className="hogares-type-icon"><HomeIcon size={20} color="#1c1c1e" /></div>
-                <span className="hogares-type-label">Personal</span>
-                <span className="hogares-type-desc">Familias, parejas, roomies</span>
-              </button>
-              <button
-                type="button"
-                className={`hogares-type-btn ${newType === 'organization' ? 'hogares-type-btn-active' : ''}`}
-                onClick={() => setNewType('organization')}
-              >
-                <div className="hogares-type-icon"><BuildingIcon size={20} /></div>
-                <span className="hogares-type-label">Organización</span>
-                <span className="hogares-type-desc">Albergues, refugios, criadores</span>
-              </button>
-            </div>
+                className="hogares-typepick-close"
+                onClick={() => setTypePickerModal(null)}
+                aria-label="Cerrar"
+              >✕</button>
 
-            <input
-              className="hogares-sheet-input"
-              placeholder={newType === 'organization' ? 'Nombre de la organización' : 'Nombre del hogar (ej: Casa Pérez)'}
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              autoFocus maxLength={40}
-            />
-
-            {/* Organization-only fields */}
-            {newType === 'organization' && (
-              <>
-                {/* Country selector */}
-                <div className="hogares-country-select-wrap" style={{ marginTop: '10px' }}>
-                  <select
-                    className="hogares-sheet-input hogares-country-select"
-                    value={newCountry}
-                    onChange={(e) => setNewCountry(e.target.value)}
-                  >
-                    <option value="">Selecciona un país</option>
-                    {COUNTRIES.map((c) => (
-                      <option key={c.code} value={c.code}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Phone with auto dial code */}
-                <div className="hogares-phone-row" style={{ marginTop: '10px' }}>
-                  <span className="hogares-phone-prefix">
-                    {(() => {
-                      const c = newCountry ? COUNTRIES.find(x => x.code === newCountry) : null;
-                      return c ? c.dial : '+__';
-                    })()}
-                  </span>
-                  <input
-                    className="hogares-sheet-input hogares-phone-input"
-                    placeholder="Número de contacto *"
-                    type="tel"
-                    value={newPhone}
-                    onChange={(e) => setNewPhone(e.target.value)}
-                    maxLength={15}
-                  />
-                </div>
-
-                <p className="hogares-org-hint">
-                  El número de contacto nos permite comunicarnos con tu organización para ofrecerte promociones y beneficios exclusivos.
-                </p>
-              </>
-            )}
-
-            {createErr && <p className="hogares-sheet-error">{createErr}</p>}
-            <div className="hogares-sheet-actions">
-              <button type="button" className="hogares-sheet-cancel"
-                onClick={resetCreateForm}>
-                Cancelar
-              </button>
-              <button type="submit" className="hogares-sheet-save" disabled={!newName.trim() || creating}>
-                {creating ? 'Creando…' : 'Crear'}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-      {/* ── Bottom sheet: invitar persona ── */}
-      {inviteHH && (
-        <div className="hogares-sheet-overlay" onClick={closeInviteSheet}>
-          <div className="hogares-sheet hogares-invite-sheet" onClick={(e) => { e.stopPropagation(); setActiveTip(null); }}>
-            <div className="hogares-sheet-handle" />
-            <h3 className="hogares-sheet-title">Invitar a {inviteHH.name}</h3>
-
-            {/* Invite by KIMO code */}
-            <div className="hogares-invite-label-row">
-              <p className="hogares-invite-section-label">Código KIMO del usuario</p>
-              <button
-                className="hogares-invite-info-btn"
-                onClick={(e) => { e.stopPropagation(); setActiveTip(v => v === 'email' ? null : 'email'); }}
-                aria-label="Más información"
-              >
-                <InfoIcon />
-              </button>
-              {activeTip === 'email' && (
-                <span className="hogares-invite-tip">Pídele su código KIMO al usuario. Lo encuentran en su perfil.</span>
-              )}
-            </div>
-            <div className="hogares-invite-email-row">
-              <input
-                className="hogares-sheet-input hogares-invite-input"
-                type="text"
-                placeholder="ej: A3F7K2"
-                value={inviteCode}
-                onChange={(e) => { setInviteCode(e.target.value.toUpperCase()); setInviteMsg(''); }}
-                maxLength={6}
-                style={{ letterSpacing: '3px', fontWeight: 700, textAlign: 'center' }}
-              />
-              <button className="hogares-invite-send-btn" onClick={handleInviteByCode}
-                disabled={inviting || !inviteCode.trim()}>
-                {inviting ? '…' : 'Invitar'}
-              </button>
-            </div>
-
-            {inviteMsg && <p className="hogares-invite-msg">{inviteMsg}</p>}
-
-            <div className="hogares-invite-divider">
-              <div className="hogares-invite-divider-line" />
-              <span>o</span>
-              <div className="hogares-invite-divider-line" />
-            </div>
-
-            {/* Label: no tiene cuenta */}
-            <div className="hogares-invite-label-row">
-              <p className="hogares-invite-section-label">Si no tiene cuenta</p>
-              <button
-                className="hogares-invite-info-btn"
-                onClick={(e) => { e.stopPropagation(); setActiveTip(v => v === 'noAccount' ? null : 'noAccount'); }}
-                aria-label="Más información"
-              >
-                <InfoIcon />
-              </button>
-              {activeTip === 'noAccount' && (
-                <span className="hogares-invite-tip">Invita a usar la app para gestionar hogares juntos</span>
-              )}
-            </div>
-            {!generatedLink ? (
-              <button className="hogares-invite-link-btn" onClick={handleGenerateLink} disabled={generatingLink}>
-                {generatingLink ? 'Generando…' : '🔗 Generar link de invitación'}
-              </button>
-            ) : (
-              <div className="hogares-invite-link-box">
-                <p className="hogares-invite-link-text">{generatedLink}</p>
-                <button className="hogares-invite-copy-btn" onClick={handleCopyLink}>
-                  {copied ? '✓ Copiado' : <><CopyIcon /> Copiar</>}
-                </button>
+              {/* Icon */}
+              <div className={`hogares-typepick-icon ${isPersonal ? 'hogares-typepick-icon--personal' : 'hogares-typepick-icon--org'}`}>
+                {isPersonal ? <HomeIcon size={28} color="#2a8a6a" /> : <BuildingIcon size={28} />}
               </div>
-            )}
 
-            <button className="hogares-sheet-cancel hogares-invite-close" onClick={closeInviteSheet}>
-              Cerrar
-            </button>
+              {/* Title */}
+              <p className="hogares-inv-label">
+                {isPersonal ? 'Hogar Personal' : 'Organización'}
+              </p>
+              <h2 className="hogares-typepick-title">
+                {isPersonal ? '¿Para quién es?' : '¿Para quién es?'}
+              </h2>
+              <p className="hogares-inv-sub">
+                {isPersonal
+                  ? 'Ideal para familias, parejas o cuidadores que comparten el cuidado de sus mascotas en casa. Invita a quienes conviven con ellas y lleva el historial completo juntos.'
+                  : 'Perfecto para albergues, refugios, criaderos o clínicas. Gestiona muchas mascotas, coordina tu equipo y cede perfiles a adoptantes de forma digital.'}
+              </p>
+
+              {/* Feature list */}
+              <div className="hogares-typepick-features">
+                {isPersonal ? (
+                  <>
+                    <div className="hogares-typepick-feature">
+                      <span className="hogares-typepick-feature-icon">👨‍👩‍👧</span>
+                      <span>Invita a tu familia o roomies como cuidadores</span>
+                    </div>
+                    <div className="hogares-typepick-feature">
+                      <span className="hogares-typepick-feature-icon">💊</span>
+                      <span>Registra medicinas, vacunas y comida fácilmente</span>
+                    </div>
+                    <div className="hogares-typepick-feature">
+                      <span className="hogares-typepick-feature-icon">🐾</span>
+                      <span>Un perfil completo para cada mascota del hogar</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="hogares-typepick-feature">
+                      <span className="hogares-typepick-feature-icon">🏢</span>
+                      <span>Gestiona múltiples mascotas con tu equipo</span>
+                    </div>
+                    <div className="hogares-typepick-feature">
+                      <span className="hogares-typepick-feature-icon">🤝</span>
+                      <span>Cede perfiles médicos a adoptantes digitalmente</span>
+                    </div>
+                    <div className="hogares-typepick-feature">
+                      <span className="hogares-typepick-feature-icon">🎁</span>
+                      <span>Accede a beneficios y promociones exclusivas</span>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* CTA */}
+              <button
+                className="hogares-typepick-cta"
+                onClick={() => handleOpenCreateFromModal(typePickerModal)}
+              >
+                Crear
+              </button>
+            </div>
           </div>
-        </div>
+        );
+      })()}
+
+      {/* ── Create Hogar Sheet ── */}
+      {showCreate && (
+        <HogarCreateSheet
+          newType={newType} onTypeChange={setNewType} typeLocked={typeLocked}
+          newName={newName} onNameChange={setNewName}
+          newCountry={newCountry} onCountryChange={setNewCountry}
+          newCity={newCity} onCityChange={setNewCity}
+          newDescription={newDescription} onDescriptionChange={setNewDescription}
+          newInstagram={newInstagram} onInstagramChange={setNewInstagram}
+          newWhatsapp={newWhatsapp} onWhatsappChange={setNewWhatsapp}
+          newFacebook={newFacebook} onFacebookChange={setNewFacebook}
+          newTiktok={newTiktok} onTiktokChange={setNewTiktok}
+          newWebsite={newWebsite} onWebsiteChange={setNewWebsite}
+          newMaps={newMaps} onMapsChange={setNewMaps}
+          newCoverPreview={newCoverPreview}
+          onCoverReady={(blob, preview) => { setNewCoverBlob(blob); setNewCoverPreview(preview); }}
+          creating={creating} createErr={createErr}
+          onSubmit={handleCreate} onCancel={resetCreateForm}
+        />
       )}
+      {/* ── Invite Sheet ── */}
+      <InviteSheet
+        household={inviteHH}
+        inviteCode={inviteCode}
+        onCodeChange={(v) => { setInviteCode(v); setInviteMsg(''); }}
+        inviting={inviting}
+        onInviteByCode={handleInviteByCode}
+        inviteMsg={inviteMsg}
+        generatedLink={generatedLink}
+        generatingLink={generatingLink}
+        onGenerateLink={handleGenerateLink}
+        copied={copied}
+        onCopyLink={handleCopyLink}
+        activeTip={activeTip}
+        onToggleTip={(tip) => setActiveTip(v => v === tip ? null : tip)}
+        onClose={closeInviteSheet}
+      />
+
+
       {/* ── Transfer Sheet (sender flow) ── */}
       <TransferSheet
         isOpen={!!transferHH}
@@ -1036,6 +1200,31 @@ export default function HogaresPage() {
           households={households}
           onAccept={acceptTransfer}
           onDecline={declineTransferFn}
+        />
+      )}
+
+      {/* ── Directory Profile Editor ── */}
+      {dirProfileHH && (
+        <DirectoryProfileSheet
+          household={dirProfileHH}
+          onClose={() => setDirProfileHH(null)}
+          onSaved={() => { fetchOrganizations(); setDirProfileHH(null); }}
+        />
+      )}
+
+      {/* ── Org Public Profile Sheet ── */}
+      {selectedOrg && (
+        <OrgProfileSheet
+          org={selectedOrg}
+          onClose={() => setSelectedOrg(null)}
+        />
+      )}
+
+      {/* ── Feedback Modal ── */}
+      {showFeedback && (
+        <FeedbackModal
+          userId={user?.id}
+          onClose={() => setShowFeedback(false)}
         />
       )}
     </div>

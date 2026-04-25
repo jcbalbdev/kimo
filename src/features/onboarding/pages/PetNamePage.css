@@ -95,3 +95,79 @@
   width: 100%;
   margin-top: var(--space-sm);
 }
+
+/* ── Avatar button (tap to pick) ── */
+.petname-avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.petname-avatar-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  transition: transform 0.15s;
+}
+
+.petname-avatar-btn:active { transform: scale(0.94); }
+
+.petname-avatar-img {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  border-radius: 28px;
+  background: var(--bg-input);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.09);
+  transition: box-shadow 0.2s;
+}
+
+.petname-avatar-hint {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: 0.1px;
+}
+
+/* ── Picker grid ── */
+.petname-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  width: 100%;
+  background: var(--bg-input);
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 4px;
+}
+
+.petname-picker-opt {
+  background: #fff;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, transform 0.12s;
+}
+
+.petname-picker-opt img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+}
+
+.petname-picker-opt:active { transform: scale(0.92); }
+
+.petname-picker-opt--active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-bg);
+}

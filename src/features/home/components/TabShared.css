@@ -92,12 +92,16 @@
   align-self: flex-start;
 }
 
-/* ── Solid Gradient Add Card ── */
+/* ── Solid Gradient Add Card (fixed above pet selector) ── */
 .tab-add-card {
+  position: fixed;
+  bottom: calc(66px + env(safe-area-inset-bottom, 0px));
+  left: 20px;
+  right: 20px;
+  z-index: 45;
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 100%;
   padding: 16px;
   border: none;
   border-radius: 16px;
@@ -107,6 +111,7 @@
   transition: opacity 0.15s, transform 0.15s;
   box-sizing: border-box;
   justify-content: center;
+  box-shadow: 0 4px 20px rgba(137,207,240,0.45);
 }
 .tab-add-card:active {
   transform: scale(0.98);

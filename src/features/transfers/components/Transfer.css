@@ -474,6 +474,22 @@
   line-height: 1.3;
 }
 
+/* ── Locked type badge (comes from type-picker modal) */
+.hogares-type-locked {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 30px;
+  background: rgba(168, 230, 207, 0.18);
+  border: 1.5px solid rgba(168, 230, 207, 0.5);
+  font-size: 14px;
+  font-weight: 600;
+  color: #2a8a6a;
+  margin-bottom: 14px;
+  width: fit-content;
+}
+
 /* ── Type badge on household cards ──────────────── */
 .hogares-item-type-badge {
   font-size: 10px;

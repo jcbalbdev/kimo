@@ -27,7 +27,14 @@ export function HouseholdProvider({ children }) {
         .select(`
           household_id,
           role,
-          households (id, name, type, invite_code, created_by, created_at)
+          households (
+            id, name, type, invite_code, created_by, created_at,
+            country, city, description, instagram, whatsapp, facebook, tiktok,
+            directory_visible, directory_description, directory_city,
+            directory_instagram, directory_whatsapp, directory_facebook,
+            directory_tiktok, directory_cover_url, contact_phone,
+            directory_website, directory_maps, directory_whatsapp_public
+          )
         `)
         .eq('user_id', user.id);
 
@@ -84,13 +91,27 @@ export function HouseholdProvider({ children }) {
     }
   };
 
-  const createHousehold = async (name, type = 'personal', { country, contactPhone } = {}) => {
+  const createHousehold = async (name, type = 'personal', {
+    country, contactPhone,
+    city, description, instagram, whatsapp, facebook, tiktok, directoryVisible,
+    directory_website, directory_maps,
+    ...extraFields
+  } = {}) => {
     if (!user || !supabase) return { error: 'No user' };
 
     const payload = { name, type, created_by: user.id };
     if (type === 'organization') {
-      if (country) payload.country = country;
-      if (contactPhone) payload.contact_phone = contactPhone;
+      if (country)           payload.country               = country;
+      if (contactPhone)      payload.contact_phone         = contactPhone;
+      if (city)              payload.directory_city        = city;
+      if (description)       payload.directory_description = description;
+      if (instagram)         payload.directory_instagram   = instagram;
+      if (whatsapp)          payload.directory_whatsapp    = whatsapp;
+      if (facebook)          payload.directory_facebook    = facebook;
+      if (tiktok)            payload.directory_tiktok      = tiktok;
+      if (directory_website) payload.directory_website     = directory_website;
+      if (directory_maps)    payload.directory_maps        = directory_maps;
+      payload.directory_visible = directoryVisible ?? false;
     }
 
     const { data: hh, error: hhErr } = await supabase
@@ -210,7 +231,7 @@ export function HouseholdProvider({ children }) {
       supabase.rpc('get_household_members', { p_household_id: householdId }),
       supabase
         .from('pets')
-        .select('id, name, species, avatar_emoji')
+        .select('id, name, species, avatar_emoji, photo_url')
         .eq('household_id', householdId)
         .order('created_at', { ascending: true }),
     ]);

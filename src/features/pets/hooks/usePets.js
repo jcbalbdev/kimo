@@ -38,7 +38,7 @@ export function usePets() {
 
   const currentPet = pets.find((p) => p.id === currentPetId) || null;
 
-  const addPet = async ({ name, species, customSpecies }) => {
+  const addPet = async ({ name, species, customSpecies, avatarKey }) => {
     if (!currentHousehold || !user) {
       console.error('[Pets] No household or user', { currentHousehold, user });
       return { error: 'No household' };
@@ -53,7 +53,7 @@ export function usePets() {
         name,
         species,
         custom_species: customSpecies || null,
-        avatar_emoji: 'img', // default = show custom illustration
+        avatar_emoji: avatarKey || 'img',
         household_id: currentHousehold.id,
         created_by: user.id,
       })

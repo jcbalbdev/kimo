@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePets } from '../../pets/hooks/usePets';
-import PetAvatar from '../../pets/components/PetAvatar';
+import { SPECIES_AVATARS, PET_IMG } from '../../../shared/utils/petAvatars';
 import Button from '../../../shared/components/Button/Button';
 import './PetNamePage.css';
 
@@ -9,26 +9,31 @@ export default function PetNamePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { addPet } = usePets();
-  const [name, setName] = useState('');
-  const [saving, setSaving] = useState(false);
+  const [name, setName]             = useState('');
+  const [saving, setSaving]         = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
+  const [selectedKey, setSelectedKey] = useState(null); // null = use default
 
-  const { species, customSpecies } = location.state || {
-    species: 'other',
-    customSpecies: null,
-  };
+  const { species, customSpecies } = location.state || { species: 'other', customSpecies: null };
+
+  // Avatars available for this species
+  const avatarOptions = SPECIES_AVATARS[species] || SPECIES_AVATARS.other;
+
+  // Preview image: chosen avatar or species default
+  const previewImg = selectedKey
+    ? (avatarOptions.find((a) => a.key === selectedKey)?.img ?? avatarOptions[0].img)
+    : (PET_IMG[species] ?? avatarOptions[0].img);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim()) return;
-
     setSaving(true);
     await addPet({
       name: name.trim(),
       species,
       customSpecies,
+      avatarKey: selectedKey || 'img',
     });
-
-    // Pequeña pausa para la animación
     setTimeout(() => navigate('/'), 400);
   };
 
@@ -43,9 +48,34 @@ export default function PetNamePage() {
       </button>
 
       <form className="petname-content" onSubmit={handleSubmit}>
-        <div className="petname-avatar-container animate-scale-in">
-          <PetAvatar species={species} size="hero" />
+
+        {/* ── Tappable avatar ── */}
+        <div className="petname-avatar-wrap animate-scale-in">
+          <button type="button" className="petname-avatar-btn" onClick={() => setShowPicker((v) => !v)}>
+            <img src={previewImg} alt="avatar" className="petname-avatar-img" />
+            <span className="petname-avatar-hint">{showPicker ? 'Cerrar' : 'Cambiar avatar'}</span>
+          </button>
         </div>
+
+        {/* ── Avatar picker grid ── */}
+        {showPicker && (
+          <div className="petname-picker animate-fade-in-up">
+            {avatarOptions.map((opt) => (
+              <button
+                key={opt.key}
+                type="button"
+                className={`petname-picker-opt${
+                  (selectedKey === opt.key || (!selectedKey && opt.key === 'img'))
+                    ? ' petname-picker-opt--active'
+                    : ''
+                }`}
+                onClick={() => { setSelectedKey(opt.key); setShowPicker(false); }}
+              >
+                <img src={opt.img} alt={opt.key} />
+              </button>
+            ))}
+          </div>
+        )}
 
         {customSpecies && (
           <p className="petname-species animate-fade-in">{customSpecies}</p>
@@ -68,12 +98,7 @@ export default function PetNamePage() {
         </div>
 
         <div className="petname-action animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-          <Button
-            type="submit"
-            size="lg"
-            disabled={!name.trim()}
-            loading={saving}
-          >
+          <Button type="submit" size="lg" disabled={!name.trim()} loading={saving}>
             ¡Listo!
           </Button>
         </div>

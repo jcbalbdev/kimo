@@ -96,10 +96,12 @@ export const DEFAULT_SPECIES_KEYS = new Set(['🐕', '🐈', '🐇', '🐾', 'im
 
 /**
  * Resolve the display image for a pet object.
+ * Priority: real photo (photo_url) > named avatar key > species default.
  * Works for pet cards, selectors, and household pet lists.
  */
 export function getPetImg(pet) {
   if (!pet) return gatoIcon;
+  if (pet.photo_url) return pet.photo_url;
   const k = pet.avatar_emoji;
   if (k && AVATAR_KEY_TO_IMG[k]) return AVATAR_KEY_TO_IMG[k];
   return PET_IMG[pet.species] || gatoIcon;

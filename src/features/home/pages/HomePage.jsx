@@ -7,6 +7,7 @@ import { useHousehold } from '../../household/hooks/useHousehold';
 import {
   SPECIES_AVATARS, PET_IMG, AVATAR_KEY_TO_IMG, DEFAULT_SPECIES_KEYS, getPetImg,
 } from '../../../shared/utils/petAvatars';
+import { supabase } from '../../../lib/supabase';
 import PerfilTab from '../components/PerfilTab';
 import MedsTab from '../components/MedsTab';
 import AlimentosTab from '../components/AlimentosTab';
@@ -14,6 +15,8 @@ import CitasTab from '../components/CitasTab';
 import VacunasTab from '../components/VacunasTab';
 import SaludTab from '../components/SaludTab';
 import ShareModal from '../../../shared/components/ShareModal/ShareModal';
+import PetPhotoUpload from '../../../shared/components/PetPhotoUpload/PetPhotoUpload';
+import '../../../shared/components/PetPhotoUpload/PetPhotoUpload.css';
 import './HomePage.css';
 
 
@@ -36,6 +39,8 @@ export default function HomePage() {
   const [savingAvatar, setSavingAvatar] = useState(false);
   const [newName, setNewName] = useState('');
   const [pendingAvatarKey, setPendingAvatarKey] = useState(null);
+  const [pendingPhotoBlob, setPendingPhotoBlob] = useState(null);
+  const [pendingPhotoPreview, setPendingPhotoPreview] = useState('');
   const [sheetDragY, setSheetDragY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [closingSheet, setClosingSheet] = useState(false);
@@ -100,6 +105,8 @@ export default function HomePage() {
       setShowAvatarPicker(false);
       setClosingSheet(false);
       setSheetDragY(0);
+      setPendingPhotoBlob(null);
+      setPendingPhotoPreview('');
     }, 320);
   }, []);
 
@@ -119,6 +126,9 @@ export default function HomePage() {
   const openEditSheet = () => {
     setNewName(currentPet.name || '');
     setPendingAvatarKey(currentAvatarKey);
+    // Restore current photo preview if one exists
+    setPendingPhotoBlob(null);
+    setPendingPhotoPreview(currentPet.photo_url || '');
     setSheetDragY(0);
     setClosingSheet(false);
     setShowAvatarPicker(true);
@@ -159,12 +169,34 @@ export default function HomePage() {
     setSavingAvatar(true);
     const updates = {};
     if (newName.trim() !== currentPet.name) updates.name = newName.trim();
-    if (pendingAvatarKey !== currentAvatarKey) updates.avatar_emoji = pendingAvatarKey;
+
+    if (pendingPhotoBlob) {
+      // Upload new photo to Supabase Storage
+      const path = `${currentPet.id}/photo.webp`;
+      const { error: upErr } = await supabase.storage
+        .from('pet-photos')
+        .upload(path, pendingPhotoBlob, { contentType: 'image/webp', upsert: true });
+      if (!upErr) {
+        const { data: urlData } = supabase.storage.from('pet-photos').getPublicUrl(path);
+        // Append cache-buster so the browser always loads the fresh image
+        updates.photo_url    = `${urlData.publicUrl}?v=${Date.now()}`;
+        updates.avatar_emoji = 'photo';
+      }
+    } else if (pendingAvatarKey !== 'photo' && currentPet.photo_url) {
+      // User switched back to an illustrated avatar — clear the real photo
+      updates.photo_url    = null;
+      updates.avatar_emoji = pendingAvatarKey;
+    } else if (pendingAvatarKey !== currentAvatarKey) {
+      updates.avatar_emoji = pendingAvatarKey;
+    }
+
     if (Object.keys(updates).length > 0) {
       await updatePet(currentPet.id, updates);
       await fetchPets();
     }
     setSavingAvatar(false);
+    setPendingPhotoBlob(null);
+    setPendingPhotoPreview('');
     setShowAvatarPicker(false);
   };
 
@@ -275,7 +307,11 @@ export default function HomePage() {
       <div className="hp-hero-area">
         <div className="hp-hero">
           <div className="hp-hero-img-wrap">
-            <img src={heroImg} alt={currentPet.name} className="hp-hero-img" />
+            <img
+              src={heroImg}
+              alt={currentPet.name}
+              className={`hp-hero-img${currentPet.photo_url ? ' hp-hero-img--photo' : ''}`}
+            />
 
             {/* Share button — bottom left */}
             <button
@@ -286,6 +322,18 @@ export default function HomePage() {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+              </svg>
+            </button>
+
+            {/* Notifications button — bottom center */}
+            <button
+              className="hp-hero-notif-btn"
+              onClick={() => navigate('/notificaciones', { state: { petId: currentPet.id, petName: currentPet.name } })}
+              aria-label="Notificaciones"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
               </svg>
             </button>
 
@@ -356,7 +404,7 @@ export default function HomePage() {
           TAB CONTENT
           ══════════════════════════════════════ */}
       <div className="hp-content">
-        {activeTab === 'perfil'       && <PerfilTab   pet={currentPet} onPetUpdated={fetchPets} />}
+        {activeTab === 'perfil'       && <PerfilTab   pet={currentPet} onPetUpdated={fetchPets} isOrgHousehold={currentHousehold?.type === 'organization'} />}
         {activeTab === 'salud'        && <SaludTab    petId={currentPet.id} />}
         {activeTab === 'medicamentos' && <MedsTab     petId={currentPet.id} />}
         {activeTab === 'alimentos'    && <AlimentosTab petId={currentPet.id} />}
@@ -371,7 +419,6 @@ export default function HomePage() {
       {showAvatarPicker && (
         <div
           className={`hp-avatar-overlay ${closingSheet ? 'hp-avatar-overlay-closing' : ''}`}
-          onClick={dismissSheet}
         >
           <div
             ref={sheetRef}
@@ -381,16 +428,20 @@ export default function HomePage() {
               transition: isDragging ? 'none' : 'transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               willChange: 'transform',
             }}
-            onClick={e => e.stopPropagation()}
           >
-            {/* Handle — drag to dismiss */}
-            <div
-              className="hp-avatar-handle"
-              onPointerDown={onHandlePointerDown}
-              onPointerMove={onHandlePointerMove}
-              onPointerUp={onHandlePointerUp}
-              onPointerCancel={onHandlePointerUp}
-            />
+            {/* Top bar with back button */}
+            <div className="hp-avatar-topbar">
+              <button
+                className="hp-avatar-back-btn"
+                onClick={dismissSheet}
+                aria-label="Cerrar"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 12H5M12 5l-7 7 7 7" />
+                </svg>
+              </button>
+              <span className="hp-avatar-topbar-title">Editar mascota</span>
+            </div>
 
             {/* Name editing */}
             <p className="hp-avatar-name-label">Nombre de la mascota</p>
@@ -403,14 +454,56 @@ export default function HomePage() {
             />
 
             <h3 className="hp-avatar-title">Cambiar avatar</h3>
+
+            {/* ── Photo upload row ── */}
+            <div className="hp-avatar-photo-row">
+              <PetPhotoUpload
+                previewUrl={pendingPhotoPreview}
+                onFileReady={(blob, preview) => {
+                  setPendingPhotoBlob(blob);
+                  setPendingPhotoPreview(preview);
+                  // Deselect any illustrated avatar while photo is pending
+                  setPendingAvatarKey('photo');
+                }}
+                disabled={savingAvatar}
+              />
+              <div className="hp-avatar-photo-info">
+                <span className="hp-avatar-photo-label">Foto de mi mascota</span>
+                <span className="hp-avatar-photo-hint">
+                  {pendingPhotoPreview
+                    ? 'Toca la foto para cambiarla (JPG, PNG, HEIC · máx. 2 MB)'
+                    : 'Toca el círculo para subir una foto (JPG, PNG, HEIC · máx. 2 MB)'}
+                </span>
+                {pendingPhotoPreview && (
+                  <button
+                    className="hp-avatar-photo-remove"
+                    onClick={() => {
+                      setPendingPhotoBlob(null);
+                      setPendingPhotoPreview('');
+                      setPendingAvatarKey(currentAvatarKey === 'photo' ? 'img' : currentAvatarKey);
+                    }}
+                    disabled={savingAvatar}
+                  >
+                    Quitar foto
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* ── Illustrated avatars grid ── */}
             <div className="hp-avatar-grid">
               {avatarOptions.map((opt) => {
-                const isActive = pendingAvatarKey === opt.key;
+                const isActive = pendingAvatarKey === opt.key && !pendingPhotoPreview;
                 return (
                   <button
                     key={opt.key}
                     className={`hp-avatar-option ${isActive ? 'hp-avatar-option-active' : ''}`}
-                    onClick={() => handleAvatarSelect(opt.key)}
+                    onClick={() => {
+                      handleAvatarSelect(opt.key);
+                      // Selecting an illustration discards the pending photo
+                      setPendingPhotoBlob(null);
+                      setPendingPhotoPreview('');
+                    }}
                     disabled={savingAvatar}
                   >
                     <img src={opt.img} alt="avatar" className="hp-avatar-opt-img" />
@@ -434,6 +527,17 @@ export default function HomePage() {
           PET SELECTOR — fixed bottom bar
           ══════════════════════════════════════ */}
       <div className="hp-selector-row">
+        {/* Add pet — always first so it's never buried off-screen */}
+        <button
+          className="hp-pet-bubble hp-pet-bubble-add"
+          onClick={() => navigate('/onboarding/especie')}
+          aria-label="Agregar mascota"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+
         {pets.map((pet) => {
           const isActive = pet.id === currentPet.id;
           const bubbleImg = getPetImg(pet);
@@ -444,19 +548,14 @@ export default function HomePage() {
               onClick={() => selectPet(pet.id)}
               aria-label={pet.name}
             >
-              <img src={bubbleImg} alt={pet.name} className="hp-bubble-img" />
+              <img
+                src={bubbleImg}
+                alt={pet.name}
+                className={`hp-bubble-img${pet.photo_url ? ' hp-bubble-img--photo' : ''}`}
+              />
             </button>
           );
         })}
-        <button
-          className="hp-pet-bubble hp-pet-bubble-add"
-          onClick={() => navigate('/onboarding/especie')}
-          aria-label="Agregar mascota"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-        </button>
       </div>
 
       {/* ══════════════════════════════════════
